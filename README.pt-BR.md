@@ -27,6 +27,8 @@ A página dela, com os oito especialistas: [grippado.github.io/dumps/skill](http
 Ela é opinativa de propósito: um dial de estilo lido das suas próprias palavras vai de "sóbrio" a
 "inovação máxima", e ela recusa o visual padrão de artefato. Veja um exemplo de cada tipo em
 [grippado.github.io/dumps/examples](https://grippado.github.io/dumps/examples/).
+Pacotes de estilo acrescentam tokens de design, voz e regras para cada nível. Veja a [prévia do
+formato aberto](https://grippado.github.io/dumps/style-packs/) ou o [guia de contribuição](docs/pt-BR/style-packs.md).
 
 Guia completo: [docs/pt-BR/agent.md](docs/pt-BR/agent.md).
 Para hosts internos da organização, veja o [guia de publicação Enterprise](docs/pt-BR/enterprise.md).

@@ -1,0 +1,187 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Style packs for dump-this</title>
+<meta name="description" content="Preview one dump-this style pack across the four style dial levels. Explore the open format and contribute a reusable guide.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Style packs for dump-this">
+<meta property="og:description" content="One presentation guide, applied across four style dial levels.">
+<meta property="og:url" content="https://grippado.github.io/dumps/style-packs/">
+<style>
+:root{color-scheme:light dark;--bg:#f4f1e9;--fg:#202720;--mut:#626b62;--line:rgba(32,39,32,.18);--panel:#fbf9f3;--accent:#843d2d;--soft:#e8e1d4;--pack-page:#f5f0e6;--pack-ink:#202c25;--pack-accent:#853b2b;--pack-muted:#4e6156;--pack-line:#b8b7a9;--pack-display:Georgia,serif;--pack-body:Arial,sans-serif}
+@media(prefers-color-scheme:dark){:root{--bg:#111713;--fg:#f1eee4;--mut:#aeb9ae;--line:rgba(241,238,228,.2);--panel:#19211c;--accent:#f0a18a;--soft:#26322a}}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.55 ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif}
+a{color:var(--accent);text-decoration-thickness:.08em;text-underline-offset:.18em}
+a:hover{text-decoration-thickness:.14em}
+button{font:inherit}
+.wrap{width:min(1100px,100% - 40px);margin-inline:auto}
+nav{border-bottom:1px solid var(--line)}
+.nav-in{min-height:62px;display:flex;align-items:center;gap:22px}
+.logo{font-weight:800;font-size:20px;color:var(--fg);text-decoration:none;letter-spacing:-.04em}
+.navlinks{display:flex;gap:18px;margin-left:auto;font-size:14px}
+.navlinks a{color:var(--mut)}
+.language{display:flex;gap:2px;padding:3px;border:1px solid var(--line);border-radius:999px}
+.language button{border:0;background:transparent;color:var(--mut);padding:4px 9px;border-radius:999px;cursor:pointer;font-size:12px;font-weight:700}
+.language button[aria-pressed=true]{background:var(--soft);color:var(--fg)}
+header{padding:clamp(42px,8vw,86px) 0 40px;border-bottom:1px solid var(--line)}
+.eyebrow{font:700 12px/1.2 ui-monospace,SFMono-Regular,Menlo,monospace;text-transform:uppercase;letter-spacing:.12em;color:var(--accent)}
+h1{font:500 clamp(42px,8vw,88px)/.96 var(--pack-display);letter-spacing:-.055em;max-width:13ch;margin:20px 0}
+.lead{max-width:62ch;color:var(--mut);font-size:18px}
+.toolbar{display:flex;flex-wrap:wrap;align-items:center;gap:14px;margin:28px 0 0}
+.levels{display:flex;flex-wrap:wrap;gap:5px;border:1px solid var(--line);padding:4px;border-radius:8px;background:var(--panel)}
+.levels button{border:0;background:transparent;color:var(--mut);padding:8px 11px;border-radius:5px;cursor:pointer}
+.levels button[aria-pressed=true]{background:var(--fg);color:var(--bg)}
+.levels button:focus-visible,.language button:focus-visible,a:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
+#status{color:var(--mut);font-size:13px}
+main{padding:42px 0 80px}
+.preview{--p-page:var(--pack-page);--p-ink:var(--pack-ink);--p-accent:var(--pack-accent);--p-muted:var(--pack-muted);--p-line:var(--pack-line);border:1px solid var(--p-line);background:var(--p-page);color:var(--p-ink);padding:clamp(22px,5vw,58px);min-height:430px;transition:background-color .2s,color .2s}
+.preview[data-layout=poster]{background:var(--p-ink);color:var(--p-page);border-color:var(--p-ink);padding:clamp(28px,7vw,78px)}
+.preview-top{display:flex;justify-content:space-between;gap:16px;border-bottom:1px solid var(--p-line);padding-bottom:13px;font:12px ui-monospace,SFMono-Regular,Menlo,monospace;color:var(--p-muted);text-transform:uppercase;letter-spacing:.07em}
+.preview[data-layout=poster] .preview-top{border-color:color-mix(in srgb,var(--p-page) 40%,transparent);color:color-mix(in srgb,var(--p-page) 74%,transparent)}
+.mock-content{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(220px,.7fr);gap:clamp(22px,6vw,76px);align-items:end;padding:clamp(40px,8vw,92px) 0}
+.preview[data-layout=column] .mock-content{display:block;max-width:670px}
+.preview[data-layout=editorial] .mock-content{grid-template-columns:minmax(0,1.35fr) minmax(170px,.55fr);align-items:center}
+.preview[data-layout=poster] .mock-content{display:block;max-width:880px;padding-block:clamp(54px,11vw,126px)}
+.mock-copy{min-width:0}
+.mock-label{font:700 11px ui-monospace,SFMono-Regular,Menlo,monospace;text-transform:uppercase;letter-spacing:.14em;color:var(--p-accent)}
+.mock-copy h2{font:500 clamp(38px,7vw,78px)/.93 var(--pack-display);letter-spacing:-.055em;max-width:10ch;margin:17px 0 22px}
+.preview[data-layout=column] .mock-copy h2{font-size:clamp(36px,5vw,56px);line-height:1.02}
+.preview[data-layout=editorial] .mock-copy h2{font-size:clamp(40px,6vw,64px);line-height:.98}
+.preview[data-layout=poster] .mock-copy h2{font:800 clamp(52px,12vw,140px)/.78 var(--pack-display);letter-spacing:-.08em;max-width:8ch;text-transform:uppercase}
+.mock-copy p{color:var(--p-muted);font:17px/1.6 var(--pack-body);max-width:52ch;margin:0}
+.preview[data-layout=poster] .mock-copy p{color:color-mix(in srgb,var(--p-page) 78%,transparent);max-width:38ch}
+.action{display:inline-flex;margin-top:25px;padding:10px 0;border-bottom:2px solid var(--p-accent);color:var(--p-ink);font-weight:700;text-decoration:none}
+.preview[data-layout=poster] .action{color:var(--p-page);border-color:var(--p-page)}
+.note{align-self:end;border-left:2px solid var(--p-accent);padding:10px 0 10px 16px;color:var(--p-muted);font:14px/1.5 var(--pack-body);max-width:26ch}
+.preview[data-layout=column] .note{margin-top:32px;max-width:44ch}
+.preview[data-layout=poster] .note{color:color-mix(in srgb,var(--p-page) 78%,transparent);margin-top:36px}
+.dial-caption{display:flex;justify-content:space-between;gap:14px;margin:13px 0 0;color:var(--mut);font-size:13px}
+.info{display:grid;grid-template-columns:1fr 1fr;gap:clamp(24px,6vw,72px);padding-top:58px}
+.info h2{font:500 clamp(27px,4vw,40px)/1.04 var(--pack-display);letter-spacing:-.04em;margin:0 0 12px}
+.info p,.info li{color:var(--mut)}
+.info ul{padding-left:20px}
+.info li+li{margin-top:8px}
+.resources{border-top:1px solid var(--line);padding-top:22px;margin-top:26px;font-size:14px}
+.resources a{margin-right:16px}
+footer{border-top:1px solid var(--line);padding:22px 0 38px;color:var(--mut);font-size:13px}
+@media(max-width:720px){.wrap{width:min(100% - 28px,1100px)}.nav-in{gap:12px}.navlinks{display:none}.language{margin-left:auto}.mock-content,.preview[data-layout=editorial] .mock-content,.preview[data-layout=split] .mock-content{grid-template-columns:1fr}.note{max-width:44ch}.info{grid-template-columns:1fr}.dial-caption{flex-direction:column}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.preview{transition:none}}
+</style>
+<script src="../ga.js" defer></script>
+</head>
+<body>
+<nav aria-label="Main navigation">
+  <div class="wrap nav-in">
+    <a class="logo" href="../">dumps</a>
+    <div class="navlinks"><a href="../skill/" data-en="Skill" data-pt="Skill">Skill</a><a href="../examples/" data-en="Examples" data-pt="Exemplos">Examples</a></div>
+    <div class="language" role="group" aria-label="Language">
+      <button type="button" data-lang="en" aria-pressed="true">EN</button>
+      <button type="button" data-lang="pt-BR" aria-pressed="false">PT</button>
+    </div>
+  </div>
+</nav>
+<header>
+  <div class="wrap">
+    <span class="eyebrow" data-en="Open style pack · one format · four levels" data-pt="Pacote de estilo aberto · um formato · quatro níveis">Open style pack · one format · four levels</span>
+    <h1 data-en="One guide. Four ways to tell the story." data-pt="Um guia. Quatro jeitos de contar a história.">One guide. Four ways to tell the story.</h1>
+    <p class="lead" data-en="A style pack carries design tokens, voice, examples and rules. This preview applies the Field Notes guide to the same landing page at each dump-this dial level." data-pt="Um pacote de estilo reúne tokens de design, voz, exemplos e regras. Esta prévia aplica o guia Caderno de campo à mesma landing page nos quatro níveis do dial dump-this.">A style pack carries design tokens, voice, examples and rules. This preview applies the Field Notes guide to the same landing page at each dump-this dial level.</p>
+    <div class="toolbar">
+      <div class="levels" role="group" aria-label="Style dial level">
+        <button type="button" data-level="classic" aria-pressed="false">1 Classic</button>
+        <button type="button" data-level="refined" aria-pressed="false">2 Refined</button>
+        <button type="button" data-level="bold" aria-pressed="true">3 Bold</button>
+        <button type="button" data-level="avant-garde" aria-pressed="false">4 Avant-garde</button>
+      </div>
+      <span id="status" role="status" aria-live="polite">Loading style pack…</span>
+    </div>
+  </div>
+</header>
+<main class="wrap">
+  <article class="preview" id="preview" data-layout="split" aria-label="Landing page preview">
+    <div class="preview-top"><span id="pack-name">Field Notes</span><span data-en="A landing page · preview content" data-pt="Landing page · conteúdo de prévia">A landing page · preview content</span></div>
+    <div class="mock-content">
+      <div class="mock-copy">
+        <span class="mock-label" id="mock-label">A place for the work in progress</span>
+        <h2 id="mock-title">Good ideas need somewhere to land.</h2>
+        <p id="mock-lead">A small, considered workspace for turning a team's notes into useful pages.</p>
+        <a class="action" id="mock-action" href="#pack-info">See how it works</a>
+      </div>
+      <aside class="note" id="mock-note">A page can feel distinct without losing the details that make it useful.</aside>
+    </div>
+  </article>
+  <div class="dial-caption"><span id="level-name">Level 3 · Bold</span><span id="level-direction">A confident product story with an oversized headline and an asymmetric split.</span></div>
+  <section class="info" id="pack-info">
+    <div>
+      <span class="eyebrow" data-en="The pack" data-pt="O pacote">The pack</span>
+      <h2 id="info-name">Field Notes</h2>
+      <p id="info-summary">An editorial guide for practical, human-scale product stories.</p>
+      <p data-en="The four dial levels stay fixed. A pack supplies the rules for expressing each one and declares which content formats it supports." data-pt="Os quatro níveis do dial permanecem. O pacote define como expressar cada nível e declara quais formatos de conteúdo suporta.">The four dial levels stay fixed. A pack supplies the rules for expressing each one and declares which content formats it supports.</p>
+    </div>
+    <div>
+      <span class="eyebrow" data-en="Included in this guide" data-pt="O que o guia inclui">Included in this guide</span>
+      <ul>
+        <li data-en="Design tokens for light and dark themes" data-pt="Tokens de design para temas claro e escuro">Design tokens for light and dark themes</li>
+        <li data-en="Voice principles and before/after examples" data-pt="Princípios de voz e exemplos de antes/depois">Voice principles and before/after examples</li>
+        <li data-en="Composition rules for all four dial levels" data-pt="Regras de composição para os quatro níveis do dial">Composition rules for all four dial levels</li>
+        <li data-en="Declared format support and accessibility invariants" data-pt="Formatos suportados e requisitos de acessibilidade">Declared format support and accessibility invariants</li>
+      </ul>
+      <div class="resources">
+        <a href="schema/v1.json" data-en="Read the schema" data-pt="Ver o schema">Read the schema</a>
+        <a href="https://github.com/grippado/dumps/blob/main/docs/style-packs.md" data-en="Author a pack" data-pt="Criar um pacote">Author a pack</a>
+      </div>
+    </div>
+  </section>
+</main>
+<footer><div class="wrap"><span data-en="A public preview of the dump-this style pack format." data-pt="Uma prévia pública do formato de pacotes de estilo do dump-this.">A public preview of the dump-this style pack format.</span><a href="https://github.com/grippado/dumps">GitHub</a></div></footer>
+<script>
+(function(){
+  'use strict';
+  var pack=null,lang='en',level='bold';
+  var translations={
+    en:{classic:'Classic',refined:'Refined',bold:'Bold','avant-garde':'Avant-garde',label:'A place for the work in progress',note:'A page can feel distinct without losing the details that make it useful.',action:'See how it works',loading:'Loading style pack…',loaded:'Previewing Field Notes for landing pages.',failed:'The style pack could not be loaded.'},
+    'pt-BR':{classic:'Clássico',refined:'Refinado',bold:'Ousado','avant-garde':'Experimental',label:'Um lugar para o trabalho em andamento',note:'Uma página pode ter personalidade sem perder os detalhes que a tornam útil.',action:'Veja como funciona',loading:'Carregando pacote de estilo…',loaded:'Prévia do Caderno de campo para landing pages.',failed:'Não foi possível carregar o pacote de estilo.'}
+  };
+  function text(value){return value&&typeof value==='object'?value[lang]||value.en||'':value||'';}
+  function token(group,key){var t=group&&group[key];return t&&t.$value;}
+  function safeColor(value){return typeof value==='string'&&/^#[0-9a-fA-F]{6}$/.test(value)?value:null;}
+  function safeFont(value){var parts=Array.isArray(value)?value:[value];return parts.length&&parts.every(function(x){return typeof x==='string'&&/^[A-Za-z0-9 ,"'-]+$/.test(x);})?parts.join(', '):null;}
+  function applyTokens(){
+    var root=document.documentElement,scheme=window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';
+    var colors=pack.designTokens.color[scheme],fonts=pack.designTokens.fontFamily;
+    [['--pack-page',token(colors,'page')],['--pack-ink',token(colors,'ink')],['--pack-accent',token(colors,'accent')],['--pack-muted',token(colors,'muted')],['--pack-line',token(colors,'line')]].forEach(function(pair){var value=safeColor(pair[1]);if(value)root.style.setProperty(pair[0],value);});
+    [['--pack-display',token(fonts,'display')],['--pack-body',token(fonts,'body')]].forEach(function(pair){var value=safeFont(pair[1]);if(value)root.style.setProperty(pair[0],value);});
+  }
+  function render(){
+    if(!pack)return;
+    var levelData=pack.guidance.levels[level],example=pack.examples[0],label=translations[lang];
+    applyTokens();
+    document.documentElement.lang=lang;
+    document.querySelectorAll('[data-en]').forEach(function(node){node.textContent=node.getAttribute('data-'+(lang==='pt-BR'?'pt':'en'));});
+    document.querySelectorAll('[data-lang]').forEach(function(button){button.setAttribute('aria-pressed',String(button.getAttribute('data-lang')===lang));});
+    document.querySelectorAll('[data-level]').forEach(function(button){button.setAttribute('aria-pressed',String(button.getAttribute('data-level')===level));});
+    document.getElementById('preview').setAttribute('data-layout',levelData.previewLayout);
+    document.getElementById('pack-name').textContent=text(pack.metadata.name);
+    document.getElementById('info-name').textContent=text(pack.metadata.name);
+    document.getElementById('info-summary').textContent=text(pack.metadata.summary);
+    document.getElementById('mock-title').textContent=text(example.title);
+    document.getElementById('mock-lead').textContent=text(example.lead);
+    document.getElementById('mock-action').textContent=text(example.action);
+    document.getElementById('mock-label').textContent=label.label;
+    document.getElementById('mock-note').textContent=label.note;
+    document.getElementById('level-name').textContent=(level==='classic'?'Level 1':level==='refined'?'Level 2':level==='bold'?'Level 3':'Level 4')+' · '+label[level];
+    document.getElementById('level-direction').textContent=levelData.direction;
+    document.getElementById('status').textContent=label.loaded;
+    var names={en:{classic:'1 Classic',refined:'2 Refined',bold:'3 Bold','avant-garde':'4 Avant-garde'},'pt-BR':{classic:'1 Clássico',refined:'2 Refinado',bold:'3 Ousado','avant-garde':'4 Experimental'}};
+    document.querySelectorAll('.levels button').forEach(function(button){var key=button.getAttribute('data-level');button.textContent=names[lang][key];});
+  }
+  document.querySelectorAll('[data-lang]').forEach(function(button){button.addEventListener('click',function(){lang=button.getAttribute('data-lang');render();});});
+  document.querySelectorAll('[data-level]').forEach(function(button){button.addEventListener('click',function(){level=button.getAttribute('data-level');render();});});
+  fetch('pack.json').then(function(response){if(!response.ok)throw new Error('HTTP '+response.status);return response.json();}).then(function(value){pack=value;render();}).catch(function(){document.getElementById('status').textContent=translations[lang].failed;});
+})();
+</script>
+</body>
+</html>

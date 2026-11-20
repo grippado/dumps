@@ -52,6 +52,13 @@ that names the level and the concept.
 See one example per type and level at
 [grippado.github.io/dumps/examples](https://grippado.github.io/dumps/examples/).
 
+## Style packs
+
+A Style Pack v1 adds reusable design tokens, voice, examples and presentation rules to the built-in
+style dial. Each pack keeps all four dial levels and declares the content formats it supports. The
+[Field Notes preview](https://grippado.github.io/dumps/style-packs/) applies one landing-page pack at
+all four levels. See the [pack format and validator](style-packs.md) to create a contribution.
+
 ## Claude Code
 
 **Just the skill (nothing to clone).** Run this in any terminal; it downloads the skill and

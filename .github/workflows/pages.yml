@@ -28,6 +28,11 @@ jobs:
           cd agents/skills
           zip -qr ../../site/dump-this.zip dump-this
           cp ../chatgpt/instructions.md ../../site/dump-this-chatgpt.txt
+      - name: package the public style pack preview
+        run: |
+          mkdir -p site/style-packs/schema
+          cp agents/skills/dump-this/style-packs/field-notes.json site/style-packs/pack.json
+          cp agents/skills/dump-this/style-packs/schema.json site/style-packs/schema/v1.json
       - name: analytics with consent banner (same script as dumps)
         run: sed "s/__DUMPS_GA_ID__/G-4943FTCN4Q/" web/dumps-ga.js > site/ga.js
       - uses: actions/configure-pages@v5

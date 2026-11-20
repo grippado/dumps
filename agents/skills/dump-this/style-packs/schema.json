@@ -1,0 +1,161 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://grippado.github.io/dumps/style-packs/schema/v1.json",
+  "title": "dumps Style Pack",
+  "description": "A declarative presentation guide for dump-this, version 1.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "$schema",
+    "schemaVersion",
+    "id",
+    "metadata",
+    "supports",
+    "designTokens",
+    "voice",
+    "guidance",
+    "accessibility",
+    "examples"
+  ],
+  "properties": {
+    "$schema": {
+      "const": "https://grippado.github.io/dumps/style-packs/schema/v1.json"
+    },
+    "schemaVersion": { "const": 1 },
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?$",
+      "maxLength": 63
+    },
+    "metadata": { "$ref": "#/$defs/metadata" },
+    "supports": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": { "enum": ["report", "story", "slides", "dashboard", "doc", "comparison", "changelog", "landing"] }
+    },
+    "designTokens": {
+      "type": "object",
+      "description": "A Design Tokens Community Group 2025.10 token document.",
+      "required": ["$schema"],
+      "properties": {
+        "$schema": { "const": "https://www.designtokens.org/schemas/2025.10/format.json" }
+      },
+      "minProperties": 2
+    },
+    "voice": { "$ref": "#/$defs/voice" },
+    "guidance": { "$ref": "#/$defs/guidance" },
+    "accessibility": { "$ref": "#/$defs/accessibility" },
+    "examples": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/example" }
+    },
+    "assets": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/asset" }
+    }
+  },
+  "$defs": {
+    "localized": {
+      "type": "object",
+      "required": ["en", "pt-BR"],
+      "properties": {
+        "en": { "type": "string", "minLength": 1 },
+        "pt-BR": { "type": "string", "minLength": 1 }
+      },
+      "additionalProperties": false
+    },
+    "metadata": {
+      "type": "object",
+      "required": ["name", "summary", "author", "license"],
+      "properties": {
+        "name": { "$ref": "#/$defs/localized" },
+        "summary": { "$ref": "#/$defs/localized" },
+        "author": { "type": "string", "minLength": 1 },
+        "license": { "type": "string", "minLength": 1 }
+      },
+      "additionalProperties": false
+    },
+    "voice": {
+      "type": "object",
+      "required": ["summary", "principles", "examples"],
+      "properties": {
+        "summary": { "type": "string", "minLength": 1 },
+        "principles": { "type": "array", "minItems": 1, "items": { "type": "string", "minLength": 1 } },
+        "examples": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "required": ["before", "after"],
+            "properties": {
+              "before": { "type": "string", "minLength": 1 },
+              "after": { "type": "string", "minLength": 1 }
+            },
+            "additionalProperties": false
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "level": {
+      "type": "object",
+      "required": ["direction", "previewLayout", "rules"],
+      "properties": {
+        "direction": { "type": "string", "minLength": 1 },
+        "previewLayout": { "enum": ["column", "editorial", "split", "poster"] },
+        "rules": { "type": "array", "minItems": 1, "items": { "type": "string", "minLength": 1 } }
+      },
+      "additionalProperties": false
+    },
+    "guidance": {
+      "type": "object",
+      "required": ["global", "levels"],
+      "properties": {
+        "global": { "type": "array", "minItems": 1, "items": { "type": "string", "minLength": 1 } },
+        "levels": {
+          "type": "object",
+          "required": ["classic", "refined", "bold", "avant-garde"],
+          "properties": {
+            "classic": { "$ref": "#/$defs/level" },
+            "refined": { "$ref": "#/$defs/level" },
+            "bold": { "$ref": "#/$defs/level" },
+            "avant-garde": { "$ref": "#/$defs/level" }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "accessibility": {
+      "type": "object",
+      "required": ["invariants"],
+      "properties": {
+        "invariants": { "type": "array", "minItems": 4, "items": { "type": "string", "minLength": 1 } }
+      },
+      "additionalProperties": false
+    },
+    "example": {
+      "type": "object",
+      "required": ["format", "title", "lead", "action"],
+      "properties": {
+        "format": { "enum": ["report", "story", "slides", "dashboard", "doc", "comparison", "changelog", "landing"] },
+        "title": { "$ref": "#/$defs/localized" },
+        "lead": { "$ref": "#/$defs/localized" },
+        "action": { "$ref": "#/$defs/localized" }
+      },
+      "additionalProperties": false
+    },
+    "asset": {
+      "type": "object",
+      "required": ["path", "license", "attribution"],
+      "properties": {
+        "path": { "type": "string", "minLength": 1 },
+        "license": { "type": "string", "minLength": 1 },
+        "attribution": { "type": "string", "minLength": 1 }
+      },
+      "additionalProperties": false
+    }
+  }
+}

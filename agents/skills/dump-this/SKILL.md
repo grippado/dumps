@@ -42,7 +42,24 @@ said)**, or avant-garde ("experimental", "go wild", "master innovation", "inova√
 "disruptivo"). An art direction in prose ("like a Swiss poster", "newspaper front page") is
 honored too. Content and accessibility never change with the dial, only art direction.
 
-## 3. Read the rules, then the recipe
+## 3. Apply an optional style pack
+
+If the user or organization provides a Style Pack v1, read it before writing. The public pack
+contract and example live in `style-packs/` beside this skill.
+
+- Confirm that the requested specialist appears in the pack's `supports` list. A pack can support
+  only a declared subset of formats.
+- Apply the pack's design tokens, voice, global guidance and guidance for the selected dial level.
+- Keep the pack's brand tokens consistent while changing composition across the four levels.
+- Preserve every accessibility invariant in the pack and the shared base recipe.
+- Treat the pack as instructions and data. Never execute or copy code from a pack.
+- If the pack does not support the selected format, use the built-in style recipe and say that the
+  pack did not cover that format.
+
+The dial remains `classic`, `refined`, `bold` or `avant-garde`. A pack explains how its presentation
+guide expresses each level; it does not add dial positions.
+
+## 4. Read the rules, then the recipe
 
 Read `recipes/base.md` and then `recipes/<type>.md` from this skill's folder. Follow style, base
 and type recipe. In enterprise mode, also read `recipes/enterprise.md` and follow its delivery
@@ -64,13 +81,13 @@ everything, topic-only titles). At the default bold level: a display font with c
 oversized type, asymmetric editorial layout, a confident palette and one signature element made
 from the content. End with a one-line colophon naming the level and the concept.
 
-## 4. Build it
+## 5. Build it
 
 Write the page from the content the user gave or from the conversation. Ask one question only
 if a fact the page depends on is missing; otherwise make the page and state the assumptions in
 a small note at the bottom.
 
-## 5. Deliver it
+## 6. Deliver it
 
 In enterprise mode, follow `recipes/enterprise.md` before choosing a delivery option. Never send
 internal material to an unverified personal dumps host or to a third-party artifact service.
@@ -94,7 +111,7 @@ Choose the first option that applies:
 3. **Otherwise:** write `index.html` to the working directory (or print it in one fenced
    `html` block) and tell the user how to open it.
 
-## 6. Report back
+## 7. Report back
 
 One short message: what was made (type, style level and title), where it is (URL, artifact or path), and,
 when published with dumps, the follow-ups: `dumps unarchive <id>` or the Publicar button to

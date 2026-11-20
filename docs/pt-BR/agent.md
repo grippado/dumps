@@ -52,6 +52,13 @@ colofão com o nível e o conceito.
 Veja um exemplo de cada tipo e nível em
 [grippado.github.io/dumps/examples](https://grippado.github.io/dumps/examples/).
 
+## Pacotes de estilo
+
+Um pacote Style Pack v1 acrescenta tokens de design, voz, exemplos e regras de apresentação ao dial
+de estilo. Cada pacote mantém os quatro níveis e declara os formatos de conteúdo que suporta. A
+[prévia Caderno de campo](https://grippado.github.io/dumps/style-packs/) aplica um pacote de landing
+page nos quatro níveis. Veja o [formato e o validador](style-packs.md) para criar uma contribuição.
+
 ## Claude Code
 
 **Só a skill (sem clonar nada).** Rode num terminal qualquer; isso baixa a skill e descompacta na

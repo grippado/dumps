@@ -19,6 +19,8 @@ jobs:
           cache: false
       - name: lint
         run: make lint
+      - name: validate public style packs
+        run: python3 tools/validate-style-pack.py agents/skills/dump-this/style-packs/field-notes.json
       - name: test
         run: make test
       - name: cross-build
