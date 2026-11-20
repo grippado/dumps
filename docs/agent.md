@@ -54,21 +54,22 @@ See one example per type and level at
 
 ## Claude Code
 
-With the repo cloned:
+**Just the skill (nothing to clone).** Run this in any terminal; it downloads the skill and
+unpacks it into Claude Code's skills folder:
 
 ```bash
-cli/dumps install-agent claude
+mkdir -p ~/.claude/skills
 ```
-
-This links the skill to `~/.claude/skills/dump-this` and the command to
-`~/.claude/commands/dump-this.md` (symlinks, so `git pull` updates them; `CLAUDE_CONFIG_DIR` is
-respected). Without the CLI, copy the folder instead:
 
 ```bash
-cp -R agents/skills/dump-this ~/.claude/skills/
+curl -fsSL https://grippado.github.io/dumps/dump-this.zip -o /tmp/dump-this.zip
 ```
 
-Then, in any session:
+```bash
+unzip -oq /tmp/dump-this.zip -d ~/.claude/skills
+```
+
+Open a new Claude Code session and type:
 
 ```text
 /dump-this a report of what changed in this PR
@@ -76,15 +77,47 @@ Then, in any session:
 
 You can also just ask ("dump this as slides"): the skill activates on its own.
 
-## Codex
+**With the dumps CLI (to also publish to your own domain).** Clone the repo once, then run the
+installer from the repo folder (`cli/dumps` is the CLI script inside the repo):
 
 ```bash
-cli/dumps install-agent codex
+git clone https://github.com/grippado/dumps
 ```
 
-This links the skill to `~/.codex/skills/dump-this` and the prompt to
-`~/.codex/prompts/dump-this.md` (`CODEX_HOME` is respected). Use it with `/prompts:dump-this`
-followed by what you want, or ask for it in plain words.
+```bash
+cd dumps
+```
+
+```bash
+cli/dumps install-agent claude
+```
+
+This symlinks `agents/skills/dump-this` to `~/.claude/skills/dump-this` and the command to
+`~/.claude/commands/dump-this.md`, so a `git pull` in the repo updates them
+(`CLAUDE_CONFIG_DIR` is respected). Put the CLI on your PATH so the skill can publish:
+`ln -s "$PWD/cli/dumps" ~/.local/bin/dumps`.
+
+## Codex
+
+**Just the skill (nothing to clone):**
+
+```bash
+mkdir -p ~/.codex/skills
+```
+
+```bash
+curl -fsSL https://grippado.github.io/dumps/dump-this.zip -o /tmp/dump-this.zip
+```
+
+```bash
+unzip -oq /tmp/dump-this.zip -d ~/.codex/skills
+```
+
+Start a new Codex session and ask for a dump in plain words ("dump this as a dashboard").
+
+**With the dumps CLI:** from the cloned repo folder (see Claude Code above), run
+`cli/dumps install-agent codex`. It symlinks the skill to `~/.codex/skills/dump-this` and adds the
+`/prompts:dump-this` prompt at `~/.codex/prompts/dump-this.md` (`CODEX_HOME` is respected).
 
 ## claude.ai (Skills)
 

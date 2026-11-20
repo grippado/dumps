@@ -341,11 +341,11 @@ footer .links a{font-family:var(--mono);font-size:12px;text-transform:uppercase;
       <div class="rows">
         <div class="row">
           <h3>Claude Code</h3>
-          <div><p>From a clone of the dumps repository:</p><code class="cmd">cli/dumps install-agent claude</code><p>Then ask with <code>/dump-this</code>.</p></div>
+          <div><p>In any terminal, no clone needed:</p><code class="cmd">curl -fsSL https://grippado.github.io/dumps/dump-this.zip -o /tmp/dump-this.zip &amp;&amp; unzip -oq /tmp/dump-this.zip -d ~/.claude/skills</code><p>Then ask with <code>/dump-this</code> in a new session.</p></div>
         </div>
         <div class="row">
           <h3>Codex</h3>
-          <div><code class="cmd">cli/dumps install-agent codex</code><p>Then ask with <code>/prompts:dump-this</code>.</p></div>
+          <div><p>Same zip, Codex's skills folder:</p><code class="cmd">curl -fsSL https://grippado.github.io/dumps/dump-this.zip -o /tmp/dump-this.zip &amp;&amp; unzip -oq /tmp/dump-this.zip -d ~/.codex/skills</code><p>Then ask for a dump in plain words in a new session.</p></div>
         </div>
         <div class="row">
           <h3>claude.ai</h3>
