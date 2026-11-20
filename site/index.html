@@ -121,6 +121,10 @@ pre{max-width:100%}.term{max-width:min(720px,100%)}
 .dialnote{color:var(--mut);font-size:14.5px;margin:0 0 28px;max-width:70ch}
 @media (max-width:720px){.dial{grid-template-columns:1fr 1fr}.dial .lvl:nth-child(2){border-right:0}.dial .lvl:nth-child(-n+2){border-bottom:1px solid var(--line)}}
 .sub.small{font-size:14.5px}.sub code{font:13px ui-monospace,Menlo,monospace;overflow-wrap:anywhere}
+.newskill{display:inline-flex;align-items:center;gap:8px;margin-left:10px;font-size:13px;color:var(--fg);padding:5px 12px 5px 6px;border-radius:999px;border:1px solid var(--line);background:var(--card)}
+.newskill b{font-size:11px;letter-spacing:.06em;text-transform:uppercase;background:var(--acc);color:#fff;padding:2px 8px;border-radius:999px}
+.newskill:hover{text-decoration:none;border-color:var(--acc)}
+@media (max-width:640px){.newskill{margin:10px 0 0;display:flex;width:fit-content;max-width:100%}}
 [data-lang-show]{display:none}
 html[lang="en"] [data-lang-show="en"],html[lang="pt-BR"] [data-lang-show="pt-BR"]{display:revert}
 </style>
@@ -132,7 +136,7 @@ html[lang="en"] [data-lang-show="en"],html[lang="pt-BR"] [data-lang-show="pt-BR"
     <a class="logo" href="#"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2 3 6.5 12 11l9-4.5L12 2Z" fill="currentColor" opacity=".95"/><path d="m3 11.5 9 4.5 9-4.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" opacity=".7"/><path d="m3 16.5 9 4.5 9-4.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" opacity=".45"/></svg>dumps</a>
     <div class="links">
       <a href="#live" data-i18n="nav_live">Live</a>
-      <a href="#agent" data-i18n="nav_agent">Skill</a>
+      <a href="skill/" data-i18n="nav_agent">Skill</a>
       <a href="examples/" data-i18n="nav_examples">Examples</a>
       <a href="#recipes" data-i18n="nav_recipes">Recipes</a>
       <a href="#oss" data-i18n="nav_oss">Contribute</a>
@@ -148,6 +152,7 @@ html[lang="en"] [data-lang-show="en"],html[lang="pt-BR"] [data-lang-show="pt-BR"
 <header class="hero">
   <div class="wrap">
     <span class="eyebrow" data-i18n="eyebrow">Open source · self-hosted · MIT</span>
+    <a class="newskill" href="skill/"><b data-i18n="new_b">New</b> <span data-i18n="new_s">dump-this: eight specialists make your artifacts, in any harness</span> <span aria-hidden="true">→</span></a>
     <h1 data-i18n-html="h1">Publish any HTML artifact to <em>dumps.YOURDOMAIN</em></h1>
     <p class="lead" data-i18n="lead">One command, or your AI agent, turns a report, a story, a deck or a dashboard into a link on your own domain. It runs on an old phone, a Raspberry Pi, a VPS or just your laptop.</p>
     <div class="ctas">
@@ -234,7 +239,7 @@ unzip -oq /tmp/dump-this.zip -d ~/.codex/skills</pre><p data-i18n="h2_p">Same zi
         <h3 class="h3" data-i18n="flow_h">With your own dumps, the agent drafts and you publish</h3>
         <p class="sub" data-i18n="flow_sub">Dumps made by the agent are published hidden. The link works right away, and the admin shows a Publicar button so you review before it reaches your home page.</p>
         <p class="sub small" data-i18n-html="flow_cli">To publish from the agent, clone the repo and run the installer from its folder: <code>git clone https://github.com/grippado/dumps &amp;&amp; cd dumps &amp;&amp; cli/dumps install-agent all</code></p>
-        <div class="ctas"><a class="btn primary" href="examples/" data-i18n="agent_examples">See the examples</a><a class="btn" href="https://github.com/grippado/dumps/blob/main/docs/agent.md" data-i18n="agent_doc">Read the skill guide</a></div>
+        <div class="ctas"><a class="btn primary" href="skill/" data-i18n="agent_meet">Meet the specialists</a><a class="btn" href="examples/" data-i18n="agent_examples">See the examples</a><a class="btn" href="https://github.com/grippado/dumps/blob/main/docs/agent.md" data-i18n="agent_doc">Read the skill guide</a></div>
       </div>
       <div class="chat" aria-label="Example conversation">
         <div class="msg u"><code>/dump-this</code> <span data-i18n="chat_u">a dashboard of this week's deploys from deploys.csv</span></div>
@@ -340,7 +345,7 @@ h1_p:"Rode num terminal qualquer, sem clonar nada. Depois digite /dump-this numa
 d1_b:"Clássico",d1_s:"\"sóbrio, para a diretoria\"",d2_b:"Refinado",d2_s:"\"limpo, minimalista\"",d3_b:"Ousado",d3_s:"o padrão",d4_b:"Experimental",d4_s:"\"inovação máxima\"",
 dial_note:"Escolha o estilo em palavras, do conservador à inovação máxima. Ela nunca cai no visual padrão de artefato: nada de abertura centralizada com gradiente, três cards iguais ou emoji como ícone.",
 flow_cli:'Para publicar a partir do agente, clone o repo e rode o instalador de dentro da pasta dele: <code>git clone https://github.com/grippado/dumps &amp;&amp; cd dumps &amp;&amp; cli/dumps install-agent all</code>',
-flow_h:"Com o seu dumps, o agente rascunha e você publica",flow_sub:"Dumps feitos pelo agente nascem escondidos. O link funciona na hora, e o admin mostra um botão Publicar para você revisar antes de ir para a home.",agent_doc:"Ler o guia da skill",agent_examples:"Ver os exemplos",nav_examples:"Exemplos",
+flow_h:"Com o seu dumps, o agente rascunha e você publica",flow_sub:"Dumps feitos pelo agente nascem escondidos. O link funciona na hora, e o admin mostra um botão Publicar para você revisar antes de ir para a home.",agent_doc:"Ler o guia da skill",agent_examples:"Ver os exemplos",agent_meet:"Conheça os especialistas",new_b:"Novo",new_s:"dump-this: oito especialistas fazem os seus artefatos, em qualquer harness",nav_examples:"Exemplos",
 chat_u:"um dashboard dos deploys da semana a partir do deploys.csv",chat_a1:"Montei um dashboard com KPIs e gráficos inline a partir das 42 linhas e publiquei escondido:",chat_a2:"Revise e clique em Publicar no admin, ou rode",
 built_with:"Feito de ponta a ponta com",
 rec_h:"Receitas para o seu dumps.SEUDOMINIO",rec_sub:"Escolha a máquina que você tem e o jeito de chegar nela. Cada receita é um doc no repo.",

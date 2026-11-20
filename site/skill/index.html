@@ -1,0 +1,731 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>dump-this: a company of eight specialists that make your pages</title>
+<meta name="description" content="dump-this is an open source agent skill that turns a request, a file or a conversation into one self-contained HTML page made the way a specialist would make it, in Claude Code, Codex, claude.ai or ChatGPT.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="dump-this: eight specialists make your pages">
+<meta property="og:description" content="An agent skill that turns a request, a file or a chat into one self-contained HTML page made the way a specialist would make it.">
+<meta property="og:url" content="https://grippado.github.io/dumps/skill/">
+<meta property="og:image" content="https://grippado.github.io/dumps/examples/thumbs/story.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Ccircle cx='12' cy='12' r='10' fill='%23c8321b'/%3E%3Cpath d='M12 12 17 7' stroke='%23f3ecdc' stroke-width='2.5' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@500;700;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  color-scheme:light dark;
+  --paper:#f3ecdc;--paper2:#e9dfc8;--ink:#17130e;--mut:#5a5145;--rule:#17130e;
+  --red:#b02a14;--redbig:#c8321b;--onred:#fff8ec;
+  --stage:#17130e;--onstage:#f3ecdc;--stagemut:#bdb2a0;--stagered:#ff6b4f;
+  --codebg:#221d16;--focus:#0b57d0;
+  --disp:"Big Shoulders Display","Arial Narrow","Helvetica Neue Condensed",Impact,sans-serif;
+  --serif:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,ui-serif,serif;
+  --mono:ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme:dark){:root{
+  --paper:#14110d;--paper2:#1e1913;--ink:#f0e6d0;--mut:#b5a993;--rule:#f0e6d0;
+  --red:#ff7a5e;--redbig:#ff5b3d;--onred:#14110d;
+  --stage:#271a12;--onstage:#f6ecd6;--stagemut:#c9b9a0;--stagered:#ff8a70;
+  --codebg:#0d0b08;--focus:#8ab4ff;
+}}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--paper);color:var(--ink);font:17px/1.6 var(--serif);-webkit-font-smoothing:antialiased;overflow-x:clip}
+img{max-width:100%;display:block}
+a{color:inherit}
+:focus-visible{outline:3px solid var(--focus);outline-offset:3px}
+.skip{position:absolute;left:-9999px;top:8px;background:var(--ink);color:var(--paper);padding:8px 12px;z-index:50}
+.skip:focus{left:16px}
+.wrap{max-width:1180px;margin:0 auto;padding:0 max(16px,env(safe-area-inset-left))}
+.mono{font-family:var(--mono);font-size:.78rem;letter-spacing:.08em;text-transform:uppercase}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+/* top bill */
+.bill{border-bottom:3px double var(--rule)}
+.bill .wrap{display:flex;flex-wrap:wrap;gap:6px 22px;align-items:center;justify-content:space-between;padding-top:12px;padding-bottom:10px}
+.bill a{text-decoration:none}
+.bill nav{display:flex;flex-wrap:wrap;gap:4px 18px}
+.bill nav a{padding:4px 0;border-bottom:1px solid transparent}
+.bill nav a:hover{border-color:currentColor}
+.brand{font-family:var(--disp);font-weight:900;font-size:1.35rem;letter-spacing:.02em;text-transform:uppercase}
+
+/* hero playbill */
+.hero{padding:clamp(28px,5vw,64px) 0 0}
+.presents{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;border-bottom:1px solid var(--rule);padding-bottom:10px}
+.hero h1{margin:0;font-weight:400}
+.wood{display:block;font-family:var(--disp);font-weight:900;text-transform:uppercase;line-height:.78;letter-spacing:-.01em;font-size:clamp(6.5rem,37vw,23rem);margin:.06em 0 0 -.04em}
+.wood .l2{display:block;color:var(--redbig);padding-left:clamp(0px,9vw,140px)}
+.wood span.ch{display:inline-block}
+.h1-sub{display:block;font-family:var(--serif);font-style:italic;font-size:clamp(1.45rem,3.4vw,2.6rem);line-height:1.18;max-width:20ch;margin-top:.5em}
+.hero-grid{display:grid;grid-template-columns:1fr;gap:28px;margin-top:22px;align-items:end}
+@media (min-width:900px){.hero-grid{grid-template-columns:1.1fr .9fr;gap:56px}}
+.lede{font-size:1.12rem;max-width:52ch;margin:0 0 22px}
+.ctas{display:flex;flex-wrap:wrap;gap:12px 20px;align-items:center}
+.btn{display:inline-flex;align-items:center;gap:10px;font-family:var(--disp);font-weight:700;text-transform:uppercase;letter-spacing:.06em;font-size:1.2rem;padding:12px 22px;background:var(--redbig);color:var(--onred);text-decoration:none;border:2px solid var(--redbig)}
+.btn:hover{background:var(--ink);border-color:var(--ink);color:var(--paper)}
+.btn.ghost{background:transparent;color:var(--ink);border-color:var(--ink)}
+.btn.ghost:hover{background:var(--ink);color:var(--paper)}
+.billing{border:2px solid var(--rule);padding:18px 18px 14px;text-align:center}
+.billing .mono{display:block;margin-bottom:6px}
+.billing ol{list-style:none;margin:0;padding:0;font-family:var(--disp);text-transform:uppercase;line-height:1.02}
+.billing li a{text-decoration:none}
+.billing li a:hover{color:var(--red)}
+.billing .b1{font-size:2.1rem;font-weight:900}
+.billing .b2{font-size:1.65rem;font-weight:700}
+.billing .b3{font-size:1.3rem;font-weight:700}
+.billing .b4{font-size:1.05rem;font-weight:500;letter-spacing:.04em}
+.billing .and{font-family:var(--serif);font-style:italic;text-transform:none;font-size:1rem;display:block;margin:6px 0 2px}
+.billing .tiny{font-family:var(--serif);font-size:.9rem;margin-top:10px;color:var(--mut)}
+
+.where{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,230px),1fr));border-top:1px solid var(--rule);border-bottom:1px solid var(--rule);margin-top:clamp(36px,6vw,72px)}
+.where div{padding:16px 16px 18px 0}
+.where div+div{border-top:1px solid var(--rule)}
+@media (min-width:760px){.where div+div{border-top:0;border-left:1px solid var(--rule);padding-left:16px}}
+.where b{display:block;font-family:var(--disp);font-size:1.5rem;text-transform:uppercase;line-height:1.1}
+.where p{margin:4px 0 0;color:var(--mut);font-size:.98rem}
+
+/* marquee of trigger words */
+.ticker{overflow:hidden;border-bottom:3px double var(--rule);padding:10px 0;white-space:nowrap}
+.ticker .run{display:inline-flex;gap:36px;padding-right:36px;animation:tick 48s linear infinite;font-family:var(--disp);font-weight:700;font-size:1.5rem;text-transform:uppercase}
+.ticker .run i{font-family:var(--serif);font-weight:400;text-transform:none;color:var(--red)}
+@keyframes tick{to{transform:translateX(-50%)}}
+
+/* section heads */
+.act{padding:clamp(48px,8vw,104px) 0 0}
+.act-head{display:grid;grid-template-columns:1fr;gap:6px 40px;align-items:end;margin-bottom:clamp(24px,4vw,44px)}
+@media (min-width:900px){.act-head{grid-template-columns:auto 1fr}}
+.act-no{font-family:var(--disp);font-weight:900;font-size:clamp(4rem,12vw,9rem);line-height:.8;color:var(--redbig)}
+.act-no::before{content:"Act";display:block;font-family:var(--mono);font-weight:400;font-size:.75rem;letter-spacing:.12em;text-transform:uppercase;line-height:1;margin-bottom:8px;color:inherit}
+.act-head h2{margin:0;font-family:var(--disp);font-weight:900;text-transform:uppercase;font-size:clamp(2.3rem,6.4vw,5rem);line-height:.92;letter-spacing:-.005em}
+.act-head p{margin:10px 0 0;max-width:60ch;color:var(--mut)}
+
+/* the cast */
+.cast{list-style:none;margin:0;padding:0;border-top:3px solid var(--rule)}
+.role{display:grid;grid-template-columns:1fr;gap:14px 32px;padding:26px 0 30px;border-bottom:1px solid var(--rule);position:relative;transition:background .3s}
+@media (min-width:860px){
+  .role{grid-template-columns:64px minmax(0,1.25fr) minmax(0,1fr) 300px;align-items:start}
+  .role:nth-child(even) .thumb{transform:rotate(1.2deg)}
+  .role:nth-child(odd) .thumb{transform:rotate(-1.2deg)}
+}
+.role .num{font-family:var(--disp);font-weight:700;font-size:1.6rem;line-height:1}
+.role h3{margin:0;font-weight:400;container-type:inline-size}
+.role .type{display:block;font-family:var(--disp);font-weight:900;text-transform:uppercase;font-size:clamp(2.4rem,17cqi,6.4rem);line-height:.84;overflow-wrap:anywhere}
+.role .who{display:block;font-style:italic;font-size:1.35rem;margin-top:6px}
+.lvl{display:inline-flex;align-items:center;gap:8px;margin-top:12px}
+.pips{display:inline-flex;gap:3px}
+.pips i{width:14px;height:8px;border:1.5px solid currentColor}
+.pips i.on{background:currentColor}
+.role ul{margin:0;padding:0;list-style:none;counter-reset:m}
+.role li{counter-increment:m;padding:8px 0 8px 34px;position:relative;border-top:1px dotted var(--mut)}
+.role li:first-child{border-top:0;padding-top:0}
+.role li::before{content:counter(m,lower-roman)".";position:absolute;left:0;font-style:italic;color:var(--red)}
+.role li:first-child::before{top:0}
+.role .always{font-family:var(--mono);font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;margin:0 0 8px;color:var(--mut)}
+.thumb{display:block;text-decoration:none;border:2px solid var(--rule);background:var(--paper2);transition:transform .35s ease}
+.thumb img{aspect-ratio:1200/750;width:100%;height:auto;object-fit:cover}
+.thumb span{display:flex;justify-content:space-between;padding:8px 10px;font-family:var(--mono);font-size:.74rem;letter-spacing:.06em;text-transform:uppercase;border-top:2px solid var(--rule)}
+.thumb:hover{transform:rotate(0) scale(1.02)}
+.thumb:hover span{background:var(--ink);color:var(--paper)}
+.role.lit{background:linear-gradient(90deg,transparent,color-mix(in srgb,var(--redbig) 14%,transparent) 30%,transparent)}
+.role .playing{display:none;position:absolute;right:0;top:10px;background:var(--redbig);color:var(--onred);padding:3px 8px}
+.role.lit .playing{display:inline-block}
+@media (min-width:860px){.role .playing{top:-12px}}
+
+/* dial: full-bleed stage */
+.stage{background:var(--stage);color:var(--onstage);margin-top:clamp(48px,8vw,104px);padding:clamp(44px,7vw,96px) 0}
+.stage .act{padding-top:0}
+.stage .act-head p{color:var(--stagemut)}
+.stage .act-no{color:var(--stagered)}
+.dial-grid{display:grid;grid-template-columns:1fr;gap:36px;align-items:center}
+@media (min-width:900px){.dial-grid{grid-template-columns:340px 1fr;gap:64px}}
+.knob-box{display:flex;flex-direction:column;align-items:center;gap:18px}
+.knob{width:min(280px,72vw);aspect-ratio:1;border-radius:50%;cursor:pointer;touch-action:none;background:transparent;border:0;padding:0;color:var(--onstage)}
+.knob svg{width:100%;height:100%;display:block;overflow:visible}
+.knob .needle{transition:transform .45s cubic-bezier(.3,1.6,.5,1);transform-origin:150px 150px}
+.knob:focus-visible{outline-offset:6px;border-radius:50%}
+.stops{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;width:100%;max-width:360px}
+.stops button{font:inherit;font-family:var(--disp);font-weight:700;text-transform:uppercase;font-size:1rem;letter-spacing:.04em;background:transparent;color:var(--onstage);border:1.5px solid var(--stagemut);padding:8px 4px;cursor:pointer}
+.stops button[aria-pressed="true"]{background:var(--stagered);border-color:var(--stagered);color:#17130e}
+.readout{border-top:2px solid var(--onstage);padding-top:16px;min-width:0}
+.readout .say{font-style:italic;font-size:1.15rem;color:var(--stagemut);margin:0 0 4px}
+.readout .say q{color:var(--onstage)}
+.readout h3{margin:0;font-family:var(--disp);font-weight:900;text-transform:uppercase;font-size:clamp(2.6rem,7vw,4.6rem);line-height:.9}
+.readout h3 small{font-size:.42em;color:var(--stagered);vertical-align:.6em;margin-right:.3em}
+.readout dl{display:grid;grid-template-columns:1fr;gap:4px 18px;margin:18px 0 0}
+@media (min-width:600px){.readout dl{grid-template-columns:110px 1fr}}
+.readout dt{font-family:var(--mono);font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;color:var(--stagemut);padding-top:5px}
+.readout dd{margin:0 0 8px}
+.specimen{margin-top:22px;border:1.5px dashed var(--stagemut);padding:22px 18px;min-height:150px;display:flex;flex-direction:column;justify-content:center;overflow:hidden}
+.specimen .lbl{font-family:var(--mono);font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;color:var(--stagemut);margin-bottom:10px}
+.specimen .t{margin:0;transition:all .4s ease}
+.specimen[data-l="1"] .t{font-family:Georgia,serif;font-weight:400;font-size:1.6rem;line-height:1.3;border-bottom:1px solid var(--stagemut);padding-bottom:10px}
+.specimen[data-l="2"] .t{font-family:-apple-system,"Helvetica Neue",Arial,sans-serif;font-weight:600;font-size:1.9rem;letter-spacing:-.035em;line-height:1.15}
+.specimen[data-l="3"] .t{font-family:var(--disp);font-weight:900;text-transform:uppercase;font-size:clamp(2.2rem,5.6vw,3.4rem);line-height:.92;color:var(--stagered)}
+.specimen[data-l="4"] .t{font-family:var(--disp);font-weight:900;text-transform:uppercase;font-size:clamp(2.6rem,7.4vw,4.6rem);line-height:.8;color:transparent;-webkit-text-stroke:1.5px var(--onstage);transform:rotate(-3deg) translateX(4px)}
+.specimen[data-l="4"] .t em{color:var(--stagered);-webkit-text-stroke:0;font-style:normal}
+.never{margin-top:clamp(44px,6vw,72px);display:grid;grid-template-columns:1fr;gap:18px 40px}
+@media (min-width:900px){.never{grid-template-columns:340px 1fr}}
+.never h3{margin:0;font-family:var(--disp);font-weight:900;text-transform:uppercase;font-size:2rem;line-height:1}
+.never ul{margin:0;padding:0;list-style:none;display:flex;flex-wrap:wrap;gap:10px 14px}
+.never li{font-size:1.15rem;border:1.5px solid var(--stagemut);padding:6px 12px;text-decoration:line-through;text-decoration-color:var(--stagered);text-decoration-thickness:2px}
+.never p{grid-column:1/-1;margin:0;color:var(--stagemut);max-width:70ch}
+
+/* how it plays */
+.steps{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:1fr;border-top:3px solid var(--rule)}
+@media (min-width:860px){.steps{grid-template-columns:1fr 1.25fr 1fr}}
+.steps li{padding:22px 0 26px;border-bottom:1px solid var(--rule)}
+@media (min-width:860px){.steps li{padding:22px 24px 26px;border-bottom:0}.steps li+li{border-left:1px solid var(--rule)}.steps li:first-child{padding-left:0}}
+.steps b{display:block;font-family:var(--disp);font-weight:900;font-size:3.6rem;line-height:.9;color:var(--redbig)}
+.steps h3{margin:6px 0 6px;font-family:var(--disp);font-weight:700;text-transform:uppercase;font-size:1.7rem;line-height:1}
+.steps p{margin:0}
+code{font-family:var(--mono);font-size:.88em;background:var(--paper2);padding:1px 5px;overflow-wrap:anywhere}
+
+/* lines to steal */
+.lines{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,330px),1fr));gap:0}
+.lines li{border-top:1px solid var(--rule);padding:18px 0 20px;display:flex;flex-direction:column;gap:10px}
+@media (min-width:760px){.lines li{padding:18px 22px 20px 0}}
+.lines blockquote{margin:0;font-style:italic;font-size:1.3rem;line-height:1.3}
+.lines blockquote::before{content:"\201C";font-family:var(--disp);font-style:normal;font-weight:900;color:var(--redbig);font-size:2.6rem;line-height:0;vertical-align:-.42em;margin-right:4px}
+.lines .meta{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;justify-content:space-between}
+.lines .meta .mono{color:var(--mut)}
+
+/* box office */
+.office{display:grid;grid-template-columns:1fr;gap:0;border:3px solid var(--rule)}
+@media (min-width:900px){.office{grid-template-columns:1fr 1fr}}
+.stub{padding:22px 18px 24px;border-bottom:1px dashed var(--rule);min-width:0}
+@media (min-width:900px){.stub:nth-child(odd){border-right:1px dashed var(--rule)}.stub.wide{grid-column:1/-1;border-right:0}}
+.stub:last-child{border-bottom:0}
+.stub header{display:flex;justify-content:space-between;align-items:baseline;gap:10px;margin-bottom:12px}
+.stub h3{margin:0;font-family:var(--disp);font-weight:900;text-transform:uppercase;font-size:2.1rem;line-height:1}
+.stub header .mono{color:var(--mut)}
+.stub p{margin:10px 0 0}
+.cmd{display:flex;align-items:stretch;background:var(--codebg);color:#f3ecdc;margin-top:8px;min-width:0}
+.cmd code{flex:1;min-width:0;background:transparent;padding:12px 12px;font-size:.84rem;line-height:1.5;white-space:pre-wrap;overflow-wrap:anywhere;color:inherit}
+.cmd code::before{content:"$ ";color:#ff8a70}
+.cmd.url code::before{content:""}
+.copy{flex:none;font-family:var(--mono);font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;background:#3a3127;color:#f3ecdc;border:0;padding:0 14px;cursor:pointer;min-width:74px}
+.copy:hover{background:#ff6b4f;color:#17130e}
+.copy.done{background:#7bd88f;color:#17130e}
+.lines .copy{background:var(--ink);color:var(--paper);padding:8px 12px}
+.lines .copy:hover{background:var(--redbig);color:var(--onred)}
+.lines .copy.done{background:#2f7d3e;color:#fff}
+.stub a{color:var(--red)}
+
+/* finale */
+.finale{margin-top:clamp(56px,9vw,120px);border-top:3px double var(--rule);padding:clamp(36px,6vw,72px) 0}
+.finale .big{font-family:var(--disp);font-weight:900;text-transform:uppercase;font-size:clamp(3rem,11vw,8.5rem);line-height:.84;margin:0 0 24px}
+.finale .big span{color:var(--redbig)}
+.credits{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,200px),1fr));gap:4px 24px;margin-top:40px;border-top:1px solid var(--rule);padding-top:18px}
+.credits a{display:block;padding:6px 0;text-decoration:none;font-family:var(--disp);font-weight:700;text-transform:uppercase;font-size:1.25rem}
+.credits a:hover{color:var(--red)}
+.credits a small{display:block;font-family:var(--serif);font-weight:400;text-transform:none;font-size:.9rem;color:var(--mut)}
+.colophon{margin-top:28px;font-size:.88rem;color:var(--mut);border-top:1px solid var(--rule);padding-top:12px}
+
+.reveal{opacity:0;transform:translateY(18px);transition:opacity .7s ease,transform .7s ease}
+.reveal.in{opacity:1;transform:none}
+.wood span.ch{opacity:0;transform:translateY(.25em);animation:up .7s cubic-bezier(.2,.9,.3,1.2) forwards}
+@keyframes up{to{opacity:1;transform:none}}
+
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}
+  .wood span.ch,.reveal{opacity:1!important;transform:none!important}
+  .ticker .run{transform:none}
+  .ticker{white-space:normal}
+  .ticker .run:nth-child(2){display:none}
+  .ticker .run{flex-wrap:wrap;gap:6px 24px}
+}
+@media print{
+  .bill nav,.ticker,.copy,.knob-box,.ctas{display:none!important}
+  .stage{background:none;color:#000}
+  body{background:#fff;color:#000}
+  .reveal{opacity:1;transform:none}
+}
+</style>
+<script src="../ga.js" defer></script>
+</head>
+<body>
+<a class="skip" href="#cast">Skip to the cast</a>
+
+<header class="bill">
+  <div class="wrap">
+    <a class="brand" href="../">dumps</a>
+    <nav aria-label="Page">
+      <a class="mono" href="#cast">The cast</a>
+      <a class="mono" href="#dial">The dial</a>
+      <a class="mono" href="#lines">Lines</a>
+      <a class="mono" href="#install">Box office</a>
+      <a class="mono" href="https://github.com/grippado/dumps">GitHub</a>
+    </nav>
+  </div>
+</header>
+
+<main id="top">
+<section class="hero" aria-labelledby="title">
+  <div class="wrap">
+    <div class="presents mono"><span>The dumps company presents</span><span>An agent skill in eight parts</span><span>MIT · open source</span></div>
+    <h1 id="title">
+      <span class="wood" aria-hidden="true"><span class="l1">Dump</span><span class="l2">this.</span></span>
+      <span class="sr">dump-this:</span>
+      <span class="h1-sub">Any request, file or chat, turned into one page a specialist would have made.</span>
+    </h1>
+    <div class="hero-grid">
+      <div>
+        <p class="lede">dump-this is a skill for your AI agent. Ask for a page and it casts the right specialist, sets how bold the art direction should be, and hands back one self-contained HTML file: inline CSS and JS, light and dark, readable on a phone. Not the gradient-and-three-cards look every generated artifact has.</p>
+        <div class="ctas">
+          <a class="btn" href="#install">Get the skill</a>
+          <a class="btn ghost" href="../examples/">See all examples</a>
+        </div>
+      </div>
+      <aside class="billing" aria-label="Billing">
+        <span class="mono">Starring</span>
+        <ol>
+          <li class="b1"><a href="#r-report">The senior analyst</a></li>
+          <li class="b2"><a href="#r-story">The magazine editor</a></li>
+          <li class="b2"><a href="#r-dashboard">The data viz specialist</a></li>
+          <li class="b3"><a href="#r-slides">The presentation coach</a></li>
+          <li class="b3"><a href="#r-comparison">The decision advisor</a></li>
+          <li><span class="and">with</span></li>
+          <li class="b4"><a href="#r-doc">The technical writer</a> · <a href="#r-changelog">the release manager</a></li>
+          <li><span class="and">and introducing</span></li>
+          <li class="b3"><a href="#r-landing">The product marketer</a></li>
+        </ol>
+        <p class="tiny">Each one follows its own recipe. You only say what you want.</p>
+      </aside>
+    </div>
+    <div class="where">
+      <div><b>No server needed</b><p>An artifact in claude.ai, a canvas in ChatGPT, or a plain file anywhere.</p></div>
+      <div><b>Any harness</b><p>Claude Code, Codex, claude.ai and ChatGPT, from the same skill.</p></div>
+      <div><b>Your own domain</b><p>With dumps installed it publishes the page hidden. You review it and press Publicar in the admin.</p></div>
+    </div>
+  </div>
+  <div class="ticker" aria-hidden="true">
+    <div class="run"><span>conservative</span><i>for the board</i><span>sóbrio</span><i>clean</i><span>minimal</span><i>make it nice</i><span>go wild</span><i>master innovation</i><span>inovação máxima</span><i>like a Swiss poster</i><span>newspaper front page</span><i>museum catalogue</i></div><div class="run"><span>conservative</span><i>for the board</i><span>sóbrio</span><i>clean</i><span>minimal</span><i>make it nice</i><span>go wild</span><i>master innovation</i><span>inovação máxima</span><i>like a Swiss poster</i><span>newspaper front page</span><i>museum catalogue</i></div>
+  </div>
+</section>
+
+<section class="act" id="cast" aria-labelledby="cast-h">
+  <div class="wrap">
+    <div class="act-head">
+      <div class="act-no" aria-hidden="true">I</div>
+      <div>
+        <h2 id="cast-h">Eight specialists, each with a recipe they never skip</h2>
+        <p>Name a type, or let the skill pick one from what you ask. Every specialist below made a real example page; open it and judge the work. Billed in order of how far each example turned the dial.</p>
+      </div>
+    </div>
+    <ol class="cast" id="castlist">
+      <li class="role reveal" id="r-report" data-level="1">
+        <span class="num" aria-hidden="true">01</span>
+        <h3><span class="type">Report</span><span class="who">The senior analyst</span></h3>
+        <div>
+          <p class="always">Always</p>
+          <ul>
+            <li>Answers first: a TL;DR a reader can stop at and still have the gist.</li>
+            <li>One section per finding, ordered by impact, each with its evidence and confidence.</li>
+            <li>Numbers right aligned with units in the header, and the row that matters highlighted.</li>
+          </ul>
+          <span class="lvl mono"><span class="pips" aria-hidden="true"><i class="on"></i><i></i><i></i><i></i></span>Example at level 1 classic</span>
+        </div>
+        <a class="thumb" href="../examples/report/"><img src="../examples/thumbs/report.jpg" width="1200" height="750" loading="lazy" alt="Screenshot of the report example page"><span>See the report <b aria-hidden="true">&rarr;</b></span></a>
+        <span class="playing mono">Now playing</span>
+      </li>
+      <li class="role reveal" id="r-doc" data-level="2">
+        <span class="num" aria-hidden="true">02</span>
+        <h3><span class="type">Doc</span><span class="who">The technical writer</span></h3>
+        <div>
+          <p class="always">Always</p>
+          <ul>
+            <li>A table of contents built from the headings, sticky on wide screens.</li>
+            <li>Tasks as numbered steps: one command per block, each with a copy button, and what success looks like.</li>
+            <li>Options and flags as a table: name, default, meaning.</li>
+          </ul>
+          <span class="lvl mono"><span class="pips" aria-hidden="true"><i class="on"></i><i class="on"></i><i></i><i></i></span>Example at level 2 refined</span>
+        </div>
+        <a class="thumb" href="../examples/doc/"><img src="../examples/thumbs/doc.jpg" width="1200" height="750" loading="lazy" alt="Screenshot of the doc example page"><span>See the doc <b aria-hidden="true">&rarr;</b></span></a>
+        <span class="playing mono">Now playing</span>
+      </li>
+      <li class="role reveal" id="r-changelog" data-level="2">
+        <span class="num" aria-hidden="true">03</span>
+        <h3><span class="type">Changelog</span><span class="who">The release manager</span></h3>
+        <div>
+          <p class="always">Always</p>
+          <ul>
+            <li>Newest first, every version with its own anchor.</li>
+            <li>Grouped by Added, Changed, Fixed and Removed, in user facing words.</li>
+            <li>Breaking changes in a warning box with the migration step.</li>
+          </ul>
+          <span class="lvl mono"><span class="pips" aria-hidden="true"><i class="on"></i><i class="on"></i><i></i><i></i></span>Example at level 2 refined</span>
+        </div>
+        <a class="thumb" href="../examples/changelog/"><img src="../examples/thumbs/changelog.jpg" width="1200" height="750" loading="lazy" alt="Screenshot of the changelog example page"><span>See the changelog <b aria-hidden="true">&rarr;</b></span></a>
+        <span class="playing mono">Now playing</span>
+      </li>
+      <li class="role reveal" id="r-slides" data-level="3">
+        <span class="num" aria-hidden="true">04</span>
+        <h3><span class="type">Slides</span><span class="who">The presentation coach</span></h3>
+        <div>
+          <p class="always">Always</p>
+          <ul>
+            <li>One idea per slide, titled as the takeaway sentence, not the topic.</li>
+            <li>Arrow keys, space and swipe, with a counter, a progress bar and the slide in the URL.</li>
+            <li>Speaker notes behind the N key, and one slide per page when printed.</li>
+          </ul>
+          <span class="lvl mono"><span class="pips" aria-hidden="true"><i class="on"></i><i class="on"></i><i class="on"></i><i></i></span>Example at level 3 bold</span>
+        </div>
+        <a class="thumb" href="../examples/slides/"><img src="../examples/thumbs/slides.jpg" width="1200" height="750" loading="lazy" alt="Screenshot of the slides example page"><span>See the slides <b aria-hidden="true">&rarr;</b></span></a>
+        <span class="playing mono">Now playing</span>
+      </li>
+      <li class="role reveal" id="r-comparison" data-level="3">
+        <span class="num" aria-hidden="true">05</span>
+        <h3><span class="type">Comparison</span><span class="who">The decision advisor</span></h3>
+        <div>
+          <p class="always">Always</p>
+          <ul>
+            <li>Verdict first: which option, for whom, and the one reason that decided it.</li>
+            <li>Criteria weighted or marked must have before anything gets scored.</li>
+            <li>The best cell marked per row, with a sticky first column on phones.</li>
+          </ul>
+          <span class="lvl mono"><span class="pips" aria-hidden="true"><i class="on"></i><i class="on"></i><i class="on"></i><i></i></span>Example at level 3 bold</span>
+        </div>
+        <a class="thumb" href="../examples/comparison/"><img src="../examples/thumbs/comparison.jpg" width="1200" height="750" loading="lazy" alt="Screenshot of the comparison example page"><span>See the comparison <b aria-hidden="true">&rarr;</b></span></a>
+        <span class="playing mono">Now playing</span>
+      </li>
+      <li class="role reveal" id="r-landing" data-level="3">
+        <span class="num" aria-hidden="true">06</span>
+        <h3><span class="type">Landing</span><span class="who">The product marketer</span></h3>
+        <div>
+          <p class="always">Always</p>
+          <ul>
+            <li>A headline that states the benefit, one primary action and one secondary.</li>
+            <li>Proof up front: a screenshot, a live demo, numbers or a quote.</li>
+            <li>How it works in three numbered steps, then the call to action again.</li>
+          </ul>
+          <span class="lvl mono"><span class="pips" aria-hidden="true"><i class="on"></i><i class="on"></i><i class="on"></i><i></i></span>Example at level 3 bold</span>
+        </div>
+        <a class="thumb" href="../examples/landing/"><img src="../examples/thumbs/landing.jpg" width="1200" height="750" loading="lazy" alt="Screenshot of the landing example page"><span>See the landing <b aria-hidden="true">&rarr;</b></span></a>
+        <span class="playing mono">Now playing</span>
+      </li>
+      <li class="role reveal" id="r-dashboard" data-level="4">
+        <span class="num" aria-hidden="true">07</span>
+        <h3><span class="type">Dashboard</span><span class="who">The data visualization specialist</span></h3>
+        <div>
+          <p class="always">Always</p>
+          <ul>
+            <li>A KPI row first, with direction shown by sign or arrow, never by color alone.</li>
+            <li>The chart chosen by the question. Never 3D, never dual axes.</li>
+            <li>Inline SVG drawn from the data, with the full sortable table and the source below.</li>
+          </ul>
+          <span class="lvl mono"><span class="pips" aria-hidden="true"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i></span>Example at level 4 avant-garde</span>
+        </div>
+        <a class="thumb" href="../examples/dashboard/"><img src="../examples/thumbs/dashboard.jpg" width="1200" height="750" loading="lazy" alt="Screenshot of the dashboard example page"><span>See the dashboard <b aria-hidden="true">&rarr;</b></span></a>
+        <span class="playing mono">Now playing</span>
+      </li>
+      <li class="role reveal" id="r-story" data-level="4">
+        <span class="num" aria-hidden="true">08</span>
+        <h3><span class="type">Story</span><span class="who">The magazine editor</span></h3>
+        <div>
+          <p class="always">Always</p>
+          <ul>
+            <li>A title with a point of view, and three or four numbers that frame the story.</li>
+            <li>A cast, then a timeline with real dates and times. Never estimated ones.</li>
+            <li>Two or three turning points pulled out, each with the lesson learned.</li>
+          </ul>
+          <span class="lvl mono"><span class="pips" aria-hidden="true"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i></span>Example at level 4 avant-garde</span>
+        </div>
+        <a class="thumb" href="../examples/story/"><img src="../examples/thumbs/story.jpg" width="1200" height="750" loading="lazy" alt="Screenshot of the story example page"><span>See the story <b aria-hidden="true">&rarr;</b></span></a>
+        <span class="playing mono">Now playing</span>
+      </li>
+    </ol>
+  </div>
+</section>
+
+<div class="stage" id="dial">
+<section class="act" aria-labelledby="dial-h">
+  <div class="wrap">
+    <div class="act-head">
+      <div class="act-no" aria-hidden="true">II</div>
+      <div>
+        <h2 id="dial-h">You set the volume in plain words</h2>
+        <p>The style dial reads how far to push from what you say. Content and accessibility never move with it, only the art direction. Say nothing and you get bold. Turn the knob: the specialists whose example plays at that level light up in the cast.</p>
+      </div>
+    </div>
+    <div class="dial-grid">
+      <div class="knob-box">
+        <div class="knob" id="knob" role="slider" tabindex="0" aria-label="Style dial" aria-valuemin="1" aria-valuemax="4" aria-valuenow="3" aria-valuetext="Level 3, bold">
+          <svg viewBox="0 0 300 300" aria-hidden="true">
+            <g id="ticks"></g>
+            <circle cx="150" cy="150" r="96" fill="none" stroke="currentColor" stroke-width="2"/>
+            <circle cx="150" cy="150" r="84" fill="var(--stagered)"/>
+            <g class="needle" id="needle"><rect x="146" y="72" width="8" height="52" fill="var(--stage)"/></g>
+            <circle cx="150" cy="150" r="10" fill="var(--stage)"/>
+          </svg>
+        </div>
+        <div class="stops" role="group" aria-label="Pick a level">
+          <button type="button" data-l="1" aria-pressed="false">1 Classic</button>
+          <button type="button" data-l="2" aria-pressed="false">2 Refined</button>
+          <button type="button" data-l="3" aria-pressed="true">3 Bold</button>
+          <button type="button" data-l="4" aria-pressed="false">4 Wild</button>
+        </div>
+        <p class="mono" style="margin:0;color:var(--stagemut);text-align:center">Focus the knob, use arrow keys</p>
+      </div>
+      <div class="readout" aria-live="polite">
+        <p class="say">Say <q id="r-say">make it nice</q></p>
+        <h3><small id="r-no">3</small><span id="r-name">Bold</span></h3>
+        <dl>
+          <dt>Type</dt><dd id="r-type">A display face with character for oversized headings, paired with a quiet text face.</dd>
+          <dt>Color</dt><dd id="r-color">Two or three confident colors with one surprising accent, full-bleed blocks.</dd>
+          <dt>Layout</dt><dd id="r-layout">Editorial and asymmetric, the grid broken on purpose.</dd>
+          <dt>Signature</dt><dd id="r-sig">One memorable element made from the content itself.</dd>
+        </dl>
+        <div class="specimen" id="specimen" data-l="3">
+          <span class="lbl">Same headline, this level</span>
+          <p class="t" id="spec-t">Make the page a specialist <em>would make.</em></p>
+        </div>
+      </div>
+    </div>
+    <div class="never">
+      <h3>Refused at every level</h3>
+      <ul>
+        <li>a centered gradient hero with three cards</li>
+        <li>emoji as icons</li>
+        <li>shadows on everything</li>
+        <li>gray text on gray</li>
+        <li>titles that only name a topic</li>
+        <li>charts that only decorate</li>
+      </ul>
+      <p>That is the default artifact look. The skill exists to beat it. Every page ends with a one-line colophon naming its level and concept, so the reader learns the dial exists.</p>
+    </div>
+  </div>
+</section>
+</div>
+
+<section class="act" id="how" aria-labelledby="how-h">
+  <div class="wrap">
+    <div class="act-head">
+      <div class="act-no" aria-hidden="true">III</div>
+      <div><h2 id="how-h">One line from you, three moves from the skill</h2></div>
+    </div>
+    <ol class="steps">
+      <li class="reveal"><b aria-hidden="true">1</b><h3>Casts the specialist</h3><p>From your words, or the type you name. If nothing fits, the technical writer takes the part.</p></li>
+      <li class="reveal"><b aria-hidden="true">2</b><h3>Sets the dial and builds</h3><p>Reads the style rules, the base rules and the specialist's recipe, then writes one page from your request, your file or the conversation. Real data only; a missing fact gets one question, not an invention.</p></li>
+      <li class="reveal"><b aria-hidden="true">3</b><h3>Delivers where you are</h3><p>With dumps installed: <code>dumps publish</code>, hidden, until you press Publicar. Otherwise an artifact or canvas, or an <code>index.html</code> file.</p></li>
+    </ol>
+  </div>
+</section>
+
+<section class="act" id="lines" aria-labelledby="lines-h">
+  <div class="wrap">
+    <div class="act-head">
+      <div class="act-no" aria-hidden="true">IV</div>
+      <div>
+        <h2 id="lines-h">Lines to steal</h2>
+        <p>Type, topic and, if you want, a level or an art direction. That is the whole script.</p>
+      </div>
+    </div>
+    <ul class="lines">
+      <li><blockquote>/dump-this conservative report for the board about Q3 costs</blockquote><div class="meta"><span class="mono">report · level 1</span><button class="copy" type="button" data-copy="/dump-this conservative report for the board about Q3 costs">Copy</button></div></li>
+      <li><blockquote>/dump-this clean changelog of what shipped this week</blockquote><div class="meta"><span class="mono">changelog · level 2</span><button class="copy" type="button" data-copy="/dump-this clean changelog of what shipped this week">Copy</button></div></li>
+      <li><blockquote>/dump-this slides from notes.md about the launch</blockquote><div class="meta"><span class="mono">slides · level 3, default</span><button class="copy" type="button" data-copy="/dump-this slides from notes.md about the launch">Copy</button></div></li>
+      <li><blockquote>/dump-this compare these three vendors, like a Swiss poster</blockquote><div class="meta"><span class="mono">comparison · art direction</span><button class="copy" type="button" data-copy="/dump-this compare these three vendors, like a Swiss poster">Copy</button></div></li>
+      <li><blockquote>/dump-this go wild: a dashboard of our usage, as an instrument panel</blockquote><div class="meta"><span class="mono">dashboard · level 4</span><button class="copy" type="button" data-copy="/dump-this go wild: a dashboard of our usage, as an instrument panel">Copy</button></div></li>
+      <li><blockquote>/dump-this the story of this incident as a newspaper front page</blockquote><div class="meta"><span class="mono">story · art direction</span><button class="copy" type="button" data-copy="/dump-this the story of this incident as a newspaper front page">Copy</button></div></li>
+    </ul>
+  </div>
+</section>
+
+<section class="act" id="install" aria-labelledby="install-h">
+  <div class="wrap">
+    <div class="act-head">
+      <div class="act-no" aria-hidden="true">V</div>
+      <div>
+        <h2 id="install-h">Box office: pick your harness</h2>
+        <p>Same skill everywhere. Free, MIT licensed, no account.</p>
+      </div>
+    </div>
+    <div class="office">
+      <article class="stub">
+        <header><h3>Claude Code</h3><span class="mono">2 commands</span></header>
+        <div class="cmd"><code>curl -fsSL https://grippado.github.io/dumps/dump-this.zip -o /tmp/dump-this.zip</code><button class="copy" type="button">Copy</button></div>
+        <div class="cmd"><code>unzip -oq /tmp/dump-this.zip -d ~/.claude/skills</code><button class="copy" type="button">Copy</button></div>
+        <p>Then type <code>/dump-this</code> in a new session.</p>
+      </article>
+      <article class="stub">
+        <header><h3>Codex</h3><span class="mono">2 commands</span></header>
+        <div class="cmd"><code>curl -fsSL https://grippado.github.io/dumps/dump-this.zip -o /tmp/dump-this.zip</code><button class="copy" type="button">Copy</button></div>
+        <div class="cmd"><code>unzip -oq /tmp/dump-this.zip -d ~/.codex/skills</code><button class="copy" type="button">Copy</button></div>
+        <p>Then ask for a dump in plain words.</p>
+      </article>
+      <article class="stub">
+        <header><h3>claude.ai</h3><span class="mono">upload</span></header>
+        <div class="cmd url"><code>https://grippado.github.io/dumps/dump-this.zip</code><button class="copy" type="button">Copy</button></div>
+        <p><a href="https://grippado.github.io/dumps/dump-this.zip">Download the zip</a> and upload it in Settings, Capabilities, Skills.</p>
+      </article>
+      <article class="stub">
+        <header><h3>ChatGPT</h3><span class="mono">paste</span></header>
+        <div class="cmd url"><code>https://grippado.github.io/dumps/dump-this-chatgpt.txt</code><button class="copy" type="button">Copy</button></div>
+        <p>Paste <a href="https://grippado.github.io/dumps/dump-this-chatgpt.txt">the instructions</a> into a custom GPT or a Project.</p>
+      </article>
+      <article class="stub wide">
+        <header><h3>With the dumps CLI</h3><span class="mono">every harness at once</span></header>
+        <div class="cmd"><code>git clone https://github.com/grippado/dumps</code><button class="copy" type="button">Copy</button></div>
+        <div class="cmd"><code>cd dumps</code><button class="copy" type="button">Copy</button></div>
+        <div class="cmd"><code>cli/dumps install-agent all</code><button class="copy" type="button">Copy</button></div>
+        <p>This also gives the skill a place to publish: your own dumps server, where new pages arrive hidden and wait for your Publicar.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section class="finale" aria-labelledby="fin-h">
+  <div class="wrap">
+    <h2 id="fin-h" class="big">Curtain up on <span>your next page.</span></h2>
+    <div class="ctas">
+      <a class="btn" href="#install">Get the skill</a>
+      <a class="btn ghost" href="../examples/">See all examples</a>
+    </div>
+    <nav class="credits" aria-label="More">
+      <a href="../">dumps<small>The main landing: publish HTML to your own domain</small></a>
+      <a href="../examples/">Examples<small>All eight specialists at work</small></a>
+      <a href="https://github.com/grippado/dumps">GitHub<small>Source, MIT license, issues</small></a>
+      <a href="https://grippado.github.io/flux/">Built with flux<small>The agent workflow behind this project</small></a>
+    </nav>
+    <p class="colophon">Level 4 avant-garde · concept: the skill as a theatre playbill, its eight specialists billed as the cast, the style dial as the house volume knob · Big Shoulders Display + system serif + system mono.</p>
+  </div>
+</section>
+</main>
+
+<script>
+(function(){
+  var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  var wood = document.querySelectorAll('.wood .l1, .wood .l2');
+  var d = 0;
+  wood.forEach(function(el){
+    var txt = el.textContent; el.textContent = '';
+    for (var i = 0; i < txt.length; i++){
+      var s = document.createElement('span'); s.className = 'ch'; s.textContent = txt[i];
+      s.style.animationDelay = (d * 60) + 'ms'; d++; el.appendChild(s);
+    }
+  });
+
+  var rev = document.querySelectorAll('.reveal');
+  if (reduce || !('IntersectionObserver' in window)) {
+    rev.forEach(function(e){ e.classList.add('in'); });
+  } else {
+    var io = new IntersectionObserver(function(es){
+      es.forEach(function(e){ if (e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); } });
+    }, {rootMargin:'0px 0px -8% 0px'});
+    rev.forEach(function(e){ io.observe(e); });
+  }
+
+  var L = {
+    1:{name:'Classic',say:'conservative, for the board, sóbrio',
+       type:'One sans or a classic serif, two or three sizes, generous line height.',
+       color:'Near black on white, one restrained accent like navy or oxblood, no gradients.',
+       layout:'A strict column or a 12 column grid, left aligned, thin rules.',
+       sig:'Impeccable tables and alignment. A top consultancy could have printed it.'},
+    2:{name:'Refined',say:'clean, minimal, elegante',
+       type:'A modern grotesk, tight spacing on large headings, tabular numbers.',
+       color:'A warm neutral scale, one accent used sparingly, hairlines instead of shadows.',
+       layout:'Generous whitespace, asymmetric two column moments, around 720px of text.',
+       sig:'One precise detail done perfectly, like a beautiful KPI.'},
+    3:{name:'Bold',say:'make it nice, or nothing at all',
+       type:'A display face with character for oversized headings, paired with a quiet text face.',
+       color:'Two or three confident colors with one surprising accent, full-bleed blocks.',
+       layout:'Editorial and asymmetric, the grid broken on purpose.',
+       sig:'One memorable element made from the content itself.'},
+    4:{name:'Avant-garde',say:'go wild, master innovation, inovação máxima',
+       type:'Kinetic, variable, display only or monospace on purpose.',
+       color:'Whatever the concept demands, with contrast still passing AA.',
+       layout:'Swiss poster, brutalist, scroll driven or keyboard first navigation.',
+       sig:'The page itself is the idea, described in one sentence after closing it.'}
+  };
+  var ANG = {1:-120, 2:-40, 3:40, 4:120};
+  var cur = 3;
+  var knob = document.getElementById('knob');
+  var needle = document.getElementById('needle');
+  var spec = document.getElementById('specimen');
+  var ticks = document.getElementById('ticks');
+  var NS = 'http://www.w3.org/2000/svg';
+  for (var a = -135; a <= 135; a += 9){
+    var r = a * Math.PI/180, big = [-120,-40,40,120].indexOf(a) > -1;
+    var r1 = 112, r2 = big ? 136 : 122;
+    var ln = document.createElementNS(NS,'line');
+    ln.setAttribute('x1', 150 + r1*Math.sin(r)); ln.setAttribute('y1', 150 - r1*Math.cos(r));
+    ln.setAttribute('x2', 150 + r2*Math.sin(r)); ln.setAttribute('y2', 150 - r2*Math.cos(r));
+    ln.setAttribute('stroke','currentColor'); ln.setAttribute('stroke-width', big ? 3 : 1.2);
+    ticks.appendChild(ln);
+  }
+  [1,2,3,4].forEach(function(n){
+    var r = ANG[n]*Math.PI/180, t = document.createElementNS(NS,'text');
+    t.setAttribute('x', 150 + 150*Math.sin(r)); t.setAttribute('y', 150 - 150*Math.cos(r) + 7);
+    t.setAttribute('text-anchor','middle'); t.setAttribute('fill','currentColor');
+    t.setAttribute('font-family','Big Shoulders Display, Arial Narrow, sans-serif');
+    t.setAttribute('font-weight','900'); t.setAttribute('font-size','22'); t.textContent = n;
+    ticks.appendChild(t);
+  });
+  var roles = document.querySelectorAll('.role');
+  var btns = document.querySelectorAll('.stops button');
+  function set(n){
+    n = Math.max(1, Math.min(4, n)); cur = n; var l = L[n];
+    needle.style.transform = 'rotate(' + ANG[n] + 'deg)';
+    knob.setAttribute('aria-valuenow', n);
+    knob.setAttribute('aria-valuetext', 'Level ' + n + ', ' + l.name);
+    document.getElementById('r-no').textContent = n;
+    document.getElementById('r-name').textContent = l.name;
+    document.getElementById('r-say').textContent = l.say;
+    document.getElementById('r-type').textContent = l.type;
+    document.getElementById('r-color').textContent = l.color;
+    document.getElementById('r-layout').textContent = l.layout;
+    document.getElementById('r-sig').textContent = l.sig;
+    spec.setAttribute('data-l', n);
+    btns.forEach(function(b){ b.setAttribute('aria-pressed', String(+b.dataset.l === n)); });
+    roles.forEach(function(r){ r.classList.toggle('lit', +r.dataset.level === n); });
+  }
+  knob.addEventListener('keydown', function(e){
+    var k = e.key, n = cur;
+    if (k === 'ArrowRight' || k === 'ArrowUp') n++;
+    else if (k === 'ArrowLeft' || k === 'ArrowDown') n--;
+    else if (k === 'Home') n = 1;
+    else if (k === 'End') n = 4;
+    else if (k >= '1' && k <= '4') n = +k;
+    else return;
+    e.preventDefault(); set(n);
+  });
+  function fromPoint(x, y){
+    var b = knob.getBoundingClientRect();
+    var ang = Math.atan2(x - (b.left + b.width/2), -(y - (b.top + b.height/2))) * 180/Math.PI;
+    var best = 1, bd = 999;
+    [1,2,3,4].forEach(function(n){ var dd = Math.abs(ANG[n] - ang); if (dd < bd){ bd = dd; best = n; } });
+    set(best);
+  }
+  var drag = false;
+  knob.addEventListener('pointerdown', function(e){ drag = true; knob.setPointerCapture(e.pointerId); fromPoint(e.clientX, e.clientY); });
+  knob.addEventListener('pointermove', function(e){ if (drag) fromPoint(e.clientX, e.clientY); });
+  knob.addEventListener('pointerup', function(){ drag = false; });
+  knob.addEventListener('pointercancel', function(){ drag = false; });
+  btns.forEach(function(b){ b.addEventListener('click', function(){ set(+b.dataset.l); }); });
+  set(3);
+  roles.forEach(function(r){ r.classList.remove('lit'); });
+
+  function copyText(t, btn){
+    function ok(){ var o = btn.textContent; btn.textContent = 'Copied'; btn.classList.add('done'); setTimeout(function(){ btn.textContent = o; btn.classList.remove('done'); }, 1600); }
+    if (navigator.clipboard && window.isSecureContext){ navigator.clipboard.writeText(t).then(ok, fallback); } else fallback();
+    function fallback(){
+      var ta = document.createElement('textarea'); ta.value = t; ta.setAttribute('readonly',''); ta.style.position='fixed'; ta.style.opacity='0';
+      document.body.appendChild(ta); ta.select(); try { document.execCommand('copy'); ok(); } catch(err){} document.body.removeChild(ta);
+    }
+  }
+  document.querySelectorAll('.copy').forEach(function(b){
+    b.setAttribute('aria-label', 'Copy ' + (b.dataset.copy ? 'prompt' : 'command'));
+    b.addEventListener('click', function(){
+      var t = b.dataset.copy || b.parentNode.querySelector('code').textContent;
+      copyText(t, b);
+    });
+  });
+})();
+</script>
+</body>
+</html>

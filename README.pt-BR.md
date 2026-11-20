@@ -23,6 +23,7 @@ um servidor dumps:
 - **ChatGPT:** cole o [dump-this-chatgpt.txt](https://grippado.github.io/dumps/dump-this-chatgpt.txt)
   num GPT personalizado ou num Projeto, e receba a página no canvas.
 
+A página dela, com os oito especialistas: [grippado.github.io/dumps/skill](https://grippado.github.io/dumps/skill/).
 Ela é opinativa de propósito: um dial de estilo lido das suas próprias palavras vai de "sóbrio" a
 "inovação máxima", e ela recusa o visual padrão de artefato. Veja um exemplo de cada tipo em
 [grippado.github.io/dumps/examples](https://grippado.github.io/dumps/examples/).
