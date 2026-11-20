@@ -507,7 +507,7 @@ footer p{margin:0}
   var mem=document.getElementById('mem');
   D.server.rssMB.slice().sort(function(a,b){return b.max-a.max;}).forEach(function(p){
     var segs=[{from:0,to:p.min,cls:'bar'}]; if(p.max>p.min) segs.push({from:p.min,to:p.max,cls:'bar rng'});
-    meter(mem,{name:p.name,max:64,label:(p.max>p.min?p.min+'–'+p.max:'~'+p.max)+' MB',segs:segs});
+    meter(mem,{name:p.name,max:64,label:(p.max>p.min?p.min+' to '+p.max:'~'+p.max)+' MB',segs:segs});
   });
 
   var il=document.getElementById('issues');
@@ -526,7 +526,7 @@ footer p{margin:0}
     {name:'RAM available',val:4.6,disp:'~4.6 of 7.6',unit:'GB'},
     {name:'Resident memory, Caddy',val:60,disp:'~60',unit:'MB'},
     {name:'Resident memory, cloudflared',val:56,disp:'~56',unit:'MB'},
-    {name:'Resident memory, dumpsd',val:11,disp:'5–11',unit:'MB'},
+    {name:'Resident memory, dumpsd',val:11,disp:'5 to 11',unit:'MB'},
     {name:'Go binary size',val:2.4,disp:'2.4',unit:'MB'},
     {name:'Device uptime',val:127,disp:'5 d 7 h',unit:'time'},
     {name:'Services up (sshd, cloudflared, web, dumpsd)',val:4,disp:'4 of 4',unit:'services'},
