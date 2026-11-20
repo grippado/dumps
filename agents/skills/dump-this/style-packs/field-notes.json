@@ -1,0 +1,125 @@
+{
+  "$schema": "https://grippado.github.io/dumps/style-packs/schema/v1.json",
+  "schemaVersion": 1,
+  "id": "field-notes",
+  "metadata": {
+    "name": {
+      "en": "Field Notes",
+      "pt-BR": "Caderno de campo"
+    },
+    "summary": {
+      "en": "An editorial guide for practical, human-scale product stories.",
+      "pt-BR": "Um guia editorial para histórias de produto práticas e humanas."
+    },
+    "author": "dumps contributors",
+    "license": "MIT"
+  },
+  "supports": ["landing"],
+  "designTokens": {
+    "$schema": "https://www.designtokens.org/schemas/2025.10/format.json",
+    "color": {
+      "light": {
+        "page": { "$type": "color", "$value": "#F5F0E6" },
+        "ink": { "$type": "color", "$value": "#202C25" },
+        "accent": { "$type": "color", "$value": "#853B2B" },
+        "muted": { "$type": "color", "$value": "#4E6156" },
+        "line": { "$type": "color", "$value": "#B8B7A9" }
+      },
+      "dark": {
+        "page": { "$type": "color", "$value": "#17221D" },
+        "ink": { "$type": "color", "$value": "#F5F0E6" },
+        "accent": { "$type": "color", "$value": "#F0A18A" },
+        "muted": { "$type": "color", "$value": "#C3CEC5" },
+        "line": { "$type": "color", "$value": "#59675F" }
+      }
+    },
+    "fontFamily": {
+      "display": { "$type": "fontFamily", "$value": ["Georgia", "serif"] },
+      "body": { "$type": "fontFamily", "$value": ["Arial", "sans-serif"] }
+    },
+    "dimension": {
+      "spaceSmall": { "$type": "dimension", "$value": "0.75rem" },
+      "spaceLarge": { "$type": "dimension", "$value": "2rem" }
+    }
+  },
+  "voice": {
+    "summary": "Warm, specific and observant. Give useful details the space usually given to slogans.",
+    "principles": [
+      "Prefer concrete verbs and details over broad claims.",
+      "Let one useful observation carry the headline.",
+      "Keep calls to action clear and unhurried."
+    ],
+    "examples": [
+      {
+        "before": "A revolutionary platform for modern teams.",
+        "after": "Keep the team's decisions where the work happens."
+      }
+    ]
+  },
+  "guidance": {
+    "global": [
+      "Use the page background and ink tokens as the base for both color schemes.",
+      "Pair editorial headings with a calm, readable body face.",
+      "Use rules and spacing to create rhythm before adding decoration."
+    ],
+    "levels": {
+      "classic": {
+        "direction": "A careful field guide with a strict column and quiet accents.",
+        "previewLayout": "column",
+        "rules": [
+          "Keep the headline short and left aligned.",
+          "Use one restrained accent and no motion."
+        ]
+      },
+      "refined": {
+        "direction": "An open editorial page with generous margins and one precise detail.",
+        "previewLayout": "editorial",
+        "rules": [
+          "Give the lead room to breathe beside the headline.",
+          "Use hairline rules instead of decorative shadows."
+        ]
+      },
+      "bold": {
+        "direction": "A confident product story with an oversized headline and an asymmetric split.",
+        "previewLayout": "split",
+        "rules": [
+          "Let the headline and the action occupy different visual weights.",
+          "Use the accent color for one memorable mark."
+        ]
+      },
+      "avant-garde": {
+        "direction": "A field journal cover with a headline that becomes the main graphic.",
+        "previewLayout": "poster",
+        "rules": [
+          "Treat the headline as the main composition.",
+          "Keep every essential detail readable without motion or decoration."
+        ]
+      }
+    }
+  },
+  "accessibility": {
+    "invariants": [
+      "Maintain at least 4.5:1 contrast for normal text.",
+      "Keep all controls reachable and usable with a keyboard.",
+      "Respect prefers-reduced-motion.",
+      "Keep the layout readable at 360 pixels without horizontal scrolling."
+    ]
+  },
+  "examples": [
+    {
+      "format": "landing",
+      "title": {
+        "en": "Good ideas need somewhere to land.",
+        "pt-BR": "Boas ideias precisam de onde pousar."
+      },
+      "lead": {
+        "en": "A small, considered workspace for turning a team's notes into useful pages.",
+        "pt-BR": "Um espaço simples e cuidadoso para transformar as notas do time em páginas úteis."
+      },
+      "action": {
+        "en": "See how it works",
+        "pt-BR": "Veja como funciona"
+      }
+    }
+  ]
+}

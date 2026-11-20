@@ -26,6 +26,8 @@ Its own page, with the eight specialists: [grippado.github.io/dumps/skill](https
 It is opinionated on purpose: a style dial read from your own words goes from "conservative"
 to "master innovation", and it refuses the default artifact look. See one example per type at
 [grippado.github.io/dumps/examples](https://grippado.github.io/dumps/examples/).
+Style packs add reusable design tokens, voice and level-specific guidance; preview the [open pack
+format](https://grippado.github.io/dumps/style-packs/) or read the [contribution guide](docs/style-packs.md).
 
 Full guide: [docs/agent.md](docs/agent.md).
 For organization-owned internal hosts, see the [enterprise publishing guide](docs/enterprise.md).
