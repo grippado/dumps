@@ -141,12 +141,18 @@ class Validation:
                 required_colors = ("page", "ink", "accent", "muted")
                 values = {key: self.token_value(palette, key) for key in required_colors}
                 for key, color in values.items():
+                    token = palette.get(key, {}) if isinstance(palette, dict) else {}
+                    if not isinstance(token, dict) or token.get("$type") != "color":
+                        self.error(f"designTokens.color.{scheme}.{key}.$type", "must be 'color'")
                     if not isinstance(color, str) or not HEX_COLOR.fullmatch(color):
                         self.error(f"designTokens.color.{scheme}.{key}", "must be a six-digit hex color token")
                 if all(isinstance(values[key], str) and HEX_COLOR.fullmatch(values[key]) for key in ("page", "ink", "accent", "muted")):
                     for key in ("ink", "accent", "muted"):
                         self.contrast(values[key], values["page"], f"designTokens.color.{scheme}.{key}")
             for key in ("display", "body"):
+                token = fonts.get(key, {}) if isinstance(fonts, dict) else {}
+                if not isinstance(token, dict) or token.get("$type") != "fontFamily":
+                    self.error(f"designTokens.fontFamily.{key}.$type", "must be 'fontFamily'")
                 family = self.token_value(fonts, key)
                 if isinstance(family, list):
                     valid = bool(family) and all(isinstance(item, str) and FONT_FAMILY.fullmatch(item) for item in family)
@@ -232,18 +238,14 @@ class Validation:
                         self.require_string(asset.get(field), f"{path}.{field}")
 
 
-def main(argv):
-    if len(argv) != 2:
-        print("usage: python3 tools/validate-style-pack.py <style-pack.json>", file=sys.stderr)
-        return 2
-    pack_path = Path(argv[1])
+def validate_file(pack_path):
     try:
         pack = json.loads(pack_path.read_text(encoding="utf-8"))
     except OSError as error:
         print(f"error: cannot read {pack_path}: {error}", file=sys.stderr)
         return 2
     except json.JSONDecodeError as error:
-        print(f"error: invalid JSON at line {error.lineno}, column {error.colno}: {error.msg}", file=sys.stderr)
+        print(f"{pack_path}: invalid JSON at line {error.lineno}, column {error.colno}: {error.msg}", file=sys.stderr)
         return 1
 
     validation = Validation()
@@ -255,6 +257,25 @@ def main(argv):
         return 1
     print(f"{pack_path}: valid dumps Style Pack v1 ({pack['id']})")
     return 0
+
+
+def main(argv):
+    if len(argv) != 2:
+        print("usage: python3 tools/validate-style-pack.py <style-pack.json|directory>", file=sys.stderr)
+        return 2
+    pack_path = Path(argv[1])
+    if not pack_path.is_dir():
+        return validate_file(pack_path)
+
+    pack_paths = sorted(path for path in pack_path.glob("*.json") if path.name != "schema.json")
+    if not pack_paths:
+        print(f"error: no style pack JSON files found in {pack_path} (excluding schema.json)", file=sys.stderr)
+        return 1
+
+    result = 0
+    for path in pack_paths:
+        result = max(result, validate_file(path))
+    return result
 
 
 if __name__ == "__main__":

@@ -20,7 +20,7 @@ jobs:
       - name: lint
         run: make lint
       - name: validate public style packs
-        run: python3 tools/validate-style-pack.py agents/skills/dump-this/style-packs/field-notes.json
+        run: python3 tools/validate-style-pack.py agents/skills/dump-this/style-packs
       - name: test
         run: make test
       - name: cross-build

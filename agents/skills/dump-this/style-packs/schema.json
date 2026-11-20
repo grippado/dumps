@@ -37,9 +37,27 @@
     "designTokens": {
       "type": "object",
       "description": "A Design Tokens Community Group 2025.10 token document.",
-      "required": ["$schema"],
+      "required": ["$schema", "color", "fontFamily"],
       "properties": {
-        "$schema": { "const": "https://www.designtokens.org/schemas/2025.10/format.json" }
+        "$schema": { "const": "https://www.designtokens.org/schemas/2025.10/format.json" },
+        "color": {
+          "type": "object",
+          "required": ["light", "dark"],
+          "properties": {
+            "light": { "$ref": "#/$defs/colorPalette" },
+            "dark": { "$ref": "#/$defs/colorPalette" }
+          },
+          "additionalProperties": true
+        },
+        "fontFamily": {
+          "type": "object",
+          "required": ["display", "body"],
+          "properties": {
+            "display": { "$ref": "#/$defs/fontFamilyToken" },
+            "body": { "$ref": "#/$defs/fontFamilyToken" }
+          },
+          "additionalProperties": true
+        }
       },
       "minProperties": 2
     },
@@ -57,6 +75,44 @@
     }
   },
   "$defs": {
+    "colorToken": {
+      "type": "object",
+      "required": ["$type", "$value"],
+      "properties": {
+        "$type": { "const": "color" },
+        "$value": { "type": "string", "pattern": "^#[0-9a-fA-F]{6}$" }
+      },
+      "additionalProperties": true
+    },
+    "colorPalette": {
+      "type": "object",
+      "required": ["page", "ink", "accent", "muted"],
+      "properties": {
+        "page": { "$ref": "#/$defs/colorToken" },
+        "ink": { "$ref": "#/$defs/colorToken" },
+        "accent": { "$ref": "#/$defs/colorToken" },
+        "muted": { "$ref": "#/$defs/colorToken" }
+      },
+      "additionalProperties": true
+    },
+    "fontFamilyToken": {
+      "type": "object",
+      "required": ["$type", "$value"],
+      "properties": {
+        "$type": { "const": "fontFamily" },
+        "$value": {
+          "oneOf": [
+            { "type": "string", "minLength": 1, "pattern": "^[A-Za-z0-9 ,\"'-]+$" },
+            {
+              "type": "array",
+              "minItems": 1,
+              "items": { "type": "string", "minLength": 1, "pattern": "^[A-Za-z0-9 ,\"'-]+$" }
+            }
+          ]
+        }
+      },
+      "additionalProperties": true
+    },
     "localized": {
       "type": "object",
       "required": ["en", "pt-BR"],
