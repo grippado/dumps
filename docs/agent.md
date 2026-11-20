@@ -157,6 +157,15 @@ dumps publish <page> --title "<title>" --hidden --source agent
 - Ask for "on the home" or "public" to skip the review step.
 - Republishing with the same `--id` updates the page in place.
 
+## Enterprise and internal publishing
+
+For an organization's internal `dumps.<org-domain>` service, use the enterprise delivery overlay in
+[`recipes/enterprise.md`](../agents/skills/dump-this/recipes/enterprise.md) and the
+[enterprise setup guide](enterprise.md). It uses an organization-managed CLI profile and server;
+`--hidden` is not access control. The guide covers corporate SSO or VPN protection for the full
+artifact host, admin authentication and distributing the skill. Browser-only harnesses need an
+approved connector before they can publish to a private service.
+
 ## Tips for better dumps
 
 - Name the type when you know it: "dump this as a comparison".

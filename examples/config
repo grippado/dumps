@@ -7,7 +7,7 @@ DUMPS_HOST=local
 # Where dumps live on the server. Defaults: ~/.local/share/dumps (local) or the ssh home (remote).
 # DUMPS_ROOT=~/.local/share/dumps
 
-# Public base URL of the dumps. Local default: http://localhost:8090
+# Artifact base URL. Public by default; an upstream SSO/VPN can restrict it. Local default: http://localhost:8090
 # DUMPS_URL=https://dumps.example.com
 # DUMPS_LIST_URL=https://admin.example.com/_dumps/
 

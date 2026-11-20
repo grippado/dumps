@@ -34,7 +34,7 @@ cli/dumps config
 |-----|---------|---------|
 | `DUMPS_HOST` | `local` | `local` publishes on this machine. Anything else is an ssh host name (from `~/.ssh/config`) |
 | `DUMPS_ROOT` | local: `${XDG_DATA_HOME:-~/.local/share}/dumps`; remote: the ssh home | Directory on the server that holds `dumps/`, `dumps-meta/`, `bin/`. Must not contain a single quote |
-| `DUMPS_URL` | local: `http://localhost:8090`; remote: none, required | Public base URL, format `http(s)://host[:port]` with no path or trailing slash |
+| `DUMPS_URL` | local: `http://localhost:8090`; remote: none, required | Artifact base URL, public by default or restricted by an upstream SSO/VPN policy; format `http(s)://host[:port]` with no path or trailing slash |
 | `DUMPS_LIST_URL` | local: `http://localhost:<DUMPS_ADMIN_LISTEN port>/_dumps/`; remote: `$DUMPS_URL/_dumps/` | Where the private listing lives (informational, shown by `dumps config`). On a remote host the admin lives on another hostname, so set it |
 | `DUMPS_AUTHORS` | empty | Default footer authors, `Name\|URL`, entries separated by `;`. `--author` on publish overrides it |
 | `DUMPS_BLOCKED_PATHS` | empty | Colon-separated paths. Publishing anything inside them, or a folder that contains them, exits with code 2. Each item expands `~` on its own: `~` and `~/...` mean your home directory |

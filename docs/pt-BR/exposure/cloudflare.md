@@ -52,7 +52,11 @@ Crie o app do Access para `admin.example.com` antes de o registro DNS dele exist
 2. Defina o domínio da aplicação como `admin.example.com`.
 3. Adicione uma policy com ação Allow e uma regra de inclusão só para você (por exemplo o seu e-mail, ou um grupo do provedor de identidade). Todos os outros são negados por padrão.
 
-Não crie um app do Access para `dumps.example.com`. Ele continua público.
+Nesta configuração pública, não crie um app do Access para `dumps.example.com`; ele continua
+público. Numa instalação Enterprise interna, crie também uma aplicação e uma policy separadas do
+Access para o hostname de artefatos, antes de criar o DNS, ou mantenha esse hostname numa rede
+privada com acesso só pela VPN. A chave `DUMPS_ACCESS_AUD` abaixo continua identificando a
+aplicação do admin cujo JWT o `dumpsd` valida. Veja [publicação Enterprise](../enterprise.md).
 
 ## 4. Achar o domínio do time e a tag AUD
 

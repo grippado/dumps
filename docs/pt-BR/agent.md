@@ -156,6 +156,15 @@ dumps publish <página> --title "<título>" --hidden --source agent
 - Peça "na home" ou "público" para pular a revisão.
 - Republicar com o mesmo `--id` atualiza a página no lugar.
 
+## Publicação Enterprise e interna
+
+Para o serviço interno `dumps.<domínio-da-org>`, use a receita de entrega Enterprise em
+[`recipes/enterprise.md`](../../agents/skills/dump-this/recipes/enterprise.md) e o
+[guia de configuração Enterprise](enterprise.md). Ela usa um perfil do CLI e um servidor
+gerenciados pela organização; `--hidden` não é controle de acesso. O guia cobre proteção do host
+inteiro de artefatos por SSO ou VPN, autenticação do admin e distribuição da skill. Harnesses que
+rodam só no browser precisam de um conector aprovado para publicar num serviço privado.
+
 ## Dicas para dumps melhores
 
 - Diga o tipo quando souber: "faz um dump disso como comparação".

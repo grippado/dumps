@@ -1,10 +1,10 @@
 # Segurança
 
-O dumps foi pensado para uma pessoa ou um grupo pequeno que publica o próprio HTML. Esta página descreve o que ele defende, o que não defende e o que você precisa fazer por conta própria. Para reportar um problema, veja o [SECURITY.md](../../SECURITY.md).
+O dumps é um publicador auto-hospedado de HTML estático. O listener de artefatos não tem login próprio, então você decide se vai servi-lo publicamente ou restringi-lo por uma camada externa de SSO/VPN. Esta página descreve o que ele defende, o que não defende e o que você precisa fazer por conta própria. Para reportar um problema, veja o [SECURITY.md](../../SECURITY.md).
 
 ## Modelo
 
-- **O host público serve só `dumps/`.** Manifests (`dumps-meta/`), staging, `bin/` e a listagem ficam fora da pasta pública. O Caddy de exemplo esconde arquivos com ponto no início e redireciona as URLs `index.html` e `.html` para as limpas. No modo local, o `dumpsd --static` aplica as mesmas regras: segmentos com ponto no início devolvem 404, `/_dumps` devolve 404 na origem dos dumps, e só `dumps/` é servido ali.
+- **O host de artefatos serve apenas arquivos estáticos de `dumps/`, sem login próprio.** Manifests (`dumps-meta/`), staging, `bin/` e a listagem ficam fora da pasta servida. O Caddy de exemplo esconde arquivos com ponto no início e redireciona as URLs `index.html` e `.html` para as limpas. No modo local, o `dumpsd --static` aplica as mesmas regras: segmentos com ponto no início devolvem 404, `/_dumps` devolve 404 na origem dos dumps, e só `dumps/` é servido ali. A origem dos artefatos é pública, a menos que uma policy externa de SSO ou VPN proteja o host inteiro.
 - **O host do admin fica atrás de login.** A página da listagem e `/_dumps/api/*` só devem ser alcançáveis por Cloudflare Access ou Tailscale. O `dumpsd` também verifica a identidade por conta própria (JWT ou header do Tailscale), o `Origin` e o formato do pedido. Veja [auth.md](auth.md).
 - **O `dumpsd serve` escuta só em loopback.** Ele recusa qualquer outro endereço em `--listen` ou `--admin-listen`. Nada abre uma porta de entrada na internet; quem expõe é o túnel.
 - **Um único escritor.** Home, listagem e manifests são gravados só pelo `dumpsd`, sob um lock de arquivo, com gravação seguida de rename. A publicação envia para o staging e troca de forma atômica, com rollback.
@@ -22,7 +22,7 @@ O dumps foi pensado para uma pessoa ou um grupo pequeno que publica o próprio H
 
 | Atacante | Consegue | Não consegue |
 |----------|----------|--------------|
-| Qualquer pessoa na internet | Ler os dumps publicados e a home. Adivinhar ids (ids aleatórios de 10 caracteres não são adivinháveis na prática, mas um link deixa de ser segredo depois de compartilhado) | Ler manifests, staging ou a listagem, chamar a API do admin, gravar arquivos |
+| Qualquer pessoa que alcance um host de artefatos sem proteção | Ler os dumps publicados e a home. Adivinhar ids (ids aleatórios de 10 caracteres não são adivinháveis na prática, mas um link deixa de ser segredo depois de compartilhado) | Ler manifests, staging ou a listagem, chamar a API do admin, gravar arquivos |
 | Uma página visitada por um admin (CSRF) | Enviar um pedido cross-site ao host do admin | Passar pela checagem de `Origin` nem carregar um token válido do Access |
 | Quem chega à API do admin sem login | Nada: `403` | Arquivar, renomear nem apagar |
 | Quem forja um JWT | Nada | Assinar com a chave da Cloudflare. `alg: none` e `HS256` são recusados |
@@ -32,7 +32,7 @@ O dumps foi pensado para uma pessoa ou um grupo pequeno que publica o próprio H
 | JavaScript dentro de um dump, no modo local | Ler os outros dumps da origem dos dumps | Chamar a API do admin (o `Origin` dele não é o da origem do admin, e o listener dos dumps não tem API) |
 | Um usuário ssh com a sua chave | Tudo | |
 
-Dumps arquivados somem da home, mas continuam públicos para quem tem o link. Use o arquivamento para organização, não para privacidade. Não publique nada que você não quer que seja lido. Vale também para os dumps publicados escondidos pela skill de agente: o link está no ar assim que a publicação termina. Para tirar um dump do ar, use `dumps rm`.
+Dumps arquivados somem da home, mas podem ser lidos por qualquer pessoa que alcance o host de artefatos e tenha o link. `--hidden` serve para revisão, não para privacidade; o link fica no ar assim que a publicação termina. Use uma barreira externa de SSO ou VPN para material interno e `dumps rm` para tirar um dump do ar.
 
 ## HTML de terceiros divide a sua origem
 

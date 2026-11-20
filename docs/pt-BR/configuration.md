@@ -34,7 +34,7 @@ cli/dumps config
 |-------|--------|-------------|
 | `DUMPS_HOST` | `local` | `local` publica na própria máquina. Qualquer outro valor é um host do `~/.ssh/config` |
 | `DUMPS_ROOT` | local: `${XDG_DATA_HOME:-~/.local/share}/dumps`; remoto: a home do usuário ssh | Pasta no servidor que guarda `dumps/`, `dumps-meta/` e `bin/`. Não pode conter aspa simples |
-| `DUMPS_URL` | local: `http://localhost:8090`; remoto: vazio (obrigatório) | URL base pública, no formato `http(s)://host[:porta]`, sem caminho nem barra final |
+| `DUMPS_URL` | local: `http://localhost:8090`; remoto: vazio (obrigatório) | URL base dos artefatos, pública por padrão ou restrita por uma policy externa de SSO/VPN; no formato `http(s)://host[:porta]`, sem caminho nem barra final |
 | `DUMPS_LIST_URL` | local: `http://localhost:<porta de DUMPS_ADMIN_LISTEN>/_dumps/`; remoto: `$DUMPS_URL/_dumps/` | Onde fica a listagem privada (informativa, aparece no `dumps config`). Num host remoto o admin fica em outro hostname, então defina |
 | `DUMPS_AUTHORS` | vazio | Autores do rodapé, `Nome\|URL`, vários separados por `;`. `--author` no `publish` substitui |
 | `DUMPS_BLOCKED_PATHS` | vazio | Caminhos separados por `:`. Publicar o que estiver dentro deles, ou uma pasta que os contenha, termina com saída 2. Cada item expande o `~` por conta própria: `~` e `~/...` significam a sua home |

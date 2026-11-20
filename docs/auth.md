@@ -1,6 +1,6 @@
 # Admin authentication
 
-Only the admin API needs a login. Published dumps are public. `dumpsd serve` checks every request under `/_dumps/api/` with one of three modes, chosen with `--auth` (or `DUMPS_AUTH` in the CLI config). The default is `access`.
+Published dumps are static and have no built-in login. A deployment can serve them publicly or restrict the entire artifact host with an upstream SSO or VPN policy. `DUMPS_AUTH` applies only to the admin API: `dumpsd serve` checks every request under `/_dumps/api/` with one of three modes, chosen with `--auth` (or `DUMPS_AUTH` in the CLI config). The default is `access`.
 
 The listing page is static HTML. Its protection is the login in front of the admin host (Access, Tailscale), not `dumpsd`. The public host has no API. `dumpsd serve` only listens on loopback and refuses to start on any other address.
 
