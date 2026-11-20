@@ -1,0 +1,424 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Cloudflare takes the admin seat, Tailscale takes the shortcut</title>
+<meta name="description" content="A front-page comparison of five ways to put a dumps server on the internet: Cloudflare Tunnel and Access, Tailscale Funnel and serve, ngrok, frp on a VPS, and Caddy on a VPS with a tunnel home.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,700;0,900;1,500;1,700&display=swap" rel="stylesheet">
+<style>
+:root{
+  color-scheme:light dark;
+  --paper:#f4efe3;
+  --paper-2:#ebe4d3;
+  --ink:#16130f;
+  --ink-soft:#4a4338;
+  --rule:#16130f;
+  --hair:rgba(22,19,15,.22);
+  --red:#a8231b;
+  --red-ink:#ffffff;
+  --best:#e6d9b8;
+  --display:"Playfair Display",Georgia,"Times New Roman",serif;
+  --text:Georgia,"Iowan Old Style","Times New Roman",serif;
+  --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme:dark){
+  :root{
+    --paper:#15130f;
+    --paper-2:#1f1c16;
+    --ink:#ede6d4;
+    --ink-soft:#b9b09c;
+    --rule:#ede6d4;
+    --hair:rgba(237,230,212,.22);
+    --red:#ff7a66;
+    --red-ink:#15130f;
+    --best:#3a3222;
+  }
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{
+  margin:0;
+  background:var(--paper);
+  color:var(--ink);
+  font-family:var(--text);
+  font-size:clamp(16px,1.05vw + 12px,18px);
+  line-height:1.55;
+}
+a{color:inherit;text-decoration-thickness:1px;text-underline-offset:3px}
+a:focus-visible,button:focus-visible,[tabindex]:focus-visible{outline:3px solid var(--red);outline-offset:3px}
+code{font-family:var(--mono);font-size:.86em;background:var(--paper-2);padding:.05em .3em;border-radius:2px;overflow-wrap:anywhere}
+.sheet{max-width:1120px;margin:0 auto;padding:0 16px 48px}
+@media (min-width:768px){.sheet{padding:0 32px 64px}}
+
+.ears{display:flex;justify-content:space-between;gap:12px;align-items:flex-end;padding:20px 0 8px;font-size:.78rem;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-soft)}
+.ear{max-width:15ch;line-height:1.3}
+.ear.right{text-align:right}
+.ed-night{display:none}
+@media (prefers-color-scheme:dark){.ed-day{display:none}.ed-night{display:inline}}
+
+.masthead{
+  font-family:var(--display);
+  font-weight:900;
+  font-size:clamp(2.6rem,11.5vw,9.4rem);
+  line-height:.9;
+  letter-spacing:-.02em;
+  text-align:center;
+  margin:0;
+  padding:4px 0 10px;
+  border-bottom:6px double var(--rule);
+}
+.masthead i{font-weight:500}
+.dateline{
+  display:flex;flex-wrap:wrap;justify-content:space-between;gap:4px 16px;
+  border-bottom:1px solid var(--rule);
+  padding:7px 0;font-size:.8rem;letter-spacing:.08em;text-transform:uppercase;
+}
+.dateline strong{color:var(--red);font-weight:700}
+
+.front{display:grid;gap:0;margin-top:28px}
+@media (min-width:960px){.front{grid-template-columns:minmax(0,1fr) 300px;gap:40px}}
+
+.kicker{display:inline-block;background:var(--red);color:var(--red-ink);font-family:var(--text);font-weight:700;font-size:.78rem;letter-spacing:.14em;text-transform:uppercase;padding:4px 10px;transform:rotate(-2deg);margin-bottom:14px}
+h1{
+  font-family:var(--display);font-weight:900;
+  font-size:clamp(2.3rem,7.4vw,6rem);
+  line-height:.96;letter-spacing:-.025em;
+  margin:0 0 18px;
+  overflow-wrap:break-word;hyphens:auto;
+}
+h1 em{font-weight:700;color:var(--red)}
+.deck{font-family:var(--display);font-style:italic;font-weight:500;font-size:clamp(1.15rem,1.6vw + .8rem,1.6rem);line-height:1.3;margin:0 0 24px;max-width:38ch;color:var(--ink-soft)}
+
+.verdict{border:3px solid var(--rule);padding:18px 20px 20px;margin:0 0 28px;background:var(--paper);position:relative}
+.verdict h2{font-family:var(--text);font-size:.8rem;letter-spacing:.16em;text-transform:uppercase;margin:0 0 10px;color:var(--red)}
+.verdict p{margin:0 0 10px}
+.verdict p:last-child{margin:0}
+.verdict .call{font-family:var(--display);font-size:clamp(1.25rem,1.2vw + 1rem,1.7rem);line-height:1.25;font-weight:700}
+.verdict .call span{color:var(--red)}
+
+.columns{column-gap:32px;column-rule:1px solid var(--hair)}
+@media (min-width:640px){.columns{columns:2}}
+.columns p{margin:0 0 14px;text-align:justify;hyphens:auto}
+.columns p:first-child::first-letter{font-family:var(--display);font-weight:900;float:left;font-size:4.2em;line-height:.82;padding:6px 8px 0 0;color:var(--red)}
+
+.rail{border-top:3px solid var(--rule);margin-top:28px;padding-top:14px}
+@media (min-width:960px){.rail{border-top:0;border-left:1px solid var(--rule);margin-top:0;padding:0 0 0 28px}}
+.rail h2{font-family:var(--display);font-weight:900;font-size:1.6rem;line-height:1;margin:0 0 4px}
+.rail .sub{font-size:.8rem;color:var(--ink-soft);margin:0 0 16px;letter-spacing:.02em}
+.forecast{list-style:none;margin:0;padding:0}
+.forecast li{display:grid;grid-template-columns:1fr auto;gap:2px 10px;padding:10px 0;border-bottom:1px solid var(--hair)}
+.forecast .name{font-weight:700}
+.forecast .word{font-family:var(--display);font-weight:900;font-size:1.15rem;text-align:right}
+.forecast .sky{grid-column:1/-1;font-style:italic;font-size:.85rem;color:var(--ink-soft)}
+.bar{grid-column:1/-1;display:flex;gap:4px;margin-top:4px}
+.bar i{flex:1;height:8px;border:1px solid var(--rule);background:transparent}
+.bar i.on{background:var(--rule)}
+.js .bar i.on{transform-origin:left;transform:scaleX(0);transition:transform .6s cubic-bezier(.2,.7,.2,1)}
+.js .forecast.drawn .bar i.on{transform:scaleX(1)}
+.js .forecast.drawn li:nth-child(2) .bar i{transition-delay:.08s}
+.js .forecast.drawn li:nth-child(3) .bar i{transition-delay:.16s}
+.js .forecast.drawn li:nth-child(4) .bar i{transition-delay:.24s}
+.js .forecast.drawn li:nth-child(5) .bar i{transition-delay:.32s}
+.rail .notice{margin-top:22px;border:1px solid var(--rule);padding:12px 14px;font-size:.9rem}
+.rail .notice strong{display:block;font-family:var(--display);font-size:1.1rem;margin-bottom:4px}
+
+.section{margin-top:56px;border-top:6px double var(--rule);padding-top:14px}
+.section-head{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:4px 20px;margin-bottom:18px}
+.section h2{font-family:var(--display);font-weight:900;font-size:clamp(1.9rem,4.2vw,3.2rem);line-height:1;letter-spacing:-.015em;margin:0}
+.section-head p{margin:0;font-size:.85rem;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-soft)}
+
+.criteria{list-style:none;margin:0;padding:0;display:grid;gap:0}
+@media (min-width:768px){.criteria{grid-template-columns:repeat(3,1fr)}}
+.criteria li{padding:12px 0;border-bottom:1px solid var(--hair)}
+@media (min-width:768px){.criteria li{padding:12px 18px 12px 0}.criteria li:nth-child(3n+2),.criteria li:nth-child(3n){padding-left:18px;border-left:1px solid var(--hair)}}
+.criteria b{display:block;font-family:var(--display);font-size:1.2rem}
+.tag{display:inline-block;font-size:.7rem;letter-spacing:.12em;text-transform:uppercase;font-weight:700;padding:2px 6px;margin-left:6px;vertical-align:3px;border:1px solid var(--rule)}
+.tag.must{background:var(--red);color:var(--red-ink);border-color:var(--red)}
+.criteria span.why{font-size:.92rem;color:var(--ink-soft)}
+
+.table-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;border-top:2px solid var(--rule);border-bottom:2px solid var(--rule);margin-top:8px}
+table{border-collapse:collapse;width:100%;min-width:820px;font-size:.92rem}
+caption{text-align:left;font-size:.82rem;color:var(--ink-soft);padding:10px 0;caption-side:bottom}
+th,td{padding:12px 12px;vertical-align:top;text-align:left;border-bottom:1px solid var(--hair)}
+thead th{font-family:var(--display);font-weight:900;font-size:1.05rem;line-height:1.15;border-bottom:2px solid var(--rule)}
+tbody th{font-weight:700;width:150px}
+th[scope=row],thead th:first-child{position:sticky;left:0;background:var(--paper);z-index:1;box-shadow:1px 0 0 var(--rule)}
+td.best{background:var(--best)}
+td.best::after{content:"Best in row";display:block;margin-top:6px;font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;font-weight:700;color:var(--red)}
+td.nr{font-style:italic;color:var(--ink-soft)}
+
+.classifieds{display:grid;gap:0;border-top:1px solid var(--rule)}
+@media (min-width:700px){.classifieds{grid-template-columns:repeat(2,1fr)}}
+@media (min-width:1000px){.classifieds{grid-template-columns:repeat(6,1fr)}.ad{grid-column:span 2}.ad.wide{grid-column:span 3}}
+.ad{padding:16px 18px 18px 0;border-bottom:1px solid var(--rule)}
+@media (min-width:700px){.ad{padding:16px 18px}.ad:nth-child(odd){padding-left:0}}
+@media (min-width:1000px){.ad{border-right:1px solid var(--hair)}.ad:nth-child(odd){padding-left:18px}.ad:first-child,.ad:nth-child(4){padding-left:0}.ad:nth-child(3),.ad:nth-child(5){border-right:0}}
+.ad h3{font-family:var(--display);font-weight:900;font-size:1.45rem;line-height:1.05;margin:0 0 4px}
+.ad .line{font-family:var(--display);font-style:italic;margin:0 0 12px;color:var(--ink-soft)}
+.ad dl{margin:0;font-size:.93rem}
+.ad dt{font-size:.7rem;letter-spacing:.14em;text-transform:uppercase;font-weight:700;margin-top:10px}
+.ad dd{margin:2px 0 0}
+.ad.lead{background:var(--ink);color:var(--paper);padding:16px 18px 18px}
+.ad.lead .line{color:var(--paper)}
+.ad.lead code{background:rgba(127,127,127,.25);color:inherit}
+.ad.lead dt{color:var(--best)}
+@media (prefers-color-scheme:dark){.ad.lead dt{color:var(--red-ink)}}
+
+.editorial{display:grid;gap:24px}
+@media (min-width:900px){.editorial{grid-template-columns:minmax(0,2fr) minmax(0,1fr);gap:40px}}
+.editorial .body p{margin:0 0 14px;font-size:1.06em}
+.editorial .body p:first-child{font-family:var(--display);font-size:1.3em;line-height:1.35}
+.pull{font-family:var(--display);font-weight:900;font-style:italic;font-size:clamp(1.6rem,2.4vw + .8rem,2.4rem);line-height:1.1;margin:0;padding:16px 0;border-top:3px solid var(--red);border-bottom:3px solid var(--red);color:var(--red)}
+
+.footnote{margin-top:48px;border-top:1px solid var(--rule);padding-top:12px;font-size:.82rem;color:var(--ink-soft);display:grid;gap:6px}
+.footnote p{margin:0}
+
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{transition:none!important;animation:none!important}
+  .js .bar i.on{transform:none}
+}
+@media print{
+  :root{--paper:#fff;--paper-2:#f2f2f2;--ink:#000;--ink-soft:#333;--rule:#000;--best:#e8e8e8;--red:#000;--red-ink:#fff}
+  body{font-size:11pt}
+  .table-wrap{overflow:visible}
+  table{min-width:0}
+  th[scope=row],thead th:first-child{position:static;box-shadow:none}
+  .section,.ad{break-inside:avoid}
+  .js .bar i.on{transform:none}
+}
+</style>
+</head>
+<body>
+<div class="sheet">
+  <header>
+    <div class="ears" aria-hidden="true">
+      <span class="ear">Self-hosting desk</span>
+      <span class="ear right"><span class="ed-day">Day edition</span><span class="ed-night">Night edition</span></span>
+    </div>
+    <p class="masthead">The Daily <i>Dump</i></p>
+    <div class="dateline">
+      <span>Thursday, November 19, 2026</span>
+      <span>Exposure special: five ways out of the house</span>
+      <span>Price: <strong>check current plan limits</strong></span>
+    </div>
+  </header>
+
+  <main>
+    <div class="front">
+      <article>
+        <span class="kicker">Verdict</span>
+        <h1>Cloudflare takes the admin seat, <em>Tailscale</em> takes the shortcut</h1>
+        <p class="deck">Five ways to put a dumps server on the internet were weighed. Only two give the browser admin a login that dumpsd can actually verify.</p>
+
+        <section class="verdict" aria-labelledby="verdict-h">
+          <h2 id="verdict-h">The recommendation</h2>
+          <p class="call">Already have a domain on Cloudflare? Use <span>Cloudflare Tunnel and Access.</span> Otherwise, use <span>Tailscale Funnel and serve</span> for the lowest effort.</p>
+          <p><strong>The reason that decided it:</strong> native auth for the admin. dumpsd has a mode for Cloudflare Access (<code>access</code>) and a mode for Tailscale (<code>tailscale</code>). ngrok, frp and Caddy on a VPS have none, so with those you expose only the public listener and manage dumps from the CLI.</p>
+        </section>
+
+        <div class="columns">
+          <p>dumps asks very little of the layer that faces the internet. The public host has to reach Caddy on <code>127.0.0.1:8081</code>. If you want a browser admin, the admin host has to reach Caddy on <code>127.0.0.1:8080</code> behind a login that dumpsd can verify. Everything else is taste.</p>
+          <p>Cloudflare does it with no open inbound port: a tunnel carries two hostnames to two loopback listeners, and Access guards the admin one. Tailscale does it with less work: Funnel publishes the public listener on your <code>ts.net</code> name, and <code>tailscale serve</code> keeps the admin inside your tailnet, adding the header dumpsd trusts.</p>
+          <p>ngrok and frp will happily publish the public listener, but dumpsd cannot read their logins. Caddy on a VPS gives you any domain and automatic HTTPS with no third party in the traffic path, at the price of the most work.</p>
+          <p>For a public site with no admin UI, the docs are blunt: any option works.</p>
+        </div>
+      </article>
+
+      <aside class="rail" aria-labelledby="forecast-h">
+        <h2 id="forecast-h">Effort forecast</h2>
+        <p class="sub">Setup effort, in the docs' own words. Ordinal, not measured.</p>
+        <ul class="forecast" id="forecast">
+          <li><span class="name">Tailscale</span><span class="word">Low</span><span class="bar" aria-hidden="true"><i class="on"></i><i></i><i></i></span><span class="sky">Fair skies: two commands</span></li>
+          <li><span class="name">ngrok</span><span class="word">Low</span><span class="bar" aria-hidden="true"><i class="on"></i><i></i><i></i></span><span class="sky">Fair skies: public listener only</span></li>
+          <li><span class="name">Cloudflare</span><span class="word">Medium</span><span class="bar" aria-hidden="true"><i class="on"></i><i class="on"></i><i></i></span><span class="sky">Scattered setup: tunnel, DNS, Access app</span></li>
+          <li><span class="name">frp on a VPS</span><span class="word">Medium</span><span class="bar" aria-hidden="true"><i class="on"></i><i class="on"></i><i></i></span><span class="sky">Scattered setup: frps on the VPS, frpc at home</span></li>
+          <li><span class="name">Caddy on a VPS</span><span class="word">Higher</span><span class="bar" aria-hidden="true"><i class="on"></i><i class="on"></i><i class="on"></i></span><span class="sky">Heavy weather: VPS, tunnel, keep-alive</span></li>
+        </ul>
+        <div class="notice" role="note">
+          <strong>House rule</strong>
+          Never point the public hostname at the admin listener (<code>:8080</code>). The listing page has no login of its own, so anyone could read ids, titles, sizes and machine names, archived ones included.
+        </div>
+      </aside>
+    </div>
+
+    <section class="section" aria-labelledby="criteria-h">
+      <div class="section-head">
+        <h2 id="criteria-h">How the race was judged</h2>
+        <p>One must-have, the rest weighed by you</p>
+      </div>
+      <ul class="criteria">
+        <li><b>Native admin auth <span class="tag must">Must have</span></b><span class="why">Only if you want the browser admin. Without it, manage dumps from the CLI over ssh.</span></li>
+        <li><b>Setup effort <span class="tag">Weighed</span></b><span class="why">Low, Medium or Higher, as the docs rate it.</span></li>
+        <li><b>Custom domain <span class="tag">Weighed</span></b><span class="why">Your own name or the provider's.</span></li>
+        <li><b>Cost <span class="tag">Not ranked</span></b><span class="why">The docs say to check current plan limits, so no prices are quoted here.</span></li>
+        <li><b>Needs a VPS <span class="tag">Weighed</span></b><span class="why">One more machine to rent and keep alive.</span></li>
+        <li><b>Admin exposure rule <span class="tag">Context</span></b><span class="why">What the docs tell you to do with the admin listener.</span></li>
+      </ul>
+    </section>
+
+    <section class="section" aria-labelledby="table-h">
+      <div class="section-head">
+        <h2 id="table-h">The standings</h2>
+        <p>Options across, criteria down</p>
+      </div>
+      <div class="table-wrap" tabindex="0" role="region" aria-labelledby="table-h">
+        <table>
+          <caption>Best cell per row is shaded and labeled "Best in row". Cost is not ranked because the docs do not rank it. Swipe sideways on a phone; the criteria column stays put.</caption>
+          <thead>
+            <tr>
+              <th scope="col">Criterion</th>
+              <th scope="col">Cloudflare Tunnel and Access</th>
+              <th scope="col">Tailscale Funnel and serve</th>
+              <th scope="col">ngrok</th>
+              <th scope="col">frp on a VPS</th>
+              <th scope="col">Caddy on a VPS, WireGuard or ssh tunnel</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <th scope="row">Native admin auth</th>
+              <td class="best">Native: <code>DUMPS_AUTH=access</code></td>
+              <td class="best">Native: <code>DUMPS_AUTH=tailscale</code></td>
+              <td>None native. Its OAuth or basic auth can sit in front, but dumpsd cannot read an ngrok identity.</td>
+              <td>None native. dumpsd does not understand the frp login.</td>
+              <td>None native. Keep the admin listener off the VPS.</td>
+            </tr>
+            <tr>
+              <th scope="row">Setup effort</th>
+              <td>Medium: tunnel, DNS, Access app</td>
+              <td class="best">Low</td>
+              <td class="best">Low</td>
+              <td>Medium</td>
+              <td>Higher: VPS, tunnel, keep-alive</td>
+            </tr>
+            <tr>
+              <th scope="row">Custom domain</th>
+              <td class="best">Yes</td>
+              <td>Uses the <code>ts.net</code> name</td>
+              <td>Depends on the plan</td>
+              <td class="best">Yes</td>
+              <td class="best">Yes, with automatic HTTPS</td>
+            </tr>
+            <tr>
+              <th scope="row">Cost</th>
+              <td class="nr">A domain on Cloudflare; check current plan limits</td>
+              <td class="nr">Check current plan limits</td>
+              <td class="nr">Check current plan limits</td>
+              <td class="nr">A VPS</td>
+              <td class="nr">A VPS</td>
+            </tr>
+            <tr>
+              <th scope="row">Needs a VPS</th>
+              <td class="best">No</td>
+              <td class="best">No</td>
+              <td class="best">No</td>
+              <td>Yes, with a public IP</td>
+              <td>Yes</td>
+            </tr>
+            <tr>
+              <th scope="row">Admin exposure rule</th>
+              <td>Create the Access app before the DNS record, or the admin is briefly public</td>
+              <td>Admin only through <code>tailscale serve</code>, never through Funnel</td>
+              <td>Expose only the public listener</td>
+              <td>Expose only the public listener, unless you add your own authenticated layer</td>
+              <td>Admin off the VPS, or behind a mechanism dumpsd supports</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="section" aria-labelledby="ads-h">
+      <div class="section-head">
+        <h2 id="ads-h">Classifieds</h2>
+        <p>One notice per option</p>
+      </div>
+      <div class="classifieds">
+        <article class="ad lead wide">
+          <h3>Cloudflare Tunnel and Access</h3>
+          <p class="line">No open inbound port. Two hostnames, two listeners.</p>
+          <dl>
+            <dt>Best for</dt><dd>Anyone whose domain already lives on Cloudflare and who wants the browser admin.</dd>
+            <dt>Watch out for</dt><dd>Create the Access application for the admin hostname before its DNS record exists. Treat the tunnel credentials file as a secret. Do not put an Access app on the public hostname.</dd>
+            <dt>Cost</dt><dd>A domain on Cloudflare; check current plan limits.</dd>
+          </dl>
+        </article>
+        <article class="ad wide">
+          <h3>Tailscale Funnel and serve</h3>
+          <p class="line">Funnel the public port, serve the admin port.</p>
+          <dl>
+            <dt>Best for</dt><dd>The lowest setup effort that still gives the admin a native login.</dd>
+            <dt>Watch out for</dt><dd>You get the <code>ts.net</code> name, not your own domain. dumpsd trusts the header from any loopback connection, so only <code>tailscale serve</code> may reach the admin listener. <code>DUMPS_ADMIN_ORIGIN</code> must include the port. Use <code>DUMPS_TAILSCALE_ALLOW</code> if the tailnet has other people.</dd>
+            <dt>Cost</dt><dd>Check current plan limits.</dd>
+          </dl>
+        </article>
+        <article class="ad">
+          <h3>ngrok</h3>
+          <p class="line">A public URL for <code>8081</code>, fast.</p>
+          <dl>
+            <dt>Best for</dt><dd>A quick public listener when admin work happens over ssh.</dd>
+            <dt>Watch out for</dt><dd>Its login features are not something dumpsd can verify. Custom domains depend on your plan.</dd>
+            <dt>Cost</dt><dd>Check current plan limits.</dd>
+          </dl>
+        </article>
+        <article class="ad">
+          <h3>frp on a VPS</h3>
+          <p class="line"><code>frps</code> on the VPS, <code>frpc</code> at home.</p>
+          <dl>
+            <dt>Best for</dt><dd>A custom domain through a VPS with a public IP you already run.</dd>
+            <dt>Watch out for</dt><dd>No native admin auth. Expose only the public listener unless you add your own authenticated layer.</dd>
+            <dt>Cost</dt><dd>A VPS.</dd>
+          </dl>
+        </article>
+        <article class="ad">
+          <h3>Caddy on a VPS</h3>
+          <p class="line">Reached home through WireGuard or an ssh reverse tunnel.</p>
+          <dl>
+            <dt>Best for</dt><dd>The most control: any domain, automatic HTTPS, no third party in the traffic path.</dd>
+            <dt>Watch out for</dt><dd>The most work: VPS, tunnel and keep-alive. Keep the admin listener off the VPS.</dd>
+            <dt>Cost</dt><dd>A VPS.</dd>
+          </dl>
+        </article>
+      </div>
+    </section>
+
+    <section class="section" aria-labelledby="ed-h">
+      <div class="section-head">
+        <h2 id="ed-h">Editorial: what would change the decision</h2>
+        <p>Opinion</p>
+      </div>
+      <div class="editorial">
+        <div class="body">
+          <p>Drop the browser admin and the race opens up. dumps archive, unarchive, edit and rm run on the server over ssh, so anyone who already has ssh needs no login layer, and for a public site with no admin UI any option works.</p>
+          <p>Then pick on the other rows: ngrok for low effort, frp if you already rent a VPS, Caddy on a VPS if you want any domain with no third party in the traffic path and do not mind the most work. If your own domain is a hard requirement, Tailscale drops out, because Funnel serves your <code>ts.net</code> name. Keep the browser admin and want your own domain, and Cloudflare is the pick. Commands and plan limits of these tools change, so check their current docs before you commit.</p>
+        </div>
+        <p class="pull">Do not use <code>DUMPS_AUTH=none</code> to skip the login. The CLI refuses it for a service.</p>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footnote">
+    <p>Source: the dumps exposure docs (Cloudflare guide and the alternatives page). No prices are quoted because the docs say to check current plan limits. Effort ratings are the docs' Low, Medium and Higher; the bars only repeat those words. Hostnames such as <code>example.com</code> and <code>ts.net</code> names are placeholders.</p>
+    <p>Level 3 bold · art direction: newspaper front page · Playfair Display + Georgia</p>
+  </footer>
+</div>
+<script>
+(function(){
+  var root=document.documentElement;
+  var list=document.getElementById("forecast");
+  if(!list||!("IntersectionObserver" in window))return;
+  if(window.matchMedia&&window.matchMedia("(prefers-reduced-motion: reduce)").matches)return;
+  root.classList.add("js");
+  var io=new IntersectionObserver(function(entries){
+    entries.forEach(function(e){
+      if(e.isIntersecting){list.classList.add("drawn");io.disconnect();}
+    });
+  },{threshold:.3});
+  io.observe(list);
+})();
+</script>
+</body>
+</html>

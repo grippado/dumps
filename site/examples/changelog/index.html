@@ -1,0 +1,334 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>dumps launch day: first publish to open source in 3 h 55 min</title>
+<meta name="description" content="Everything that shipped in dumps on 19 November 2026, from the first publish at 17:39 to the open source release at 21:34, grouped into four milestones.">
+<style>
+:root{
+  color-scheme:light dark;
+  --bg:#f8f6f2;--surface:#fffdf9;--fg:#1d1b18;--mut:#69645c;--faint:#a39d93;
+  --line:#e4dfd6;--line-strong:#cfc8bc;
+  --acc:#b8431c;--acc-soft:#f6e4da;
+  --add:#2f6b4f;--chg:#3d5a8a;--fix:#8a5a12;
+  --warn-bg:#fbefe3;--warn-line:#e2b48f;
+  --mono:ui-monospace,"SF Mono",SFMono-Regular,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme:dark){
+  :root{
+    --bg:#141311;--surface:#1b1a17;--fg:#ece8e1;--mut:#a8a196;--faint:#78726a;
+    --line:#2c2a26;--line-strong:#3d3a34;
+    --acc:#f08a5d;--acc-soft:#3a2218;
+    --add:#7fc4a0;--chg:#93b0e0;--fix:#e0b46a;
+    --warn-bg:#2a1d14;--warn-line:#6b4228;
+  }
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--fg);font:17px/1.6 ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",sans-serif;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+a{color:var(--acc);text-decoration-thickness:1px;text-underline-offset:3px}
+a:hover{text-decoration-thickness:2px}
+:focus-visible{outline:2px solid var(--acc);outline-offset:3px;border-radius:3px}
+code{font-family:var(--mono);font-size:.88em;background:var(--acc-soft);color:var(--fg);padding:1px 6px;border-radius:4px;white-space:nowrap}
+.wrap{max-width:1040px;margin:0 auto;padding:0 16px}
+@media (min-width:768px){.wrap{padding:0 32px}}
+.num{font-variant-numeric:tabular-nums}
+
+header{padding:clamp(48px,9vw,104px) 0 0}
+.kicker{font-size:13px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--mut);margin:0 0 20px}
+.kicker span{color:var(--acc)}
+h1{font-size:clamp(34px,6vw,64px);line-height:1.04;letter-spacing:-.035em;font-weight:700;margin:0;max-width:16ch}
+h1 .t{color:var(--acc)}
+.lede{font-size:clamp(17px,1.9vw,19px);color:var(--mut);max-width:58ch;margin:22px 0 0}
+
+.kpis{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));border-top:1px solid var(--line-strong);border-bottom:1px solid var(--line);margin:clamp(36px,6vw,56px) 0 0}
+.kpi{padding:18px 0 16px}
+.kpi+.kpi{padding-left:16px;border-left:1px solid var(--line)}
+@media (min-width:768px){.kpi+.kpi{padding-left:28px}}
+.kpi b{display:block;font-size:clamp(28px,4.6vw,44px);line-height:1;letter-spacing:-.03em;font-weight:650;font-variant-numeric:tabular-nums}
+.kpi small{display:block;margin-top:8px;font-size:13px;color:var(--mut);line-height:1.35}
+
+.ruler{margin:36px 0 0;padding:0 0 8px}
+.ruler-head{display:flex;justify-content:space-between;align-items:baseline;gap:12px;font-size:13px;color:var(--mut);margin-bottom:14px}
+.legend{display:flex;gap:14px;flex-wrap:wrap}
+.legend i{display:inline-block;width:2px;height:10px;margin-right:6px;vertical-align:-1px;background:var(--fg)}
+.legend .lf i{background:var(--fix);height:7px}
+.legend .lb i{background:var(--acc);width:6px;height:6px;border-radius:50%;vertical-align:1px}
+.track{position:relative;height:74px}
+.band{position:absolute;top:0;height:46px;border-left:1px solid var(--line-strong);background:linear-gradient(to bottom,color-mix(in srgb,var(--line) 55%,transparent),transparent)}
+.band span{position:absolute;top:4px;left:6px;font-size:11px;font-weight:600;letter-spacing:.02em;color:var(--mut);white-space:nowrap}
+.axis{position:absolute;left:0;right:0;top:46px;border-top:1px solid var(--line-strong)}
+.tick{position:absolute;bottom:28px;width:2px;height:22px;margin-left:-1px;background:var(--fg);transform-origin:bottom;border-radius:1px}
+.tick.fix{height:13px;background:var(--fix)}
+.tick.brk::after{content:"";position:absolute;left:50%;top:-9px;width:7px;height:7px;margin-left:-3.5px;border-radius:50%;background:var(--acc)}
+.hour{position:absolute;top:52px;font-size:11px;color:var(--faint);transform:translateX(-50%);font-variant-numeric:tabular-nums}
+.hour::before{content:"";position:absolute;left:50%;top:-6px;height:4px;border-left:1px solid var(--line-strong)}
+@media (max-width:560px){.band span{display:none}}
+
+.toc{display:flex;flex-wrap:wrap;gap:8px 20px;margin:28px 0 0;padding:0;list-style:none;font-size:14px}
+.toc a{color:var(--fg);text-decoration:none;border-bottom:1px solid var(--line-strong);padding-bottom:1px}
+.toc a:hover{border-color:var(--acc);color:var(--acc)}
+.toc .num{color:var(--faint);margin-right:6px}
+
+main{padding-bottom:40px}
+.release{display:grid;grid-template-columns:1fr;gap:20px;padding:clamp(44px,7vw,72px) 0;border-top:1px solid var(--line)}
+.release:first-of-type{border-top:0}
+@media (min-width:860px){.release{grid-template-columns:250px minmax(0,1fr);gap:56px}}
+.meta{align-self:start}
+@media (min-width:860px){.meta{position:sticky;top:28px}}
+.meta .idx{font-size:13px;color:var(--faint);font-variant-numeric:tabular-nums;margin:0 0 6px}
+.meta h2{font-size:clamp(24px,3vw,30px);letter-spacing:-.025em;line-height:1.12;margin:0;font-weight:680}
+.meta h2 a{color:inherit;text-decoration:none}
+.meta h2 a:hover .hash{opacity:1}
+.hash{color:var(--faint);font-weight:400;opacity:0;transition:opacity .15s;margin-left:6px}
+.meta .when{margin:10px 0 0;font-size:14px;color:var(--mut);font-variant-numeric:tabular-nums}
+.meta .refs{margin:14px 0 0;padding:0;list-style:none;font-size:13px;line-height:1.9}
+.meta .refs a{font-family:var(--mono);font-size:12.5px}
+.badge{display:inline-block;font-size:11px;font-weight:650;letter-spacing:.06em;text-transform:uppercase;color:var(--acc);border:1px solid currentColor;border-radius:999px;padding:1px 9px;margin-top:14px}
+
+.summary{font-size:clamp(18px,2vw,20px);line-height:1.55;margin:0 0 30px;max-width:56ch;letter-spacing:-.005em}
+.group+.group{margin-top:30px}
+.group h3{display:flex;align-items:center;gap:10px;font-size:12px;font-weight:650;letter-spacing:.09em;text-transform:uppercase;margin:0 0 6px;color:var(--mut)}
+.group h3::before{content:"";width:8px;height:8px;border-radius:2px;background:currentColor}
+.group.added h3{color:var(--add)}.group.changed h3{color:var(--chg)}.group.fixed h3{color:var(--fix)}
+.group h3 small{font-weight:500;letter-spacing:0;text-transform:none;color:var(--faint);font-size:12px}
+ul.changes{list-style:none;margin:0;padding:0}
+ul.changes li{display:grid;grid-template-columns:52px minmax(0,1fr);gap:12px;padding:11px 0;border-bottom:1px solid var(--line)}
+ul.changes li:last-child{border-bottom:0}
+ul.changes time{font-family:var(--mono);font-size:13px;color:var(--faint);padding-top:3px;font-variant-numeric:tabular-nums}
+ul.changes p{margin:0}
+
+.warn{margin:0 0 32px;padding:18px 20px;background:var(--warn-bg);border:1px solid var(--warn-line);border-left:3px solid var(--acc);border-radius:6px}
+.warn strong{display:block;font-size:12px;letter-spacing:.09em;text-transform:uppercase;color:var(--acc);margin-bottom:6px}
+.warn p{margin:0}
+.warn p+p{margin-top:8px;color:var(--mut);font-size:15px}
+
+footer{border-top:1px solid var(--line-strong);padding:24px 0 48px;font-size:14px;color:var(--mut)}
+footer p{margin:0 0 8px;max-width:70ch}
+footer .colophon{margin-top:18px;font-size:12px;color:var(--faint);letter-spacing:.01em}
+
+.reveal{opacity:1}
+@media (prefers-reduced-motion:no-preference){
+  .js .reveal{opacity:0;transform:translateY(10px);transition:opacity .6s ease,transform .6s ease}
+  .js .reveal.in{opacity:1;transform:none}
+  .js .tick{transform:scaleY(0);transition:transform .5s cubic-bezier(.2,.7,.2,1)}
+  .js .track.in .tick{transform:scaleY(1)}
+}
+@media print{
+  .toc,.ruler{display:none}
+  .meta{position:static}
+  body{background:#fff;color:#000}
+  .release{break-inside:avoid-page}
+}
+</style>
+</head>
+<body>
+<header class="wrap">
+  <p class="kicker">Changelog <span>·</span> 19 November 2026</p>
+  <h1>From first publish to open source in <span class="t num">3 h 55 min</span>.</h1>
+  <p class="lede">Launch day for dumps: a CLI that turned one HTML file into a link at 17:39 became, by 21:34, an MIT project with a browser admin, a Go core, link previews and a skill any AI agent can use.</p>
+
+  <div class="kpis" role="list">
+    <div class="kpi" role="listitem"><b>15</b><small>timestamped ships</small></div>
+    <div class="kpi" role="listitem"><b>4</b><small>milestones</small></div>
+    <div class="kpi" role="listitem"><b>1</b><small>breaking change, at 20:51</small></div>
+  </div>
+
+  <figure class="ruler" aria-label="Timeline of the 15 ships between 17:39 and 21:34">
+    <figcaption class="ruler-head">
+      <span>Every ship on one ruler, local time (UTC−3)</span>
+      <span class="legend" aria-hidden="true"><span><i></i>ship</span><span class="lf"><i></i>fix</span><span class="lb"><i></i>breaking</span></span>
+    </figcaption>
+    <div class="track" aria-hidden="true">
+      <div class="band" style="left:3.53%;width:29.80%"><span>First publish</span></div>
+      <div class="band" style="left:40.00%;width:14.51%"><span>Previews</span></div>
+      <div class="band" style="left:61.57%;width:17.25%"><span>Admin, Go</span></div>
+      <div class="band" style="left:88.63%;width:7.06%"><span>OSS</span></div>
+      <div class="axis"></div>
+      <i class="tick" style="left:3.53%"></i>
+      <i class="tick fix" style="left:4.71%"></i>
+      <i class="tick" style="left:13.33%"></i>
+      <i class="tick" style="left:19.61%"></i>
+      <i class="tick" style="left:26.67%"></i>
+      <i class="tick" style="left:33.33%"></i>
+      <i class="tick" style="left:40.00%"></i>
+      <i class="tick" style="left:47.06%"></i>
+      <i class="tick fix" style="left:49.02%"></i>
+      <i class="tick fix" style="left:54.51%"></i>
+      <i class="tick" style="left:61.57%"></i>
+      <i class="tick" style="left:70.59%"></i>
+      <i class="tick brk" style="left:78.82%"></i>
+      <i class="tick" style="left:88.63%"></i>
+      <i class="tick" style="left:95.69%"></i>
+      <span class="hour" style="left:11.76%">18:00</span>
+      <span class="hour" style="left:35.29%">19:00</span>
+      <span class="hour" style="left:58.82%">20:00</span>
+      <span class="hour" style="left:82.35%">21:00</span>
+    </div>
+  </figure>
+
+  <nav aria-label="Milestones">
+    <ol class="toc">
+      <li><a href="#open-source"><span class="num">04</span>Open source</a></li>
+      <li><a href="#admin-and-go-core"><span class="num">03</span>Admin and Go core</a></li>
+      <li><a href="#previews-and-analytics"><span class="num">02</span>Previews and analytics</a></li>
+      <li><a href="#first-publish"><span class="num">01</span>First publish</a></li>
+    </ol>
+  </nav>
+</header>
+
+<main class="wrap">
+
+  <section class="release reveal" id="open-source" aria-labelledby="h-oss">
+    <div class="meta">
+      <p class="idx">Milestone 04 · latest</p>
+      <h2 id="h-oss"><a href="#open-source">Open source<span class="hash" aria-hidden="true">#</span></a></h2>
+      <p class="when"><time datetime="2026-11-19T21:16-03:00">21:16</time> to <time datetime="2026-11-19T21:34-03:00">21:34</time></p>
+      <ul class="refs">
+        <li><a href="https://github.com/grippado/dumps/commit/e1fd5d6341baa0fa381e46aa4754ef384cad8b47">e1fd5d6</a> initial release</li>
+        <li><a href="https://github.com/grippado/dumps/commit/30f05b43ba77f8eca7c54f9c35804e0f560212b4">30f05b4</a> dump-this skill</li>
+        <li><a href="https://github.com/grippado/dumps/pull/1">Pull request #1</a></li>
+      </ul>
+      <span class="badge">MIT</span>
+    </div>
+    <div>
+      <p class="summary">dumps is now public at <a href="https://github.com/grippado/dumps">github.com/grippado/dumps</a>. Anyone can run it on their own domain, read the docs in English or Portuguese, and let an AI agent make the pages, with or without a dumps server behind it.</p>
+
+      <div class="group added">
+        <h3>Added <small>6</small></h3>
+        <ul class="changes">
+          <li><time datetime="2026-11-19T21:34-03:00">21:34</time><p>The <code>dump-this</code> skill works in any agent harness, even with no dumps server: it returns the page as HTML or an artifact.</p></li>
+          <li><time datetime="2026-11-19T21:34-03:00">21:34</time><p>Specialist recipes for reports, stories, slides, dashboards, docs, comparisons, changelogs and landing pages.</p></li>
+          <li><time datetime="2026-11-19T21:34-03:00">21:34</time><p>Skill downloads ready for claude.ai and ChatGPT.</p></li>
+          <li><time datetime="2026-11-19T21:16-03:00">21:16</time><p>Source code published under the MIT license, with documentation in English and Portuguese and a landing page.</p></li>
+          <li><time datetime="2026-11-19T21:16-03:00">21:16</time><p>Continuous integration on the repository.</p></li>
+          <li><time datetime="2026-11-19T21:16-03:00">21:16</time><p>Local mode: run dumps on your machine, with the dumps and the admin served from separate origins.</p></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="release reveal" id="admin-and-go-core" aria-labelledby="h-admin">
+    <div class="meta">
+      <p class="idx">Milestone 03</p>
+      <h2 id="h-admin"><a href="#admin-and-go-core">Admin and Go core<span class="hash" aria-hidden="true">#</span></a></h2>
+      <p class="when"><time datetime="2026-11-19T20:07-03:00">20:07</time> to <time datetime="2026-11-19T20:51-03:00">20:51</time></p>
+      <span class="badge">Breaking</span>
+    </div>
+    <div>
+      <div class="warn" role="note" aria-label="Breaking change">
+        <strong>Breaking change · 20:51</strong>
+        <p>The server now needs the new <code>dumpsd</code> binary before you can publish. Run <code>dumps install-dumpsd</code> on the server once, then publish as usual.</p>
+        <p>The top bar, footer and Open Graph tags are now injected on the server, so a server running the older binary would serve pages without them.</p>
+      </div>
+
+      <div class="group added">
+        <h3>Added <small>1</small></h3>
+        <ul class="changes">
+          <li><time datetime="2026-11-19T20:32-03:00">20:32</time><p>Admin in the browser: archive, unarchive, rename and delete dumps, protected by Cloudflare Access.</p></li>
+        </ul>
+      </div>
+
+      <div class="group changed">
+        <h3>Changed <small>4</small></h3>
+        <ul class="changes">
+          <li><time datetime="2026-11-19T20:51-03:00">20:51</time><p>The top bar, footer and Open Graph injection moved into the Go binary on the server.</p></li>
+          <li><time datetime="2026-11-19T20:51-03:00">20:51</time><p>Thumbnails are taken from the raw page, as you wrote it.</p></li>
+          <li><time datetime="2026-11-19T20:32-03:00">20:32</time><p>The CLI and the admin share one lock, so their edits never overlap.</p></li>
+          <li><time datetime="2026-11-19T20:07-03:00">20:07</time><p><code>dumpsd</code>, a Go binary, is now the single writer of the home page and the listing. Its output is byte-identical to before.</p></li>
+        </ul>
+      </div>
+
+      <div class="group fixed">
+        <h3>Fixed <small>2</small></h3>
+        <ul class="changes">
+          <li><time datetime="2026-11-19T20:51-03:00">20:51</time><p>Read-only files no longer get in the way of publishing.</p></li>
+          <li><time datetime="2026-11-19T20:07-03:00">20:07</time><p>Concurrent publishes no longer lose updates.</p></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="release reveal" id="previews-and-analytics" aria-labelledby="h-prev">
+    <div class="meta">
+      <p class="idx">Milestone 02</p>
+      <h2 id="h-prev"><a href="#previews-and-analytics">Previews and analytics<span class="hash" aria-hidden="true">#</span></a></h2>
+      <p class="when"><time datetime="2026-11-19T19:12-03:00">19:12</time> to <time datetime="2026-11-19T19:49-03:00">19:49</time></p>
+    </div>
+    <div>
+      <div class="group added">
+        <h3>Added <small>3</small></h3>
+        <ul class="changes">
+          <li><time datetime="2026-11-19T19:30-03:00">19:30</time><p>Optional Google Analytics 4: page views, shares per channel and clean mode.</p></li>
+          <li><time datetime="2026-11-19T19:12-03:00">19:12</time><p><code>--hidden</code> publishing: the link works, and the dump stays off the public home.</p></li>
+          <li><time datetime="2026-11-19T19:12-03:00">19:12</time><p>Open Graph link previews, so a shared dump shows its title, description and image.</p></li>
+        </ul>
+      </div>
+
+      <div class="group fixed">
+        <h3>Fixed <small>2</small></h3>
+        <ul class="changes">
+          <li><time datetime="2026-11-19T19:49-03:00">19:49</time><p>Open Graph tags hold up with third-party HTML: <code>.htm</code> files, accented file names, comments and quotes.</p></li>
+          <li><time datetime="2026-11-19T19:35-03:00">19:35</time><p>Each publish uses its own temporary file.</p></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="release reveal" id="first-publish" aria-labelledby="h-first">
+    <div class="meta">
+      <p class="idx">Milestone 01</p>
+      <h2 id="h-first"><a href="#first-publish">First publish<span class="hash" aria-hidden="true">#</span></a></h2>
+      <p class="when"><time datetime="2026-11-19T17:39-03:00">17:39</time> to <time datetime="2026-11-19T18:55-03:00">18:55</time></p>
+    </div>
+    <div>
+      <div class="group added">
+        <h3>Added <small>7</small></h3>
+        <ul class="changes">
+          <li><time datetime="2026-11-19T18:55-03:00">18:55</time><p>Archive, unarchive and rename from the CLI.</p></li>
+          <li><time datetime="2026-11-19T18:38-03:00">18:38</time><p>Public home with thumbnails, in grid or list view.</p></li>
+          <li><time datetime="2026-11-19T18:38-03:00">18:38</time><p>Clean URLs, without <code>.html</code>.</p></li>
+          <li><time datetime="2026-11-19T18:38-03:00">18:38</time><p>Clean mode, with Esc as the shortcut.</p></li>
+          <li><time datetime="2026-11-19T18:20-03:00">18:20</time><p>Fixed top bar and footer, with configurable authors.</p></li>
+          <li><time datetime="2026-11-19T18:04-03:00">18:04</time><p>Share bar in every dump: native share on phones, WhatsApp, Telegram and copy link.</p></li>
+          <li><time datetime="2026-11-19T17:39-03:00">17:39</time><p>First release: the public origin and the <code>dumps</code> CLI, with <code>publish</code>, <code>list</code> and <code>rm</code>.</p></li>
+        </ul>
+      </div>
+
+      <div class="group changed">
+        <h3>Changed <small>1</small></h3>
+        <ul class="changes">
+          <li><time datetime="2026-11-19T18:55-03:00">18:55</time><p>Republishing a dump keeps its archived state and its new name.</p></li>
+        </ul>
+      </div>
+
+      <div class="group fixed">
+        <h3>Fixed <small>1</small></h3>
+        <ul class="changes">
+          <li><time datetime="2026-11-19T17:42-03:00">17:42</time><p>Publishing is blocked only for the folders you configured.</p></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="wrap">
+  <p>Milestones are editorial groupings of one day of work, not tagged versions. Times are local (UTC−3). Work before 21:16 landed in the open source history as a single commit, so only the last milestone links to individual commits.</p>
+  <p class="colophon">Level 2 refined · concept: launch day on a single ruler · system grotesk with tabular numbers, no web fonts</p>
+</footer>
+
+<script>
+(function(){
+  var d=document.documentElement;d.classList.add('js');
+  var els=[].slice.call(document.querySelectorAll('.reveal,.track'));
+  if(!('IntersectionObserver' in window)){els.forEach(function(e){e.classList.add('in')});return;}
+  var io=new IntersectionObserver(function(entries){
+    entries.forEach(function(en){if(en.isIntersecting){en.target.classList.add('in');io.unobserve(en.target);}});
+  },{rootMargin:'0px 0px -8% 0px'});
+  els.forEach(function(e){io.observe(e)});
+})();
+</script>
+</body>
+</html>

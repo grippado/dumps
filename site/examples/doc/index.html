@@ -1,0 +1,461 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Publish your first dump locally, in five minutes</title>
+<meta name="description" content="A step-by-step guide to installing dumps on your own machine, publishing a page and browsing it on localhost, with a command reference and troubleshooting.">
+<style>
+:root{
+  color-scheme:light dark;
+  --bg:#faf9f7;--surface:#ffffff;--sunk:#f3f1ee;
+  --fg:#1d1b19;--mut:#625d57;--faint:#8c867f;
+  --line:#e6e2dc;--line-strong:#d4cec6;
+  --acc:#5b3fd1;--acc-soft:#efebfd;--acc-ink:#4a30b8;
+  --ok:#1f6f43;--ok-soft:#e8f3ec;
+  --warn:#8a5a00;--warn-soft:#fbf1dc;
+  --danger:#a12a2a;--danger-soft:#fbe9e7;
+  --code-bg:#f5f3f0;
+  --sans:ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,"Helvetica Neue",Arial,sans-serif;
+  --mono:ui-monospace,SFMono-Regular,"SF Mono",Menlo,Consolas,"Liberation Mono",monospace;
+}
+@media (prefers-color-scheme:dark){
+  :root{
+    --bg:#141312;--surface:#1b1a18;--sunk:#211f1d;
+    --fg:#ece9e4;--mut:#aaa39a;--faint:#857e76;
+    --line:#2c2a27;--line-strong:#3a3733;
+    --acc:#a593ff;--acc-soft:#25213a;--acc-ink:#c2b6ff;
+    --ok:#7fcf9e;--ok-soft:#17261d;
+    --warn:#e6b85c;--warn-soft:#2a2213;
+    --danger:#f08f86;--danger-soft:#2c1817;
+    --code-bg:#1f1d1b;
+  }
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%;scroll-behavior:smooth;scroll-padding-top:24px}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+body{margin:0;background:var(--bg);color:var(--fg);font:400 17px/1.6 var(--sans);font-feature-settings:"tnum" 1}
+a{color:var(--acc-ink);text-decoration-thickness:1px;text-underline-offset:3px}
+a:hover{text-decoration-thickness:2px}
+:focus-visible{outline:2px solid var(--acc);outline-offset:2px;border-radius:4px}
+code,kbd{font-family:var(--mono);font-size:.88em}
+p code,li code,td code,h3 code,.callout code{background:var(--code-bg);border:1px solid var(--line);border-radius:5px;padding:.08em .36em;white-space:nowrap}
+td code{white-space:normal;word-break:break-word}
+
+.wrap{max-width:1120px;margin:0 auto;padding:0 16px}
+@media (min-width:768px){.wrap{padding:0 32px}}
+
+header.masthead{padding:56px 0 40px;border-bottom:1px solid var(--line)}
+.eyebrow{display:flex;flex-wrap:wrap;gap:8px 16px;align-items:center;font-size:13px;color:var(--mut);letter-spacing:.02em;margin:0 0 24px}
+.eyebrow .tag{color:var(--acc-ink);background:var(--acc-soft);border-radius:999px;padding:3px 10px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;font-size:11px}
+h1{font-size:clamp(34px,5.6vw,60px);line-height:1.04;letter-spacing:-.035em;font-weight:680;margin:0;max-width:16ch}
+h1 em{font-style:normal;color:var(--acc)}
+.lede{font-size:clamp(18px,2vw,20px);color:var(--mut);max-width:58ch;margin:20px 0 0}
+.lede strong{color:var(--fg);font-weight:600}
+
+.clock{margin:36px 0 0;display:grid;grid-template-columns:repeat(5,1fr);gap:0;max-width:720px;border-top:1px solid var(--line-strong)}
+.clock li{list-style:none;position:relative;padding:14px 12px 0 0;font-size:13px;color:var(--mut);line-height:1.35}
+.clock li::before{content:"";position:absolute;top:-4px;left:0;width:7px;height:7px;border-radius:50%;background:var(--bg);border:1.5px solid var(--acc)}
+.clock li:last-child::before{background:var(--acc)}
+.clock b{display:block;font:600 12px/1 var(--mono);color:var(--fg);margin-bottom:6px;letter-spacing:.02em}
+.clock-note{font-size:12px;color:var(--faint);margin:14px 0 0}
+@media (max-width:560px){
+  .clock{grid-template-columns:1fr;border-top:0;border-left:1px solid var(--line-strong);padding-left:16px;gap:10px}
+  .clock li{padding:0}
+  .clock li::before{top:5px;left:-20px}
+  .clock b{display:inline;margin-right:8px}
+}
+
+.layout{display:block;padding:40px 0 80px}
+@media (min-width:980px){.layout{display:grid;grid-template-columns:220px minmax(0,720px);gap:72px;justify-content:start}}
+
+nav.toc{margin:0 0 40px;padding:16px;border:1px solid var(--line);border-radius:10px;background:var(--surface)}
+nav.toc h2{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--faint);margin:0 0 10px;font-weight:600}
+nav.toc ol{list-style:none;margin:0;padding:0}
+nav.toc li{margin:0}
+nav.toc a{display:block;padding:5px 0 5px 12px;border-left:1.5px solid var(--line);color:var(--mut);text-decoration:none;font-size:14px;line-height:1.35}
+nav.toc li.sub a{padding-left:24px;font-size:13px}
+nav.toc a:hover{color:var(--fg)}
+nav.toc a.active{color:var(--acc-ink);border-left-color:var(--acc);font-weight:550}
+@media (min-width:980px){
+  nav.toc{position:sticky;top:24px;align-self:start;margin:0;padding:0;border:0;background:none;max-height:calc(100vh - 48px);overflow:auto}
+}
+
+main h2{font-size:clamp(24px,3vw,30px);letter-spacing:-.02em;line-height:1.2;font-weight:650;margin:64px 0 14px;padding-top:24px;border-top:1px solid var(--line)}
+main section:first-child h2{margin-top:0;border-top:0;padding-top:0}
+main h3{font-size:18px;letter-spacing:-.01em;margin:36px 0 8px;font-weight:620}
+main p,main li{max-width:68ch}
+main ul{padding-left:20px}
+main li{margin:4px 0}
+.mut{color:var(--mut)}
+
+.tldr{border:1px solid var(--line);border-radius:12px;background:var(--surface);padding:20px 22px}
+.tldr p{margin:0 0 12px}
+.tldr p:last-child{margin:0}
+.tldr .k{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--faint);font-weight:600;margin-bottom:6px}
+
+ol.steps{list-style:none;padding:0;margin:24px 0 0;counter-reset:step}
+ol.steps>li{counter-increment:step;position:relative;padding:0 0 36px 52px;max-width:none}
+ol.steps>li::before{content:counter(step);position:absolute;left:0;top:0;width:32px;height:32px;border-radius:50%;border:1px solid var(--line-strong);background:var(--surface);display:grid;place-items:center;font:600 13px/1 var(--mono);color:var(--fg)}
+ol.steps>li::after{content:"";position:absolute;left:16px;top:40px;bottom:8px;width:1px;background:var(--line)}
+ol.steps>li:last-child::after{display:none}
+ol.steps h3{margin:4px 0 6px;font-size:18px}
+ol.steps p{margin:6px 0}
+@media (max-width:480px){ol.steps>li{padding-left:44px}ol.steps>li::before{width:28px;height:28px}ol.steps>li::after{left:14px;top:36px}}
+
+.code{position:relative;margin:12px 0;border:1px solid var(--line);border-radius:10px;background:var(--code-bg);overflow:hidden}
+.code pre{margin:0;padding:14px 92px 14px 16px;overflow-x:auto;font:14px/1.55 var(--mono);color:var(--fg)}
+.code pre .p{color:var(--faint);user-select:none}
+.copy{position:absolute;top:8px;right:8px;font:500 12px/1 var(--sans);color:var(--mut);background:var(--surface);border:1px solid var(--line-strong);border-radius:6px;padding:7px 10px;cursor:pointer;min-width:64px}
+.copy:hover{color:var(--fg);border-color:var(--faint)}
+.copy[data-state="done"]{color:var(--ok);border-color:var(--ok)}
+
+.result{display:flex;gap:10px;align-items:flex-start;margin:10px 0 0;font-size:15px;color:var(--mut)}
+.result .dot{flex:0 0 auto;margin-top:7px;width:8px;height:8px;border-radius:50%;background:var(--ok)}
+.out{margin:8px 0 0;padding:10px 14px;border-left:2px solid var(--ok);background:var(--ok-soft);border-radius:0 8px 8px 0;font:13.5px/1.55 var(--mono);color:var(--fg);overflow-x:auto;white-space:pre}
+.out .c{color:var(--mut)}
+
+.callout{margin:20px 0;padding:14px 16px 14px 18px;border:1px solid var(--line);border-left-width:3px;border-radius:8px;background:var(--surface);font-size:15.5px}
+.callout p{margin:0}
+.callout p+p{margin-top:6px}
+.callout .lbl{font-size:11px;letter-spacing:.08em;text-transform:uppercase;font-weight:700;display:block;margin-bottom:4px}
+.callout.note{border-left-color:var(--acc)}
+.callout.note .lbl{color:var(--acc-ink)}
+.callout.warn{border-left-color:var(--warn);background:var(--warn-soft)}
+.callout.warn .lbl{color:var(--warn)}
+.callout.danger{border-left-color:var(--danger);background:var(--danger-soft)}
+.callout.danger .lbl{color:var(--danger)}
+
+.table{margin:16px 0;border:1px solid var(--line);border-radius:10px;overflow-x:auto;background:var(--surface)}
+table{border-collapse:collapse;width:100%;font-size:14.5px;line-height:1.45}
+th,td{text-align:left;vertical-align:top;padding:10px 14px;border-bottom:1px solid var(--line)}
+th{font-size:11px;letter-spacing:.07em;text-transform:uppercase;color:var(--faint);font-weight:600;background:var(--sunk)}
+tr:last-child td{border-bottom:0}
+td:first-child{white-space:nowrap}
+td:first-child code{white-space:nowrap}
+@media (max-width:640px){td:first-child{white-space:normal}}
+
+dl.trouble{margin:16px 0 0}
+dl.trouble dt{font-weight:620;margin:24px 0 6px}
+dl.trouble dt code{font-weight:500}
+dl.trouble dd{margin:0;color:var(--fg);max-width:68ch}
+dl.trouble dd p{margin:6px 0}
+
+footer.colophon{border-top:1px solid var(--line);padding:24px 0 48px;font-size:13px;color:var(--faint)}
+footer.colophon p{margin:4px 0}
+
+.reveal{opacity:0;transform:translateY(6px);transition:opacity .5s ease,transform .5s ease}
+.reveal.in{opacity:1;transform:none}
+@media (prefers-reduced-motion:reduce){.reveal{opacity:1;transform:none;transition:none}}
+
+@media print{
+  nav.toc,.copy{display:none!important}
+  body{background:#fff;color:#000;font-size:12pt}
+  .layout{display:block}
+  .reveal{opacity:1;transform:none}
+  .code pre{padding-right:16px;white-space:pre-wrap}
+  a{color:#000}
+  main h2{break-after:avoid}
+  ol.steps>li{break-inside:avoid}
+}
+</style>
+</head>
+<body>
+
+<header class="masthead">
+  <div class="wrap">
+    <p class="eyebrow"><span class="tag">How-to</span><span>Local mode</span><span>Last updated <time datetime="2026-11-19">19 Nov 2026</time></span></p>
+    <h1>Publish your first dump <em>locally</em>, in five minutes.</h1>
+    <p class="lede">For anyone who wants to try <strong>dumps</strong> without a server, a tunnel or a login. You will build one small binary, publish an HTML page and open it at <code>localhost</code>, all on your own machine.</p>
+    <ol class="clock" aria-label="The path at a glance">
+      <li><b>01</b>Clone the repo</li>
+      <li><b>02</b>Build dumpsd</li>
+      <li><b>03</b>Write a page</li>
+      <li><b>04</b>Publish it</li>
+      <li><b>05</b>Serve and open</li>
+    </ol>
+    <p class="clock-note">Five steps. "Five minutes" assumes Go is already installed; the first build also runs the Go tests.</p>
+  </div>
+</header>
+
+<div class="wrap layout">
+  <nav class="toc" aria-label="On this page">
+    <h2>On this page</h2>
+    <ol id="toc-list"></ol>
+  </nav>
+
+  <main id="content">
+    <section>
+      <h2 id="tldr">The short version</h2>
+      <div class="tldr">
+        <p class="k">Four commands, from inside the cloned repo</p>
+        <p><code>cli/dumps install-dumpsd</code>, then <code>cli/dumps publish ./page.html</code>, then <code>cli/dumps serve-local</code>, then open <a href="http://localhost:8090">http://localhost:8090</a>.</p>
+        <p class="mut">Local mode is the default (<code>DUMPS_HOST=local</code>), so there is no config file to write.</p>
+      </div>
+    </section>
+
+    <section>
+      <h2 id="requirements">Before you start</h2>
+      <p>Local mode runs on macOS and Linux. It needs:</p>
+      <ul>
+        <li><code>bash</code>, <code>jq</code>, <code>rsync</code> and <code>python3</code>.</li>
+        <li><strong>Go</strong>, at the version in <code>server/go.mod</code> (currently <code>go 1.26</code>), to build <code>dumpsd</code>.</li>
+        <li>Optional, for thumbnails: Chrome or Chromium, plus <code>sips</code> (built into macOS) or ImageMagick (Linux).</li>
+      </ul>
+      <div class="callout note">
+        <span class="lbl">Note</span>
+        <p>Without a browser or a resizer, publishing still works. The home just shows a placeholder card with the first letter of the title.</p>
+      </div>
+    </section>
+
+    <section>
+      <h2 id="steps">Step by step</h2>
+      <ol class="steps">
+        <li class="reveal">
+          <h3 id="step-clone">Clone the repository</h3>
+          <div class="code"><pre><code>git clone https://github.com/grippado/dumps.git</code></pre></div>
+          <div class="code"><pre><code>cd dumps</code></pre></div>
+          <p class="result"><span class="dot" aria-hidden="true"></span><span>You are at the repo root, where <code>cli/dumps</code> lives. Every command below runs from here.</span></p>
+        </li>
+
+        <li class="reveal">
+          <h3 id="step-build">Build and install dumpsd</h3>
+          <p>This runs the Go tests, builds <code>dumpsd</code> for the current machine and installs it into the local root, <code>~/.local/share/dumps/bin</code>. There is no need to run <code>make build</code>.</p>
+          <div class="code"><pre><code>cli/dumps install-dumpsd</code></pre></div>
+          <p class="result"><span class="dot" aria-hidden="true"></span><span>The command ends by printing the installed <code>dumpsd</code> version, and <code>~/.local/share/dumps/bin/dumpsd</code> exists.</span></p>
+        </li>
+
+        <li class="reveal">
+          <h3 id="step-page">Write a page to publish</h3>
+          <p>Any single <code>.html</code> file works, or a folder with an <code>index.html</code>. If you do not have one at hand, make a tiny one:</p>
+          <div class="code"><pre><code>printf '&lt;!doctype html&gt;&lt;title&gt;Hello&lt;/title&gt;&lt;h1&gt;Hello, dumps&lt;/h1&gt;\n' &gt; page.html</code></pre></div>
+          <p class="result"><span class="dot" aria-hidden="true"></span><span>A <code>page.html</code> file sits in the current folder.</span></p>
+        </li>
+
+        <li class="reveal">
+          <h3 id="step-publish">Publish it</h3>
+          <div class="code"><pre><code>cli/dumps publish ./page.html</code></pre></div>
+          <p class="result"><span class="dot" aria-hidden="true"></span><span>The last line is the dump's URL, with a short random id:</span></p>
+          <div class="out">http://localhost:8090/<span class="c">&lt;id&gt;</span>/</div>
+          <p>To pick the title and a readable, stable URL, pass flags. Publishing the same id again updates that dump.</p>
+          <div class="code"><pre><code>cli/dumps publish ./my-folder --title "My folder" --id my-folder</code></pre></div>
+        </li>
+
+        <li class="reveal">
+          <h3 id="step-serve">Serve and open it</h3>
+          <p>This re-renders the home and the listing, then serves both on loopback. Leave it running; stop it with <kbd>Ctrl</kbd>-<kbd>C</kbd>.</p>
+          <div class="code"><pre><code>cli/dumps serve-local</code></pre></div>
+          <p class="result"><span class="dot" aria-hidden="true"></span><span>It prints this line (the CLI messages are in Portuguese for now):</span></p>
+          <div class="out">dumps local em http://localhost:8090/ e admin em http://localhost:8091/_dumps/ (origens separadas). Ctrl-C para sair.</div>
+          <p>Then open:</p>
+          <ul>
+            <li><a href="http://localhost:8090">http://localhost:8090</a> for the home, and <code>http://localhost:8090/&lt;id&gt;/</code> for your dump.</li>
+            <li><a href="http://localhost:8091/_dumps/">http://localhost:8091/_dumps/</a> for the admin listing: archive, rename, delete.</li>
+          </ul>
+          <div class="callout warn">
+            <span class="lbl">Warning</span>
+            <p>Open the admin with <code>localhost</code>, not <code>127.0.0.1</code>. The API compares the <code>Origin</code> header as exact text, so on <code>http://127.0.0.1:8091</code> every admin action fails with 403.</p>
+          </div>
+        </li>
+      </ol>
+    </section>
+
+    <section>
+      <h2 id="agent">Optional: let your agent publish</h2>
+      <p>The <code>dump-this</code> skill turns a request into a finished page and publishes it hidden for your review. This links the skill and the <code>/dump-this</code> command into Claude Code and Codex (use <code>claude</code> or <code>codex</code> instead of <code>all</code> for just one):</p>
+      <div class="code"><pre><code>cli/dumps install-agent all</code></pre></div>
+      <p>The agent calls the bare <code>dumps</code> command, so put the CLI on your <code>PATH</code>. The CLI suggests a symlink like this one:</p>
+      <div class="code"><pre><code>ln -s "$PWD/cli/dumps" ~/.local/bin/dumps</code></pre></div>
+      <p class="result"><span class="dot" aria-hidden="true"></span><span><code>dumps config</code> works from any folder, and <code>/dump-this &lt;what you want&gt;</code> is available in your harness.</span></p>
+    </section>
+
+    <section>
+      <h2 id="reference">Command reference</h2>
+      <p>All commands run as <code>cli/dumps &lt;command&gt;</code> (or <code>dumps &lt;command&gt;</code> once it is on your <code>PATH</code>).</p>
+      <div class="table">
+        <table>
+          <thead><tr><th scope="col">Command</th><th scope="col">What it does</th></tr></thead>
+          <tbody>
+            <tr><td><code>install-dumpsd</code></td><td>Runs the Go tests, builds <code>dumpsd</code> for this machine and installs it into the root.</td></tr>
+            <tr><td><code>publish &lt;file|folder&gt;</code></td><td>Publishes a <code>.html</code> file or a folder with <code>index.html</code> and prints its URL.</td></tr>
+            <tr><td><code>serve-local</code></td><td>Serves the home and dumps on <code>127.0.0.1:8090</code> and the admin on <code>127.0.0.1:8091</code>. Local mode only.</td></tr>
+            <tr><td><code>list</code></td><td>Lists every dump: id, last update, title (marked when archived) and URL.</td></tr>
+            <tr><td><code>archive &lt;id&gt;</code></td><td>Takes a dump off the public home without taking it offline.</td></tr>
+            <tr><td><code>unarchive &lt;id&gt;</code></td><td>Puts an archived dump back on the home.</td></tr>
+            <tr><td><code>edit &lt;id&gt; --title &lt;text&gt;</code></td><td>Renames a dump on the home and in the listing. The bar inside the HTML changes on the next publish.</td></tr>
+            <tr><td><code>rm &lt;id&gt;</code></td><td>Deletes a dump.</td></tr>
+            <tr><td><code>regen</code></td><td>Rebuilds the home and the listing from the manifests.</td></tr>
+            <tr><td><code>config</code></td><td>Shows the effective configuration.</td></tr>
+            <tr><td><code>install-agent [claude|codex|all]</code></td><td>Symlinks the <code>dump-this</code> skill and the <code>/dump-this</code> command. Default <code>all</code>.</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="callout danger">
+        <span class="lbl">Danger</span>
+        <p><code>rm</code> does not ask for confirmation. If you only want a dump off the home, use <code>archive</code>.</p>
+      </div>
+
+      <h3 id="publish-flags">Flags for <code>publish</code></h3>
+      <div class="table">
+        <table>
+          <thead><tr><th scope="col">Flag</th><th scope="col">Default</th><th scope="col">Meaning</th></tr></thead>
+          <tbody>
+            <tr><td><code>--title &lt;text&gt;</code></td><td class="mut">the page's <code>&lt;title&gt;</code>, else the file name</td><td>Title shown on the home, the listing and the bar.</td></tr>
+            <tr><td><code>--id &lt;id&gt;</code></td><td class="mut">random, 10 chars</td><td>Readable, stable URL. Lowercase letters, digits and hyphens, starting with a letter or digit. Republishing the same id updates it.</td></tr>
+            <tr><td><code>--hidden</code></td><td class="mut">off</td><td>Publishes already archived: the link works, but the dump stays off the home.</td></tr>
+            <tr><td><code>--author "Name|URL"</code></td><td class="mut"><code>DUMPS_AUTHORS</code></td><td>Author shown in the footer. Repeat the flag for more than one.</td></tr>
+            <tr><td><code>--source agent</code></td><td class="mut"><code>cli</code></td><td>Marks the dump as made by an agent. Accepts <code>cli</code> or <code>agent</code>.</td></tr>
+            <tr><td><code>--no-bar</code></td><td class="mut">off</td><td>Publishes without the top bar.</td></tr>
+            <tr><td><code>--no-footer</code></td><td class="mut">off</td><td>Publishes without the footer.</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3 id="local-defaults">Local defaults</h3>
+      <div class="table">
+        <table>
+          <thead><tr><th scope="col">Setting</th><th scope="col">Default</th><th scope="col">Variable</th></tr></thead>
+          <tbody>
+            <tr><td>Root</td><td><code>~/.local/share/dumps</code> (or <code>$XDG_DATA_HOME/dumps</code>)</td><td><code>DUMPS_ROOT</code></td></tr>
+            <tr><td>Dumps origin</td><td><code>http://localhost:8090</code></td><td><code>DUMPS_URL</code></td></tr>
+            <tr><td>Dumps listener</td><td><code>127.0.0.1:8090</code></td><td><code>DUMPS_LISTEN</code></td></tr>
+            <tr><td>Admin listener</td><td><code>127.0.0.1:8091</code></td><td><code>DUMPS_ADMIN_LISTEN</code></td></tr>
+            <tr><td>Admin origin</td><td><code>http://localhost:8091</code>, from the admin port</td><td><code>DUMPS_ADMIN_ORIGIN</code></td></tr>
+            <tr><td>Admin page</td><td><code>http://localhost:8091/_dumps/</code></td><td><code>DUMPS_LIST_URL</code></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3 id="exit-codes">Exit codes</h3>
+      <div class="table">
+        <table>
+          <thead><tr><th scope="col">Code</th><th scope="col">Meaning</th></tr></thead>
+          <tbody>
+            <tr><td><code>0</code></td><td>OK</td></tr>
+            <tr><td><code>1</code></td><td>Usage or validation error</td></tr>
+            <tr><td><code>2</code></td><td>Blocked path (<code>DUMPS_BLOCKED_PATHS</code>)</td></tr>
+            <tr><td><code>3</code></td><td>Server unreachable</td></tr>
+            <tr><td><code>4</code></td><td>Remote failure</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section>
+      <h2 id="troubleshooting">Troubleshooting</h2>
+      <p>CLI errors start with <code>erro:</code> and warnings with <code>aviso:</code>. The messages are quoted as printed.</p>
+      <dl class="trouble">
+        <dt>Admin actions fail with 403</dt>
+        <dd><p>You opened the admin at <code>127.0.0.1</code>. Use <a href="http://localhost:8091/_dumps/">http://localhost:8091/_dumps/</a>: the <code>Origin</code> must match <code>http://localhost:8091</code> exactly. A custom <code>DUMPS_ADMIN_ORIGIN</code> breaks the check the same way when it differs from the address you open.</p></dd>
+
+        <dt><code>go não encontrado nesta máquina</code></dt>
+        <dd><p>Go is not on your <code>PATH</code>. Install the version in <code>server/go.mod</code> and run <code>install-dumpsd</code> again.</p></dd>
+
+        <dt><code>dumpsd ausente em …; rode: dumps install-dumpsd</code></dt>
+        <dd><p><code>serve-local</code> found no binary in the root. Run <code>cli/dumps install-dumpsd</code> first, with the same <code>DUMPS_ROOT</code>.</p></dd>
+
+        <dt><code>pasta sem index.html</code> or <code>arquivo precisa ser .html</code></dt>
+        <dd><p><code>publish</code> takes a single <code>.html</code> file or a folder that has an <code>index.html</code> at its top level.</p></dd>
+
+        <dt><code>id inválido: use minúsculas, números e hífen</code></dt>
+        <dd><p>The <code>--id</code> must be lowercase letters, digits and hyphens, start with a letter or digit, and be at most 63 characters.</p></dd>
+
+        <dt><code>aviso: miniatura não gerada, a home usa um placeholder</code></dt>
+        <dd><p>No Chrome or Chromium, or no resizer. Install one of each (<code>sips</code> ships with macOS; on Linux, ImageMagick), or point <code>DUMPS_CHROME</code> at your browser. The dump itself is published either way.</p></dd>
+
+        <dt>The thumbnail is missing styles or images</dt>
+        <dd><p>The thumbnail is rendered from <code>file://</code>, so absolute paths such as <code>/assets/x.css</code> do not load. Use relative paths in the folders you publish.</p></dd>
+
+        <dt>Links point to the wrong port</dt>
+        <dd><p><code>DUMPS_URL</code> and <code>DUMPS_LISTEN</code> disagree. To move ports, set the three values together:</p>
+          <div class="code"><pre><code>DUMPS_URL=http://localhost:9000 DUMPS_LISTEN=127.0.0.1:9000 DUMPS_ADMIN_LISTEN=127.0.0.1:9001 cli/dumps serve-local</code></pre></div>
+        </dd>
+
+        <dt><code>aviso: 'dumps' não está no PATH</code></dt>
+        <dd><p>Printed by <code>install-agent</code>. The skill is installed, but the agent cannot publish until <code>dumps</code> resolves. Add the symlink from <a href="#agent">the agent step</a>.</p></dd>
+      </dl>
+      <div class="callout note">
+        <span class="lbl">Note</span>
+        <p>Dumps share one origin with each other, so publish only HTML you trust. A dump's JavaScript cannot reach the admin API, which lives on a different origin.</p>
+      </div>
+    </section>
+  </main>
+</div>
+
+<footer class="colophon">
+  <div class="wrap">
+    <p>Source: the dumps README, <code>docs/local.md</code> and the usage text of <code>cli/dumps</code>. Durations are approximate.</p>
+    <p>Level 2 refined · concept: a how-to that shows what success looks like after every step · system grotesk + system mono</p>
+  </div>
+</footer>
+
+<script>
+(function(){
+  var main=document.getElementById('content');
+  var list=document.getElementById('toc-list');
+  var heads=main.querySelectorAll('section > h2, section > h3');
+  var links=[];
+  heads.forEach(function(h){
+    if(!h.id)return;
+    var li=document.createElement('li');
+    if(h.tagName==='H3')li.className='sub';
+    var a=document.createElement('a');
+    a.href='#'+h.id;
+    a.textContent=h.textContent;
+    li.appendChild(a);list.appendChild(li);
+    links.push({a:a,h:h});
+  });
+  main.querySelectorAll('ol.steps > li > h3').forEach(function(h){
+    var parent=list.querySelector('a[href="#steps"]');
+    if(!parent)return;
+    var li=document.createElement('li');li.className='sub';
+    var a=document.createElement('a');a.href='#'+h.id;a.textContent=h.textContent;
+    li.appendChild(a);
+    var anchorLi=parent.parentNode,next=anchorLi.nextSibling;
+    while(next&&next.className==='sub'&&next.dataset.step)next=next.nextSibling;
+    li.dataset.step='1';
+    anchorLi.parentNode.insertBefore(li,next);
+    links.push({a:a,h:h});
+  });
+  links.sort(function(x,y){return x.h.compareDocumentPosition(y.h)&Node.DOCUMENT_POSITION_FOLLOWING?-1:1});
+
+  function spy(){
+    var y=window.scrollY+120,cur=null;
+    links.forEach(function(l){if(l.h.getBoundingClientRect().top+window.scrollY<=y)cur=l});
+    links.forEach(function(l){l.a.classList.toggle('active',l===cur)});
+  }
+  window.addEventListener('scroll',spy,{passive:true});spy();
+
+  document.querySelectorAll('.code').forEach(function(box){
+    var b=document.createElement('button');
+    b.type='button';b.className='copy';b.textContent='Copy';
+    b.setAttribute('aria-label','Copy command');
+    b.addEventListener('click',function(){
+      var text=box.querySelector('code').textContent;
+      function done(ok){
+        b.textContent=ok?'Copied':'Select and copy';b.dataset.state=ok?'done':'';
+        setTimeout(function(){b.textContent='Copy';b.dataset.state='';},1600);
+      }
+      if(navigator.clipboard&&navigator.clipboard.writeText){
+        navigator.clipboard.writeText(text).then(function(){done(true)},function(){done(fallback(text))});
+      }else{done(fallback(text))}
+    });
+    box.appendChild(b);
+  });
+  function fallback(text){
+    try{
+      var t=document.createElement('textarea');t.value=text;t.setAttribute('readonly','');
+      t.style.position='fixed';t.style.opacity='0';document.body.appendChild(t);t.select();
+      var ok=document.execCommand('copy');document.body.removeChild(t);return ok;
+    }catch(e){return false}
+  }
+
+  var items=document.querySelectorAll('.reveal');
+  if('IntersectionObserver' in window&&!matchMedia('(prefers-reduced-motion: reduce)').matches){
+    var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}})},{rootMargin:'0px 0px -8% 0px'});
+    items.forEach(function(el){io.observe(el)});
+  }else{items.forEach(function(el){el.classList.add('in')})}
+})();
+</script>
+</body>
+</html>

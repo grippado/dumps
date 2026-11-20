@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>dump-this examples: one dump per specialist, from classic to avant-garde</title>
+<meta name="description" content="Eight pages made by the dump-this skill, one per specialist and style level, with the exact prompt that produced each.">
+<meta property="og:title" content="dump-this examples">
+<meta property="og:description" content="Eight pages made by the dump-this skill, from conservative to master innovation, with the prompt behind each one.">
+<meta property="og:image" content="https://grippado.github.io/dumps/examples/thumbs/story.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,900&display=swap" rel="stylesheet">
+<style>
+:root{color-scheme:light dark;--bg:#f6f4ef;--fg:#141414;--mut:#5f5d58;--line:rgba(0,0,0,.12);--card:#fffdf8;--acc:#5b3fd1}
+@media (prefers-color-scheme:dark){:root{--bg:#0d0d10;--fg:#f3f1ea;--mut:#a29f97;--line:rgba(255,255,255,.12);--card:#16161b;--acc:#a593ff}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.55 ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;-webkit-font-smoothing:antialiased}
+a{color:inherit}
+.wrap{max-width:1240px;margin:0 auto;padding:0 max(16px,env(safe-area-inset-left))}
+nav{display:flex;align-items:center;gap:16px;padding:22px 0}
+nav .home{font-weight:800;text-decoration:none;letter-spacing:-.02em}
+nav .sp{margin-left:auto}
+.lang{display:inline-flex;border:1px solid var(--line);border-radius:999px;padding:2px}
+.lang button{font:inherit;font-size:12px;font-weight:700;border:0;background:transparent;color:var(--mut);padding:4px 10px;border-radius:999px;cursor:pointer}
+.lang button[aria-pressed="true"]{background:var(--fg);color:var(--bg)}
+header{padding:clamp(28px,6vw,72px) 0 clamp(28px,4vw,48px);display:grid;grid-template-columns:1.4fr 1fr;gap:32px;align-items:end;border-bottom:2px solid var(--fg)}
+h1{font-family:Fraunces,Georgia,serif;font-weight:900;font-size:clamp(44px,8.5vw,120px);line-height:.92;letter-spacing:-.04em;margin:0}
+h1 i{font-style:italic;font-weight:600;color:var(--acc)}
+.intro{color:var(--mut);font-size:17px;margin:0}
+.intro b{color:var(--fg)}
+@media (max-width:860px){header{grid-template-columns:1fr}}
+.scale{display:flex;align-items:center;gap:12px;margin:28px 0 8px;font:600 13px ui-monospace,Menlo,monospace;color:var(--mut)}
+.scale .bar{flex:1;height:6px;border-radius:6px;background:linear-gradient(90deg,#9aa3ad,#5b3fd1 66%,#e8432e)}
+.grid{display:grid;grid-template-columns:repeat(12,1fr);gap:20px;padding:24px 0 72px}
+.ex{grid-column:span 4;display:flex;flex-direction:column;text-decoration:none;background:var(--card);border:1px solid var(--line);border-radius:6px;overflow:hidden;transition:transform .2s ease,border-color .2s}
+.ex:hover{transform:translateY(-3px);border-color:var(--fg)}
+.ex:focus-visible{outline:3px solid var(--acc);outline-offset:3px}
+.ex.lv4{grid-column:span 6}
+.ex:nth-child(1){grid-column:span 6}
+.ex:nth-child(2),.ex:nth-child(3){grid-column:span 3}
+.shot{display:block;aspect-ratio:16/10;overflow:hidden;border-bottom:1px solid var(--line);background:var(--bg)}
+.shot img{display:block;width:100%;height:100%;object-fit:cover;object-position:top}
+.meta{display:flex;flex-direction:column;gap:6px;padding:16px 18px 18px}
+.row{display:flex;align-items:baseline;justify-content:space-between;gap:10px}
+.row b{font-family:Fraunces,Georgia,serif;font-size:24px;letter-spacing:-.02em;font-weight:900}
+.lv{font:700 11px ui-monospace,Menlo,monospace;text-transform:uppercase;letter-spacing:.06em;padding:4px 8px;border-radius:999px;border:1px solid var(--line);white-space:nowrap}
+.lv1 .lv{color:#5d6a77}.lv2 .lv{color:var(--fg)}.lv3 .lv{background:var(--acc);border-color:var(--acc);color:#fff}.lv4 .lv{background:#e8432e;border-color:#e8432e;color:#fff}
+.by{color:var(--mut);font-size:14px}
+.title{font-weight:600;font-size:15px}
+.prompt{font:12.5px/1.5 ui-monospace,Menlo,monospace;color:var(--mut);background:color-mix(in srgb,var(--fg) 5%,transparent);padding:8px 10px;border-radius:4px;overflow-wrap:anywhere}
+@media (max-width:980px){.ex,.ex.lv4,.ex:nth-child(n){grid-column:span 6}}
+@media (max-width:640px){.ex,.ex.lv4,.ex:nth-child(n){grid-column:span 12}}
+footer{border-top:2px solid var(--fg);padding:28px 0 48px;display:flex;flex-wrap:wrap;gap:12px 28px;justify-content:space-between;color:var(--mut);font-size:14px}
+footer a{color:var(--fg);font-weight:600}
+@media (prefers-reduced-motion:reduce){.ex{transition:none}.ex:hover{transform:none}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<nav aria-label="Main"><a class="home" href="../">dumps</a><span data-en="/ examples" data-pt="/ exemplos">/ examples</span><span class="sp"></span>
+<div class="lang" role="group" aria-label="Language"><button type="button" data-set-lang="en" aria-pressed="true">EN</button><button type="button" data-set-lang="pt-BR" aria-pressed="false">PT</button></div></nav>
+<header>
+<h1 data-en-html="One prompt.<br><i>Eight specialists.</i>" data-pt-html="Um pedido.<br><i>Oito especialistas.</i>">One prompt.<br><i>Eight specialists.</i></h1>
+<p class="intro" data-en-html="Every page below was made by the <b>dump-this</b> skill from the prompt under it, with real data from the dumps project itself. The style dial goes from <b>classic</b> to <b>avant-garde</b>, set in plain words." data-pt-html="Cada página abaixo foi feita pela skill <b>dump-this</b> a partir do pedido embaixo dela, com dados reais do próprio projeto dumps. O dial de estilo vai do <b>clássico</b> ao <b>experimental</b>, escolhido em palavras.">Every page below was made by the <b>dump-this</b> skill from the prompt under it, with real data from the dumps project itself. The style dial goes from <b>classic</b> to <b>avant-garde</b>, set in plain words.</p>
+</header>
+<div class="scale" aria-hidden="true"><span data-en="1 classic" data-pt="1 clássico">1 classic</span><span class="bar"></span><span data-en="4 avant-garde" data-pt="4 experimental">4 avant-garde</span></div>
+<main class="grid">
+<a class="ex lv1" href="report/">
+<span class="shot"><img src="thumbs/report.jpg" alt="" loading="lazy" width="1200" height="750"></span>
+<span class="meta"><span class="row"><b data-en="Report" data-pt="Relatório">Report</b><span class="lv" data-en="1 · Classic" data-pt="1 · Clássico">1 · Classic</span></span>
+<span class="by" data-en="by a senior analyst" data-pt="por um analista sênior">by a senior analyst</span>
+<span class="title">Can an old phone serve our public pages?</span>
+<code class="prompt">/dump-this conservative report for the board: is an old Android phone reliable enough to serve our public pages?</code></span></a>
+<a class="ex lv2" href="doc/">
+<span class="shot"><img src="thumbs/doc.jpg" alt="" loading="lazy" width="1200" height="750"></span>
+<span class="meta"><span class="row"><b data-en="Doc" data-pt="Documento">Doc</b><span class="lv" data-en="2 · Refined" data-pt="2 · Refinado">2 · Refined</span></span>
+<span class="by" data-en="by a technical writer" data-pt="por um redator técnico">by a technical writer</span>
+<span class="title">Publish your first dump locally, in five minutes</span>
+<code class="prompt">/dump-this clean how-to: publish your first dump locally in 5 minutes</code></span></a>
+<a class="ex lv2" href="changelog/">
+<span class="shot"><img src="thumbs/changelog.jpg" alt="" loading="lazy" width="1200" height="750"></span>
+<span class="meta"><span class="row"><b data-en="Changelog" data-pt="Changelog">Changelog</b><span class="lv" data-en="2 · Refined" data-pt="2 · Refinado">2 · Refined</span></span>
+<span class="by" data-en="by a release manager" data-pt="por um gerente de release">by a release manager</span>
+<span class="title">dumps launch day: first publish to open source in 3 h 55 min</span>
+<code class="prompt">/dump-this elegant changelog of everything that shipped on launch day</code></span></a>
+<a class="ex lv3" href="slides/">
+<span class="shot"><img src="thumbs/slides.jpg" alt="" loading="lazy" width="1200" height="750"></span>
+<span class="meta"><span class="row"><b data-en="Slides" data-pt="Slides">Slides</b><span class="lv" data-en="3 · Bold" data-pt="3 · Ousado">3 · Bold</span></span>
+<span class="by" data-en="by a presentation coach" data-pt="por um coach de apresentação">by a presentation coach</span>
+<span class="title">dumps, a meetup pitch in 7 slides</span>
+<code class="prompt">/dump-this pitch dumps in 7 slides for a meetup</code></span></a>
+<a class="ex lv3" href="comparison/">
+<span class="shot"><img src="thumbs/comparison.jpg" alt="" loading="lazy" width="1200" height="750"></span>
+<span class="meta"><span class="row"><b data-en="Comparison" data-pt="Comparação">Comparison</b><span class="lv" data-en="3 · Bold" data-pt="3 · Ousado">3 · Bold</span></span>
+<span class="by" data-en="by a decision advisor" data-pt="por um conselheiro de decisão">by a decision advisor</span>
+<span class="title">Cloudflare takes the admin seat, Tailscale takes the shortcut</span>
+<code class="prompt">/dump-this compare the ways to put my dumps on the internet, make it look like a newspaper front page</code></span></a>
+<a class="ex lv3" href="landing/">
+<span class="shot"><img src="thumbs/landing.jpg" alt="" loading="lazy" width="1200" height="750"></span>
+<span class="meta"><span class="row"><b data-en="Landing" data-pt="Landing">Landing</b><span class="lv" data-en="3 · Bold" data-pt="3 · Ousado">3 · Bold</span></span>
+<span class="by" data-en="by a product marketer" data-pt="por um marketing de produto">by a product marketer</span>
+<span class="title">dump-this: pages that look made, not generated</span>
+<code class="prompt">/dump-this landing page for the dump-this skill, Swiss poster style</code></span></a>
+<a class="ex lv4" href="dashboard/">
+<span class="shot"><img src="thumbs/dashboard.jpg" alt="" loading="lazy" width="1200" height="750"></span>
+<span class="meta"><span class="row"><b data-en="Dashboard" data-pt="Dashboard">Dashboard</b><span class="lv" data-en="4 · Avant-garde" data-pt="4 · Experimental">4 · Avant-garde</span></span>
+<span class="by" data-en="by a data visualization specialist" data-pt="por um especialista em visualização">by a data visualization specialist</span>
+<span class="title">16 commits, 8 of 8 issues: the day dumps was built</span>
+<code class="prompt">/dump-this dashboard of the day dumps was built, go wild: make it an instrument panel</code></span></a>
+<a class="ex lv4" href="story/">
+<span class="shot"><img src="thumbs/story.jpg" alt="" loading="lazy" width="1200" height="750"></span>
+<span class="meta"><span class="row"><b data-en="Story" data-pt="História">Story</b><span class="lv" data-en="4 · Avant-garde" data-pt="4 · Experimental">4 · Avant-garde</span></span>
+<span class="by" data-en="by a magazine editor" data-pt="por um editor de revista">by a magazine editor</span>
+<span class="title">Linha 19: o dumps em um dia</span>
+<code class="prompt">/dump-this a história do dumps em um dia, inovação máxima</code></span></a>
+</main>
+<footer><span data-en-html="Get the skill: <a href=&quot;../#agent&quot;>Claude Code, Codex, claude.ai, ChatGPT</a>" data-pt-html="Pegue a skill: <a href=&quot;../#agent&quot;>Claude Code, Codex, claude.ai, ChatGPT</a>">Get the skill: <a href="../#agent">Claude Code, Codex, claude.ai, ChatGPT</a></span><span><a href="https://github.com/grippado/dumps">github.com/grippado/dumps</a> · <span data-en="built with" data-pt="feito com">built with</span> <a href="https://grippado.github.io/flux/">flux</a></span></footer>
+</div>
+<script>
+(function(){
+function apply(lang){var pt=lang==="pt-BR";document.documentElement.lang=lang;
+document.querySelectorAll("[data-en]").forEach(function(el){el.textContent=el.getAttribute(pt?"data-pt":"data-en")});
+document.querySelectorAll("[data-en-html]").forEach(function(el){el.innerHTML=el.getAttribute(pt?"data-pt-html":"data-en-html")});
+document.querySelectorAll("[data-set-lang]").forEach(function(b){b.setAttribute("aria-pressed",String(b.getAttribute("data-set-lang")===lang))});
+try{localStorage.setItem("dumps-lang",lang)}catch(e){}}
+document.querySelectorAll("[data-set-lang]").forEach(function(b){b.addEventListener("click",function(){apply(b.getAttribute("data-set-lang"))})});
+var saved=null;try{saved=localStorage.getItem("dumps-lang")}catch(e){}
+var lang=saved||((navigator.language||"").toLowerCase().indexOf("pt")===0?"pt-BR":"en");if(lang!=="en")apply(lang);
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,256 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Can an old phone serve our public pages?</title>
+<meta name="description" content="Board review of an old Android phone serving our public pages: fine for personal and low-stakes sites, with no SLA, one device and no monitoring yet.">
+<style>
+:root{
+  color-scheme:light dark;
+  --bg:#ffffff;--fg:#14161a;--mut:#555b66;--rule:#d9dce1;--rule-strong:#14161a;
+  --acc:#1f3a68;--acc-soft:#eef2f8;--warn:#7a2e1f;--row:#f6f7f9;
+}
+@media (prefers-color-scheme:dark){
+  :root{
+    --bg:#111317;--fg:#eceef1;--mut:#a3a9b3;--rule:#2e333b;--rule-strong:#eceef1;
+    --acc:#9db6e0;--acc-soft:#18202d;--warn:#e3a593;--row:#181b20;
+  }
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--fg);font:17px/1.65 ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;-webkit-font-smoothing:antialiased}
+.page{max-width:760px;margin:0 auto;padding:56px 16px 48px}
+@media (min-width:768px){.page{padding:80px 24px 64px}}
+.serif{font-family:Charter,"Bitstream Charter","Sitka Text",Cambria,Georgia,"Times New Roman",serif}
+header{border-top:4px solid var(--rule-strong);padding-top:16px}
+.meta{display:flex;flex-wrap:wrap;gap:4px 24px;margin:0;font-size:14px;color:var(--mut);letter-spacing:.02em}
+.meta dt{display:inline;font-weight:600;color:var(--fg)}
+.meta dd{display:inline;margin:0 0 0 6px}
+h1,h2,h3{font-family:Charter,"Bitstream Charter","Sitka Text",Cambria,Georgia,"Times New Roman",serif;font-weight:700;letter-spacing:-.005em;line-height:1.2}
+h1{font-size:clamp(28px,4.6vw,38px);margin:32px 0 16px}
+h2{font-size:24px;margin:56px 0 16px;padding-top:16px;border-top:1px solid var(--rule)}
+h3{font-size:18px;margin:32px 0 8px}
+p{margin:0 0 16px}
+.lede{font-size:19px;color:var(--fg);margin-bottom:32px}
+.mut{color:var(--mut)}
+.small{font-size:14px}
+a{color:var(--acc);text-underline-offset:2px}
+a:focus-visible,summary:focus-visible{outline:2px solid var(--acc);outline-offset:3px;border-radius:2px}
+.tldr{border-left:4px solid var(--acc);background:var(--acc-soft);padding:20px 24px;margin:0 0 8px}
+.tldr h2{border:0;padding:0;margin:0 0 8px;font-size:15px;font-family:inherit;letter-spacing:.08em;text-transform:uppercase;color:var(--acc)}
+.tldr ul{margin:0;padding-left:20px}
+.tldr li{margin:0 0 8px}
+.tldr li:last-child{margin:0}
+.verdict{display:grid;grid-template-columns:1fr;gap:0;border-top:1px solid var(--rule-strong);border-bottom:1px solid var(--rule-strong);margin:32px 0}
+.verdict div{padding:16px 0;border-bottom:1px solid var(--rule)}
+.verdict div:last-child{border-bottom:0}
+@media (min-width:640px){.verdict{grid-template-columns:repeat(3,1fr)}.verdict div{padding:16px 16px 16px 0;border-bottom:0;border-right:1px solid var(--rule)}.verdict div+div{padding-left:16px}.verdict div:last-child{border-right:0}}
+.verdict dt{font-size:13px;letter-spacing:.06em;text-transform:uppercase;color:var(--mut);margin:0 0 4px}
+.verdict dd{margin:0;font-family:Charter,"Bitstream Charter",Cambria,Georgia,serif;font-size:20px;line-height:1.3;font-weight:700}
+.verdict dd.no{color:var(--warn)}
+.finding{margin:0 0 8px}
+.conf{display:inline-block;font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--mut);border:1px solid var(--rule);padding:1px 8px;margin:0 0 12px}
+.table-wrap{margin:16px 0 24px;overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:15px;font-variant-numeric:tabular-nums lining-nums}
+caption{text-align:left;font-size:14px;color:var(--mut);padding:0 0 8px;caption-side:top}
+thead th{font-weight:600;text-align:left;border-bottom:2px solid var(--rule-strong);padding:8px 12px 8px 0;vertical-align:bottom;font-size:13px;letter-spacing:.03em}
+tbody td,tbody th{padding:8px 12px 8px 0;border-bottom:1px solid var(--rule);vertical-align:top;text-align:left;font-weight:400}
+tbody th{font-weight:600}
+th.num,td.num{text-align:right;padding-right:0;white-space:nowrap}
+tr.key td,tr.key th{background:var(--row);font-weight:600}
+tr.key td:first-child,tr.key th:first-child{box-shadow:inset 3px 0 0 var(--acc);padding-left:10px}
+tfoot td{padding:8px 12px 0 0;font-size:13px;color:var(--mut)}
+.nm{color:var(--mut);font-style:italic}
+ol.recs{padding-left:24px;margin:0 0 16px}
+ol.recs li{margin:0 0 12px;padding-left:4px}
+ol.recs .owner{display:block;font-size:14px;color:var(--mut)}
+.risks{margin:0;padding:0;list-style:none;border-top:1px solid var(--rule)}
+.risks li{display:grid;grid-template-columns:1fr;gap:4px;padding:12px 0;border-bottom:1px solid var(--rule)}
+@media (min-width:640px){.risks li{grid-template-columns:200px 1fr;gap:16px}}
+.risks b{font-weight:600}
+details{border-top:1px solid var(--rule);padding:12px 0}
+details:last-of-type{border-bottom:1px solid var(--rule)}
+summary{cursor:pointer;font-weight:600}
+details>*:not(summary){margin-top:12px}
+details ul{padding-left:20px;margin:12px 0 0}
+details li{margin:0 0 6px}
+code{font:14px/1.4 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;background:var(--row);padding:1px 4px}
+dl.gloss{margin:12px 0 0}
+dl.gloss dt{font-weight:600;margin-top:12px}
+dl.gloss dd{margin:2px 0 0}
+footer{margin-top:56px;padding-top:16px;border-top:4px solid var(--rule-strong);font-size:13px;color:var(--mut)}
+footer p{margin:0 0 8px}
+@media print{
+  :root{--bg:#fff;--fg:#000;--mut:#444;--rule:#bbb;--rule-strong:#000;--acc:#1f3a68;--acc-soft:#f1f1f1;--row:#f1f1f1}
+  body{font-size:11pt}
+  .page{max-width:none;padding:0}
+  h2{break-after:avoid}
+  table,.tldr,.verdict{break-inside:avoid}
+  details{display:block}
+  details>*{display:block}
+  a{color:inherit;text-decoration:none}
+}
+</style>
+</head>
+<body>
+<main class="page">
+
+<header>
+  <dl class="meta">
+    <div><dt>Prepared for</dt><dd>the board</dd></div>
+    <div><dt>Date</dt><dd>19 November 2026</dd></div>
+    <div><dt>Classification</dt><dd>Review, for decision</dd></div>
+  </dl>
+  <h1>An old phone can serve our public pages, provided we accept no guarantee of uptime</h1>
+  <p class="lede">A spare Motorola phone, plugged in at home, has been serving our public pages through Cloudflare. Over five days it held up on memory, disk and recovery after a reboot. It also dropped off the internet twice on one evening, and we have no long-term availability figure.</p>
+</header>
+
+<section class="tldr" aria-labelledby="tldr">
+  <h2 id="tldr">Summary</h2>
+  <ul>
+    <li><strong>Capacity is not the constraint.</strong> With every service running, about 4.6 GB of memory and 211 GB of disk remain free; the web stack uses well under 2% of memory.</li>
+    <li><strong>Availability is the constraint, and it is unmeasured.</strong> Two short outages occurred on 19 November and cleared on their own. No continuous monitoring was in place, so we cannot state an uptime percentage.</li>
+    <li><strong>Recommendation:</strong> approve for personal and low-stakes public pages. Do not use it for anything with a commitment to users until an uptime monitor, a heat and battery check and a fallback host are in place.</li>
+  </ul>
+</section>
+
+<dl class="verdict">
+  <div><dt>Personal and low-stakes pages</dt><dd>Approve</dd></div>
+  <div><dt>Pages with a user commitment</dt><dd class="no">Not yet</dd></div>
+  <div><dt>Additional spend</dt><dd>None so far</dd></div>
+</dl>
+
+<h2 id="context">Scope and sources</h2>
+<p>This review covers one device serving the public site at <code>dumps.gripp.link</code> between its last reboot test on 14 November 2026 and readings taken on 19 November 2026. The administration area sits behind Cloudflare Access and was not assessed. Sources are direct readings on the device (memory, disk, process list, uptime), one controlled reboot, and observation of two incidents. Electricity use, temperature and battery health were not measured.</p>
+
+<div class="table-wrap">
+<table>
+  <caption>Table 1. The device and what runs on it</caption>
+  <thead><tr><th scope="col">Item</th><th scope="col">Detail</th></tr></thead>
+  <tbody>
+    <tr><th scope="row">Device</th><td>Motorola Moto G54 5G, Android 15</td></tr>
+    <tr><th scope="row">Processor</th><td>MediaTek Dimensity 7020, 8 cores</td></tr>
+    <tr><th scope="row">Memory</th><td>8 GB (7.6 GB visible to the system)</td></tr>
+    <tr><th scope="row">Storage</th><td>256 GB</td></tr>
+    <tr><th scope="row">Power and location</th><td>Mains power around the clock, in a living room</td></tr>
+    <tr><th scope="row">Services</th><td>SSH access, Cloudflare Tunnel, Caddy web server and the dumps publishing service, supervised by runit inside Termux</td></tr>
+    <tr><th scope="row">Public path</th><td>Visitor, then Cloudflare, then the tunnel to the phone</td></tr>
+  </tbody>
+</table>
+</div>
+
+<h2 id="findings">Findings</h2>
+
+<h3 class="finding">1. Two outages on one evening, both self-healing, cause not confirmed</h3>
+<span class="conf">Confidence: medium on impact, low on cause</span>
+<p>On 19 November the tunnel dropped twice for a few minutes. During the first drop, remote access failed with a websocket error and the public site returned HTTP 502 and then 530 before recovering without intervention. At that moment the system load average read 11 on an 8-core processor. The load came from Android itself: the publishing service was at 0.3% CPU and the tunnel at 0.8%.</p>
+<p>We therefore do not believe our software caused the outages, but we have not established what did. Android&rsquo;s own background activity is the leading explanation and remains unproven.</p>
+<div class="table-wrap">
+<table>
+  <caption>Table 2. Readings during the 19 November incident</caption>
+  <thead><tr><th scope="col">Signal</th><th scope="col" class="num">Reading</th></tr></thead>
+  <tbody>
+    <tr class="key"><th scope="row">Public site response</th><td class="num">502, then 530</td></tr>
+    <tr><th scope="row">Duration of each outage</th><td class="num">a few minutes</td></tr>
+    <tr><th scope="row">System load average</th><td class="num">11</td></tr>
+    <tr><th scope="row">Publishing service CPU</th><td class="num">0.3%</td></tr>
+    <tr><th scope="row">Cloudflare Tunnel CPU</th><td class="num">0.8%</td></tr>
+    <tr><th scope="row">Manual intervention needed</th><td class="num">none</td></tr>
+  </tbody>
+  <tfoot><tr><td colspan="2">Exact start and end times were not recorded; durations are approximate.</td></tr></tfoot>
+</table>
+</div>
+
+<h3 class="finding">2. The device recovers from a reboot without help</h3>
+<span class="conf">Confidence: high, one test</span>
+<p>On 14 November the phone was restarted for real, not simulated. All three supervised services came back by themselves. The phone finished booting in about 45 seconds and the services were serving at about 95 seconds of uptime. A power cut or an Android update should therefore cost under two minutes of downtime, assuming the phone powers back on. This rests on a single test.</p>
+
+<h3 class="finding">3. Memory and disk leave a wide margin</h3>
+<span class="conf">Confidence: high</span>
+<p>The web stack is small. The three main processes together hold at most about 127 MB of memory, against about 4.6 GB still available with everything running. Disk is not a concern: 211 GB of 256 GB is free, and the Termux environment was cut from 764 MB to 183 MB during cleanup.</p>
+<div class="table-wrap">
+<table>
+  <caption>Table 3. Resource use with all services running, 19 November 2026</caption>
+  <thead><tr><th scope="col">Component</th><th scope="col" class="num">Memory (MB)</th><th scope="col" class="num">Share of 7.6 GB</th></tr></thead>
+  <tbody>
+    <tr><th scope="row">Cloudflare Tunnel</th><td class="num">~56</td><td class="num">0.7%</td></tr>
+    <tr><th scope="row">Caddy web server</th><td class="num">~60</td><td class="num">0.8%</td></tr>
+    <tr><th scope="row">dumps publishing service</th><td class="num">5&ndash;11</td><td class="num">0.1%</td></tr>
+    <tr class="key"><th scope="row">Web stack, at most</th><td class="num">~127</td><td class="num">1.7%</td></tr>
+    <tr><th scope="row">Available to the system</th><td class="num">~4,600</td><td class="num">61%</td></tr>
+  </tbody>
+  <tfoot><tr><td colspan="3">Shares are computed from the readings above and rounded. Disk: 211 GB free of 256 GB. Termux environment: 183 MB, down from 764 MB.</td></tr></tfoot>
+</table>
+</div>
+
+<h3 class="finding">4. Five days of continuous uptime, but no availability record</h3>
+<span class="conf">Confidence: high on uptime, none on availability</span>
+<p>At 21:21 on 19 November the device had been running for 5 days and 7 hours without a restart. Device uptime is not site availability: the two outages in Finding 1 happened inside that window. A planned one-hour monitoring run, checking services, battery and temperature every ten minutes, was deliberately skipped. We have no uptime percentage and no temperature data.</p>
+
+<h3 class="finding">5. The cost is close to zero, but not fully counted</h3>
+<span class="conf">Confidence: medium</span>
+<p>The phone was already owned and had been sitting in a box, so there was no purchase. Cloudflare provides the tunnel and access control. Electricity has not been measured.</p>
+
+<h2 id="risks">Named risks</h2>
+<ul class="risks">
+  <li><b>No service level</b><span>Nobody guarantees this hardware, home connection or power supply. There is no one to call.</span></li>
+  <li><b>Single device</b><span>One phone, one location, one network. If it fails, the public pages are down until it is repaired or replaced.</span></li>
+  <li><b>Android background limits</b><span>Android is built for a phone in a pocket, not a server. It can throttle or pause background work and was the likely source of the load spike in Finding 1.</span></li>
+  <li><b>No monitoring yet</b><span>Outages are noticed only when someone happens to look. Nothing alerts us today.</span></li>
+  <li><b>Heat and battery unknown</b><span>The battery has been on charge around the clock. Its temperature and condition have not been checked.</span></li>
+</ul>
+
+<h2 id="recommendations">Recommendations</h2>
+<h3>Do now</h3>
+<ol class="recs">
+  <li>Approve the phone for personal and low-stakes public pages only.<span class="owner">Next step: record the decision; no change to the current setup.</span></li>
+  <li>Add an external uptime monitor that checks the public site every few minutes and sends an alert on failure.<span class="owner">Next step: configure a free external check against the public URL; review the first month of results.</span></li>
+  <li>Run the skipped battery and temperature check.<span class="owner">Next step: log battery level, temperature and service status every 10 minutes for at least one hour, ideally one day.</span></li>
+</ol>
+<h3>Consider later</h3>
+<ol class="recs" start="4">
+  <li>Prepare a fallback host so the static pages can move quickly if the phone is down for long.<span class="owner">Next step: choose a static host and document the switch-over steps.</span></li>
+  <li>Investigate the Android load spike and, where Android allows it, exempt Termux from battery optimisation.<span class="owner">Next step: capture the process list the next time load rises.</span></li>
+  <li>Revisit this decision after one month of monitoring data.<span class="owner">Next step: re-review with a measured uptime percentage.</span></li>
+</ol>
+
+<h2 id="appendix">Appendix</h2>
+<details>
+  <summary>Method</summary>
+  <ul>
+    <li>Memory, disk, process CPU and uptime were read on the device on 19 November 2026, with all services running.</li>
+    <li>The reboot test on 14 November 2026 was a full restart of the phone, timed from power-on to services answering.</li>
+    <li>Incident readings were taken while the outage was in progress; no automated log of start and end times exists.</li>
+    <li>Percentages in Table 3 are derived from the readings and rounded. Nothing in this report is estimated except where marked with &ldquo;about&rdquo; or &ldquo;~&rdquo;, which reflects the precision of the original reading.</li>
+  </ul>
+</details>
+<details>
+  <summary>What was not measured</summary>
+  <ul>
+    <li>Long-term availability (uptime percentage).</li>
+    <li>Device and battery temperature, battery health.</li>
+    <li>Electricity consumption and cost.</li>
+    <li>Response time and traffic volume for visitors.</li>
+    <li>The root cause of the 19 November outages.</li>
+  </ul>
+</details>
+<details>
+  <summary>Glossary</summary>
+  <dl class="gloss">
+    <dt>Cloudflare Tunnel</dt><dd>An outbound connection from the phone to Cloudflare. Visitors reach Cloudflare, which forwards them through the tunnel to the phone.</dd>
+    <dt>Cloudflare Access</dt><dd>A login gate in front of the administration area.</dd>
+    <dt>HTTP 502 and 530</dt><dd>Error codes returned by Cloudflare when it cannot reach the server behind it.</dd>
+    <dt>Load average</dt><dd>The average number of tasks waiting for the processor. On an 8-core device, a sustained value above 8 means work is queuing.</dd>
+    <dt>Termux and runit</dt><dd>A Linux environment that runs as an Android app, and the small supervisor inside it that restarts services if they stop.</dd>
+  </dl>
+</details>
+
+<footer>
+  <p>Readings from the device on 14 and 19 November 2026.</p>
+  <p>Level 1 classic &middot; art direction: a consultancy board paper, strict single column, ruled tables &middot; Charter / Georgia for headings, system sans for text</p>
+</footer>
+
+</main>
+</body>
+</html>

@@ -1,0 +1,431 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>dump-this: pages that look made, not generated</title>
+<meta name="description" content="dump-this is an open source skill that turns a request or a conversation into one self-contained HTML page, built the way a specialist would build it.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:ital,wght@0,400;0,500;0,700;0,900;1,400;1,700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#f1efe9;
+  --ink:#111111;
+  --muted:#55524c;
+  --rule:#111111;
+  --hair:#c9c5bc;
+  --red:#d7141a;
+  --red-ink:#ffffff;
+  --code-bg:#e6e3db;
+  --dial-red:#ff3b30;
+  --sans:"Inter Tight","Helvetica Neue",Helvetica,Arial,system-ui,sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+  --gut:clamp(16px,3vw,40px);
+}
+@media (prefers-color-scheme:dark){
+  :root{
+    --paper:#121110;
+    --ink:#f1ede4;
+    --muted:#a9a399;
+    --rule:#f1ede4;
+    --hair:#3a3733;
+    --red:#ff3b30;
+    --red-ink:#120000;
+    --code-bg:#1f1d1b;
+    --dial-red:#d7141a;
+  }
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--sans);font-size:clamp(16px,1.05vw + 10px,18px);line-height:1.5;overflow-x:hidden}
+a{color:inherit}
+:focus-visible{outline:3px solid var(--red);outline-offset:3px}
+.wrap{max-width:1280px;margin:0 auto;padding:0 var(--gut)}
+.grid{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));column-gap:clamp(12px,2vw,28px)}
+.label{font-family:var(--mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.rule{border:0;border-top:2px solid var(--rule);margin:0}
+
+header.top{padding-top:20px}
+header.top .grid{align-items:baseline;padding-bottom:12px;border-bottom:2px solid var(--rule)}
+header.top .mark{grid-column:1/5;font-weight:900;font-size:18px;letter-spacing:-.01em}
+header.top nav{grid-column:5/13;display:flex;gap:24px;justify-content:flex-end;flex-wrap:wrap}
+header.top nav a{font-family:var(--mono);font-size:12px;text-transform:uppercase;letter-spacing:.08em;text-decoration:none}
+header.top nav a:hover{color:var(--red)}
+
+.hero{position:relative;padding:clamp(32px,6vw,80px) 0 clamp(48px,8vw,112px)}
+.hero .meta{grid-column:1/4;padding-top:8px}
+.hero .meta p{margin:0 0 4px}
+.hero h1{grid-column:1/13;margin:clamp(24px,4vw,48px) 0 0;font-weight:900;font-size:clamp(48px,13.2vw,200px);line-height:.84;letter-spacing:-.055em}
+.hero h1 .red{color:var(--red)}
+.hero h1 .thin{font-weight:400;font-style:italic;letter-spacing:-.04em}
+.hero .lede{grid-column:5/10;margin:clamp(28px,4vw,56px) 0 0;font-size:clamp(19px,1.6vw + 8px,26px);line-height:1.3;font-weight:500;letter-spacing:-.01em}
+.hero .ctas{grid-column:5/10;display:flex;gap:12px;flex-wrap:wrap;margin-top:28px}
+.btn{display:inline-flex;align-items:center;gap:12px;padding:14px 20px;font-weight:700;font-size:16px;text-decoration:none;border:2px solid var(--ink)}
+.btn.primary{background:var(--red);border-color:var(--red);color:var(--red-ink)}
+.btn.primary:hover{background:var(--ink);border-color:var(--ink);color:var(--paper)}
+.btn.ghost:hover{background:var(--ink);color:var(--paper)}
+.btn .arr{font-family:var(--mono);font-weight:500}
+.hero .disc{position:absolute;right:var(--gut);bottom:clamp(40px,6vw,96px);width:clamp(160px,20vw,280px);aspect-ratio:1;border-radius:50%;background:var(--red);z-index:0;pointer-events:none}
+.hero h1,.hero .lede,.hero .ctas,.hero .meta{position:relative;z-index:1}
+
+.counts{border-top:2px solid var(--rule);border-bottom:2px solid var(--rule)}
+.counts .grid{row-gap:0}
+.count{grid-column:span 3;padding:20px 0 24px;border-left:1px solid var(--hair);padding-left:16px}
+.count:first-child{border-left:0;padding-left:0}
+.count b{display:block;font-size:clamp(56px,8vw,120px);font-weight:900;line-height:.9;letter-spacing:-.05em}
+.count:nth-child(2) b{color:var(--red)}
+.count span{display:block;margin-top:8px;font-size:15px;color:var(--muted);max-width:24ch}
+
+section{padding:clamp(56px,8vw,120px) 0}
+.sec-head{grid-column:1/4}
+.sec-head .label{display:block;margin-bottom:12px}
+.sec-body{grid-column:4/13}
+h2{margin:0;font-weight:900;font-size:clamp(34px,4.6vw,72px);line-height:.95;letter-spacing:-.04em}
+h3{margin:0;font-weight:700;font-size:clamp(19px,1.4vw + 8px,24px);line-height:1.15;letter-spacing:-.015em}
+
+.index{list-style:none;margin:40px 0 0;padding:0;border-top:2px solid var(--rule)}
+.index li{display:grid;grid-template-columns:4ch minmax(0,1fr) minmax(0,1fr);gap:16px;align-items:baseline;padding:14px 0;border-bottom:1px solid var(--hair)}
+.index .n{font-family:var(--mono);font-size:13px;color:var(--muted)}
+.index .t{font-weight:900;font-size:clamp(28px,3.6vw,56px);line-height:1;letter-spacing:-.04em}
+.index .who{font-size:16px;color:var(--muted)}
+.index .who b{color:var(--ink);font-weight:700}
+.index li:hover .t{color:var(--red)}
+
+.dial{background:var(--ink);color:var(--paper)}
+.dial .label{color:color-mix(in srgb,var(--paper) 70%,var(--ink))}
+.dial h2{color:var(--paper)}
+.dial .sec-body p{max-width:56ch;margin:20px 0 0}
+.dial-ctl{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));margin-top:36px;border-top:2px solid var(--paper)}
+.dial-ctl button{appearance:none;background:transparent;color:var(--paper);border:0;border-right:1px solid color-mix(in srgb,var(--paper) 30%,var(--ink));padding:14px 10px 16px;text-align:left;font:inherit;cursor:pointer;min-height:44px}
+.dial-ctl button:last-child{border-right:0}
+.dial-ctl button .k{display:block;font-family:var(--mono);font-size:12px;opacity:.7}
+.dial-ctl button .v{display:block;font-weight:700;font-size:clamp(15px,1.4vw,20px)}
+.dial-ctl button[aria-pressed="true"]{background:#d7141a;color:#fff}
+.dial-ctl button[aria-pressed="true"] .k{opacity:1}
+.dial-ctl button:focus-visible{outline-color:var(--paper);outline-offset:-4px}
+.specimen{margin-top:2px;min-height:clamp(220px,30vw,380px);display:flex;flex-direction:column;justify-content:flex-end;padding:24px 0 8px;border-bottom:2px solid var(--paper);overflow:hidden}
+.specimen .word{display:block;line-height:.85;transition:all .35s cubic-bezier(.2,.7,.2,1)}
+.specimen .say{margin-top:16px;font-family:var(--mono);font-size:13px;opacity:.8;min-height:2.6em}
+.specimen[data-level="classic"] .word{font-family:Georgia,"Times New Roman",serif;font-weight:400;font-size:clamp(48px,8vw,120px);letter-spacing:0;color:var(--paper)}
+.specimen[data-level="refined"] .word{font-family:var(--sans);font-weight:500;font-size:clamp(52px,9vw,140px);letter-spacing:-.045em;color:var(--paper)}
+.specimen[data-level="bold"] .word{font-family:var(--sans);font-weight:900;font-size:clamp(64px,14vw,220px);letter-spacing:-.06em;color:var(--dial-red)}
+.specimen[data-level="avant-garde"] .word{font-family:var(--mono);font-weight:500;font-size:clamp(44px,9vw,150px);letter-spacing:-.02em;color:transparent;-webkit-text-stroke:2px var(--paper);transform:skewX(-14deg);transform-origin:left bottom}
+.dial .note{margin-top:16px;font-size:15px;opacity:.85;max-width:60ch}
+
+.refuse .sec-body{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:clamp(16px,3vw,40px);margin-top:0}
+.refuse .col h3{padding-bottom:10px;border-bottom:2px solid var(--rule);margin-bottom:12px}
+.refuse ul{list-style:none;margin:0;padding:0}
+.refuse li{padding:10px 0;border-bottom:1px solid var(--hair)}
+.refuse .no li{color:var(--muted);text-decoration:line-through;text-decoration-color:var(--red);text-decoration-thickness:2px}
+.refuse .yes h3{color:var(--red)}
+.refuse .lead{grid-column:1/-1;max-width:40ch}
+
+.features .sec-body{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));column-gap:clamp(12px,2vw,28px)}
+.feat{padding:20px 0 28px;border-top:2px solid var(--rule)}
+.feat p{margin:10px 0 0;color:var(--muted);max-width:46ch}
+.feat .n{font-family:var(--mono);font-size:12px;color:var(--red);display:block;margin-bottom:10px}
+.f1{grid-column:1/5}.f2{grid-column:5/7}
+.f3{grid-column:1/3}.f4{grid-column:3/7}
+.f5{grid-column:1/4}.f6{grid-column:4/7}
+.f1 h3,.f4 h3{font-size:clamp(26px,2.6vw,40px);letter-spacing:-.03em}
+
+.install{border-top:2px solid var(--rule)}
+.rows{margin-top:40px;border-top:2px solid var(--rule)}
+.row{display:grid;grid-template-columns:minmax(0,3fr) minmax(0,9fr);gap:16px;padding:18px 0;border-bottom:1px solid var(--hair)}
+.row h3{font-size:clamp(20px,1.8vw,28px)}
+.row p{margin:0 0 8px}
+code,.cmd{font-family:var(--mono);font-size:14px}
+.cmd{display:block;background:var(--code-bg);padding:10px 12px;margin:4px 0;overflow-wrap:anywhere;white-space:pre-wrap}
+p code{background:var(--code-bg);padding:1px 5px}
+
+.steps{list-style:none;margin:40px 0 0;padding:0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:clamp(12px,2vw,28px);counter-reset:s}
+.steps li{border-top:2px solid var(--rule);padding-top:12px}
+.steps .big{display:block;font-weight:900;font-size:clamp(80px,10vw,160px);line-height:.8;letter-spacing:-.06em;margin-bottom:16px}
+.steps li:nth-child(3) .big{color:var(--red)}
+.steps p{margin:8px 0 0;color:var(--muted)}
+
+.final{background:#d7141a;color:#fff;padding:clamp(56px,9vw,128px) 0}
+.final h2{color:#fff;font-size:clamp(48px,9vw,150px);line-height:.86;letter-spacing:-.055em;grid-column:1/10}
+.final .side{grid-column:10/13;align-self:end;display:flex;flex-direction:column;gap:10px}
+.final .btn{border-color:#fff;color:#fff;justify-content:space-between}
+.final .btn.solid{background:#fff;color:#111}
+.final .btn:hover{background:#111;border-color:#111;color:#fff}
+.final .btn:focus-visible{outline-color:#fff}
+
+footer{padding:24px 0 40px}
+footer .grid{row-gap:12px}
+footer .links{grid-column:1/7;display:flex;gap:20px;flex-wrap:wrap}
+footer .colophon{grid-column:7/13;text-align:left;font-family:var(--mono);font-size:12px;color:var(--muted);margin:0}
+footer .links a{font-family:var(--mono);font-size:12px;text-transform:uppercase;letter-spacing:.08em}
+
+.reveal{opacity:0;transform:translateY(16px);transition:opacity .6s ease,transform .6s ease}
+.reveal.in{opacity:1;transform:none}
+
+@media (max-width:900px){
+  .hero .meta{grid-column:1/13}
+  .hero .lede,.hero .ctas{grid-column:1/13}
+  .hero .disc{display:none}
+  .sec-head,.sec-body{grid-column:1/13}
+  .sec-head{margin-bottom:24px}
+  .count{grid-column:span 6;border-left:0;padding-left:0;border-top:1px solid var(--hair)}
+  .count:nth-child(-n+2){border-top:0}
+  .final h2,.final .side{grid-column:1/13}
+  .final .side{margin-top:32px}
+  footer .links,footer .colophon{grid-column:1/13}
+}
+@media (max-width:640px){
+  header.top .mark{grid-column:1/13}
+  header.top nav{grid-column:1/13;justify-content:flex-start;gap:16px;margin-top:6px}
+  .index li{grid-template-columns:3ch minmax(0,1fr)}
+  .index .who{grid-column:2/3}
+  .dial-ctl{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .dial-ctl button:nth-child(2){border-right:0}
+  .dial-ctl button:nth-child(-n+2){border-bottom:1px solid color-mix(in srgb,var(--paper) 30%,var(--ink))}
+  .refuse .sec-body{grid-template-columns:minmax(0,1fr)}
+  .features .sec-body{grid-template-columns:minmax(0,1fr)}
+  .f1,.f2,.f3,.f4,.f5,.f6{grid-column:1/-1}
+  .row{grid-template-columns:minmax(0,1fr);gap:6px}
+  .steps{grid-template-columns:minmax(0,1fr)}
+}
+@media (prefers-reduced-motion:reduce){
+  *{transition:none!important;animation:none!important;scroll-behavior:auto!important}
+  .reveal{opacity:1;transform:none}
+}
+@media print{
+  header.top nav,.dial-ctl,.hero .ctas,.final .side,.hero .disc{display:none}
+  body{background:#fff;color:#000}
+  .dial,.final{background:#fff;color:#000}
+  .dial h2,.final h2,.specimen .word{color:#000!important;-webkit-text-stroke:0}
+  .reveal{opacity:1;transform:none}
+}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap grid">
+    <div class="mark">dump-this</div>
+    <nav aria-label="Sections">
+      <a href="#specialists">Specialists</a>
+      <a href="#dial">Style dial</a>
+      <a href="#install">Install</a>
+      <a href="https://github.com/grippado/dumps">Source</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+<section class="hero" aria-labelledby="hero-title" style="padding-top:clamp(32px,6vw,80px)">
+  <div class="disc" aria-hidden="true"></div>
+  <div class="wrap grid">
+    <div class="meta">
+      <p class="label">A skill for AI agents</p>
+      <p class="label">Open source · MIT</p>
+    </div>
+    <h1 id="hero-title">Pages that look <span class="thin">made,</span><br>not <span class="red">generated.</span></h1>
+    <p class="lede">dump-this turns a request or a whole conversation into one self-contained HTML page, built the way a specialist would build it. No centered gradient. No three cards. No emoji.</p>
+    <div class="ctas">
+      <a class="btn primary" href="#install">Get the skill <span class="arr" aria-hidden="true">→</span></a>
+      <a class="btn ghost" href="https://grippado.github.io/dumps/examples/">See the examples <span class="arr" aria-hidden="true">↗</span></a>
+    </div>
+  </div>
+</section>
+
+<div class="counts" role="region" aria-label="dump-this in numbers">
+  <div class="wrap grid">
+    <div class="count"><b>8</b><span>page types, each with its own specialist</span></div>
+    <div class="count"><b>4</b><span>style levels, set in plain words</span></div>
+    <div class="count"><b>4</b><span>places it runs: Claude Code, Codex, claude.ai, ChatGPT</span></div>
+    <div class="count"><b>1</b><span>file out: index.html, inline CSS and JS</span></div>
+  </div>
+</div>
+
+<section id="specialists" aria-labelledby="spec-title">
+  <div class="wrap grid">
+    <div class="sec-head reveal">
+      <span class="label">01 · Recipes</span>
+    </div>
+    <div class="sec-body reveal">
+      <h2 id="spec-title">Every page gets the specialist it deserves.</h2>
+      <ol class="index">
+        <li><span class="n">01</span><span class="t">report</span><span class="who"><b>senior analyst</b>, for analysis, reviews, postmortems</span></li>
+        <li><span class="n">02</span><span class="t">story</span><span class="who"><b>magazine editor</b>, for how something happened over time</span></li>
+        <li><span class="n">03</span><span class="t">slides</span><span class="who"><b>presentation coach</b>, for a talk, a pitch, an update</span></li>
+        <li><span class="n">04</span><span class="t">dashboard</span><span class="who"><b>data visualization specialist</b>, when the numbers are the point</span></li>
+        <li><span class="n">05</span><span class="t">doc</span><span class="who"><b>technical writer</b>, for reference, how-to, runbooks</span></li>
+        <li><span class="n">06</span><span class="t">comparison</span><span class="who"><b>decision advisor</b>, for choosing between options</span></li>
+        <li><span class="n">07</span><span class="t">changelog</span><span class="who"><b>release manager</b>, for what shipped</span></li>
+        <li><span class="n">08</span><span class="t">landing</span><span class="who"><b>product marketer</b>, for presenting a project, like this page</span></li>
+      </ol>
+    </div>
+  </div>
+</section>
+
+<section id="dial" class="dial" aria-labelledby="dial-title">
+  <div class="wrap grid">
+    <div class="sec-head">
+      <span class="label">02 · Style dial</span>
+    </div>
+    <div class="sec-body">
+      <h2 id="dial-title">Say how far to push. In plain words.</h2>
+      <p>Content and accessibility never move with the dial. Only the art direction does. Nothing said means bold. An art direction in prose works too, like the one that made this page.</p>
+      <div class="dial-ctl" role="group" aria-label="Preview a style level">
+        <button type="button" data-level="classic" aria-pressed="false"><span class="k">1</span><span class="v">classic</span></button>
+        <button type="button" data-level="refined" aria-pressed="false"><span class="k">2</span><span class="v">refined</span></button>
+        <button type="button" data-level="bold" aria-pressed="true"><span class="k">3 · default</span><span class="v">bold</span></button>
+        <button type="button" data-level="avant-garde" aria-pressed="false"><span class="k">4</span><span class="v">avant-garde</span></button>
+      </div>
+      <div class="specimen" id="specimen" data-level="bold" aria-live="polite">
+        <span class="word" aria-hidden="true">Dump it.</span>
+        <span class="say" id="say">Say it like: nothing at all, "make it nice", "ousado".</span>
+      </div>
+      <p class="note">Each level is a preview of the type treatment, not a full page.</p>
+    </div>
+  </div>
+</section>
+
+<section class="refuse" aria-labelledby="refuse-title">
+  <div class="wrap grid">
+    <div class="sec-head reveal">
+      <span class="label">03 · Opinions</span>
+    </div>
+    <div class="sec-body reveal">
+      <h2 id="refuse-title" class="lead">It refuses the default artifact look.</h2>
+      <div class="col no">
+        <h3>Never</h3>
+        <ul>
+          <li>Centered gradient hero plus three cards</li>
+          <li>Emoji as icons or bullets</li>
+          <li>Drop shadows on everything</li>
+          <li>Titles that only name a topic</li>
+        </ul>
+      </div>
+      <div class="col yes">
+        <h3>Instead</h3>
+        <ul>
+          <li>The answer, verdict or key number first</li>
+          <li>Real data only, never invented</li>
+          <li>Light and dark both designed</li>
+          <li>Readable at 360px, keyboard accessible</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="features" aria-labelledby="feat-title" style="padding-top:0">
+  <div class="wrap grid">
+    <div class="sec-head reveal">
+      <span class="label">04 · What you get</span>
+      <h2 id="feat-title" style="font-size:clamp(28px,3vw,44px)">Six reasons it lands.</h2>
+    </div>
+    <div class="sec-body">
+      <div class="feat f1 reveal"><span class="n">A</span><h3>A specialist, not a template.</h3><p>Eight recipes, each written from the point of view of the person who would make that page for a living.</p></div>
+      <div class="feat f2 reveal"><span class="n">B</span><h3>One file.</h3><p>A self-contained index.html that works offline once loaded.</p></div>
+      <div class="feat f3 reveal"><span class="n">C</span><h3>Plain-word dial.</h3><p>Classic for the board, avant-garde for "go wild".</p></div>
+      <div class="feat f4 reveal"><span class="n">D</span><h3>Your domain, your call.</h3><p>With dumps installed, the page publishes hidden to your own domain. You click Publicar in the admin when it is ready for the home page.</p></div>
+      <div class="feat f5 reveal"><span class="n">E</span><h3>Works without a server.</h3><p>No dumps? You get an artifact, a canvas or a file.</p></div>
+      <div class="feat f6 reveal"><span class="n">F</span><h3>Open source, MIT.</h3><p>Part of the dumps repository on GitHub. Read it, fork it, change its opinions.</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="install" class="install" aria-labelledby="install-title">
+  <div class="wrap grid">
+    <div class="sec-head reveal">
+      <span class="label">05 · Install</span>
+    </div>
+    <div class="sec-body reveal">
+      <h2 id="install-title">Four harnesses. Pick yours.</h2>
+      <div class="rows">
+        <div class="row">
+          <h3>Claude Code</h3>
+          <div><p>From a clone of the dumps repository:</p><code class="cmd">cli/dumps install-agent claude</code><p>Then ask with <code>/dump-this</code>.</p></div>
+        </div>
+        <div class="row">
+          <h3>Codex</h3>
+          <div><code class="cmd">cli/dumps install-agent codex</code><p>Then ask with <code>/prompts:dump-this</code>.</p></div>
+        </div>
+        <div class="row">
+          <h3>claude.ai</h3>
+          <div><p>Upload the skill in Settings, Capabilities, Skills:</p><a class="cmd" href="https://grippado.github.io/dumps/dump-this.zip">grippado.github.io/dumps/dump-this.zip</a></div>
+        </div>
+        <div class="row">
+          <h3>ChatGPT</h3>
+          <div><p>Paste the instructions into a custom GPT or a Project:</p><a class="cmd" href="https://grippado.github.io/dumps/dump-this-chatgpt.txt">grippado.github.io/dumps/dump-this-chatgpt.txt</a></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section aria-labelledby="how-title" style="padding-top:0">
+  <div class="wrap grid">
+    <div class="sec-head reveal">
+      <span class="label">06 · How it works</span>
+    </div>
+    <div class="sec-body reveal">
+      <h2 id="how-title">Install. Ask. Ship the page.</h2>
+      <ol class="steps">
+        <li><span class="big" aria-hidden="true">1</span><h3>Install the skill</h3><p>In whichever of the four harnesses you already use.</p></li>
+        <li><span class="big" aria-hidden="true">2</span><h3>Ask in your words</h3><p>"/dump-this landing page for the dump-this skill, Swiss poster style." That request made this page.</p></li>
+        <li><span class="big" aria-hidden="true">3</span><h3>Get the page</h3><p>As an artifact, canvas or file. With dumps, as a hidden link on your domain until you click Publicar.</p></li>
+      </ol>
+    </div>
+  </div>
+</section>
+
+<section class="final" aria-labelledby="final-title">
+  <div class="wrap grid">
+    <h2 id="final-title">Stop shipping the default look.</h2>
+    <div class="side">
+      <a class="btn solid" href="#install">Get the skill <span class="arr" aria-hidden="true">→</span></a>
+      <a class="btn" href="https://grippado.github.io/dumps/examples/">See the examples <span class="arr" aria-hidden="true">↗</span></a>
+      <a class="btn" href="https://github.com/grippado/dumps">Source on GitHub <span class="arr" aria-hidden="true">↗</span></a>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer>
+  <div class="wrap grid">
+    <div class="links">
+      <a href="https://github.com/grippado/dumps">github.com/grippado/dumps</a>
+      <a href="https://grippado.github.io/dumps/examples/">Examples</a>
+      <span class="label">MIT license</span>
+    </div>
+    <p class="colophon">Level 3 bold · Swiss International Typographic Style: 12-column grid, flush left, one red · Inter Tight + IBM Plex Mono</p>
+  </div>
+</footer>
+
+<script>
+(function(){
+  var spec=document.getElementById('specimen');
+  var say=document.getElementById('say');
+  var lines={
+    'classic':'Say it like: "conservative", "for the board", "sóbrio".',
+    'refined':'Say it like: "clean", "minimal", "elegante".',
+    'bold':'Say it like: nothing at all, "make it nice", "ousado".',
+    'avant-garde':'Say it like: "go wild", "experimental", "inovação máxima".'
+  };
+  var btns=document.querySelectorAll('.dial-ctl button');
+  btns.forEach(function(b){
+    b.addEventListener('click',function(){
+      var lv=b.getAttribute('data-level');
+      btns.forEach(function(x){x.setAttribute('aria-pressed',x===b?'true':'false');});
+      spec.setAttribute('data-level',lv);
+      say.textContent=lines[lv];
+    });
+  });
+  var els=document.querySelectorAll('.reveal');
+  var reduce=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if(reduce||!('IntersectionObserver' in window)){els.forEach(function(e){e.classList.add('in');});return;}
+  var io=new IntersectionObserver(function(entries){
+    entries.forEach(function(en){if(en.isIntersecting){en.target.classList.add('in');io.unobserve(en.target);}});
+  },{rootMargin:'0px 0px -8% 0px'});
+  els.forEach(function(e){io.observe(e);});
+})();
+</script>
+</body>
+</html>

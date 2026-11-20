@@ -1,0 +1,492 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>dumps, a meetup pitch in 7 slides</title>
+<meta name="description" content="A seven slide meetup pitch for dumps: publish any HTML artifact to your own domain with one command or an AI agent, served from a tiny Go binary that started on an old Android phone.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="dumps, a meetup pitch in 7 slides">
+<meta property="og:description" content="One command, or your AI agent, turns any HTML into a link on your own domain. Born on an old phone in a living room.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75..100,300..800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  color-scheme:light dark;
+  --paper:#f2ece0;
+  --paper-2:#e7dfcf;
+  --ink:#141a33;
+  --mute:#4a4f63;
+  --blue:#0050b0;
+  --pink:#d4135e;
+  --pink-ink:#ff4f93;
+  --hi:#ffe14d;
+  --hi-ink:#141a33;
+  --rule:rgba(20,26,51,.18);
+  --dot:rgba(0,80,176,.22);
+  --display:"Bricolage Grotesque",ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme:dark){
+  :root{
+    --paper:#111219;
+    --paper-2:#1b1d28;
+    --ink:#f2ece0;
+    --mute:#b3b0a6;
+    --blue:#7fb0ff;
+    --pink:#ff5c9e;
+    --pink-ink:#ff5c9e;
+    --hi:#ffe14d;
+    --hi-ink:#111219;
+    --rule:rgba(242,236,224,.18);
+    --dot:rgba(127,176,255,.18);
+  }
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%}
+body{
+  background:var(--paper);
+  color:var(--ink);
+  font-family:var(--display);
+  font-size:clamp(16px,1.15vw + 11px,22px);
+  line-height:1.4;
+  -webkit-font-smoothing:antialiased;
+  font-variation-settings:"wdth" 100;
+}
+a{color:inherit;text-decoration-thickness:.08em;text-underline-offset:.15em}
+a:hover{color:var(--pink)}
+:focus-visible{outline:3px solid var(--pink);outline-offset:3px;border-radius:2px}
+code,.mono{font-family:var(--mono);font-size:.82em}
+
+.grain{
+  position:fixed;inset:0;pointer-events:none;z-index:5;opacity:.35;mix-blend-mode:multiply;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 .35 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+@media (prefers-color-scheme:dark){.grain{mix-blend-mode:screen;opacity:.12}}
+
+.bar{
+  position:fixed;top:0;left:0;right:0;z-index:10;
+  display:flex;align-items:center;gap:12px;
+  padding:10px clamp(16px,3vw,40px);
+  font-family:var(--mono);font-size:13px;
+  background:var(--paper);
+  border-bottom:1px solid var(--rule);
+}
+.url{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--mute)}
+.url b{color:var(--ink);font-weight:700}
+.url .slug{color:var(--pink);font-weight:700}
+.count{font-variant-numeric:tabular-nums;color:var(--ink)}
+.bar button{
+  font:inherit;background:none;color:var(--ink);border:1px solid var(--rule);
+  border-radius:999px;width:32px;height:32px;cursor:pointer;display:grid;place-items:center;padding:0;
+}
+.bar button:hover{border-color:var(--ink)}
+.bar .notes-btn{width:auto;padding:0 12px}
+.progress{position:absolute;left:0;bottom:-1px;height:3px;background:var(--pink);width:0;transition:width .35s ease}
+
+.deck{position:relative}
+.slide{
+  min-height:100vh;min-height:100svh;
+  padding:84px clamp(16px,6vw,96px) 56px;
+  position:relative;overflow:hidden;
+  display:flex;flex-direction:column;justify-content:center;
+  border-bottom:1px solid var(--rule);
+}
+.js .deck{height:100vh;height:100svh;overflow:hidden}
+.js .slide{
+  position:absolute;inset:0;border:0;
+  overflow-y:auto;
+  opacity:0;visibility:hidden;transform:translateX(3%);
+  transition:opacity .4s ease,transform .5s cubic-bezier(.2,.7,.2,1),visibility 0s linear .5s;
+}
+.js .slide.on{opacity:1;visibility:visible;transform:none;transition:opacity .4s ease,transform .5s cubic-bezier(.2,.7,.2,1),visibility 0s}
+.js .slide.past{transform:translateX(-3%)}
+
+.kicker{
+  font-family:var(--mono);font-size:13px;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--blue);margin:0 0 18px;display:flex;gap:10px;align-items:center;
+}
+.kicker::before{content:"";width:28px;height:2px;background:currentColor}
+h1,h2{
+  font-weight:800;line-height:.9;letter-spacing:-.03em;margin:0;
+  font-variation-settings:"wdth" 78,"opsz" 96;
+}
+h1{font-size:clamp(56px,13vw,220px)}
+h2{font-size:clamp(40px,7.2vw,124px);max-width:15ch}
+.mis{position:relative;display:inline-block}
+.mis::after{
+  content:attr(data-t);position:absolute;left:.04em;top:.035em;color:var(--pink);
+  z-index:-1;mix-blend-mode:multiply;pointer-events:none;
+}
+@media (prefers-color-scheme:dark){.mis::after{mix-blend-mode:screen;opacity:.85}}
+em.i{font-style:italic;font-weight:300;font-variation-settings:"wdth" 100}
+mark{background:var(--hi);color:var(--hi-ink);padding:0 .12em;box-decoration-break:clone;-webkit-box-decoration-break:clone}
+.lede{font-size:clamp(20px,2vw + 8px,36px);line-height:1.2;max-width:28ch;margin:28px 0 0;font-weight:500}
+.small{font-size:clamp(14px,.6vw + 10px,17px);color:var(--mute)}
+
+.halftone{
+  position:absolute;pointer-events:none;z-index:-1;border-radius:50%;
+  background-image:radial-gradient(var(--dot) 30%,transparent 32%);
+  background-size:12px 12px;
+}
+
+.cmd{
+  margin-top:clamp(24px,4vh,48px);
+  font-family:var(--mono);font-size:clamp(15px,1.6vw + 6px,30px);
+  display:grid;gap:10px;max-width:100%;
+}
+.cmd .in{background:var(--ink);color:var(--paper);padding:.5em .8em;width:max-content;max-width:100%;overflow-wrap:anywhere}
+.cmd .in::before{content:"$ ";color:var(--pink-ink)}
+.cmd .out{color:var(--blue);padding-left:.8em;overflow-wrap:anywhere}
+.cmd .out::before{content:"\2192  ";color:var(--mute)}
+
+.split{display:grid;grid-template-columns:1.25fr 1fr;gap:clamp(24px,5vw,80px);align-items:end}
+@media (max-width:760px){.split{grid-template-columns:1fr}}
+.list{list-style:none;padding:0;margin:0;display:grid;gap:22px}
+.list li{border-top:2px solid var(--ink);padding-top:12px;font-size:clamp(20px,1.6vw + 10px,32px);line-height:1.15;font-weight:600}
+.list li span{display:block;font-family:var(--mono);font-size:13px;font-weight:400;color:var(--mute);margin-bottom:6px;letter-spacing:.06em;text-transform:uppercase}
+
+.clones{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:28px;max-width:420px}
+.clones i{
+  display:block;aspect-ratio:4/3;border:1px solid var(--rule);background:var(--paper-2);position:relative;
+}
+.clones i::before{content:"";position:absolute;left:12%;right:12%;top:18%;height:16%;background:linear-gradient(90deg,#7b6cf6,#4f8cff);opacity:.55}
+.clones i::after{content:"";position:absolute;left:12%;right:12%;bottom:16%;height:30%;
+  background:linear-gradient(90deg,var(--rule) 30%,transparent 30% 35%,var(--rule) 35% 65%,transparent 65% 70%,var(--rule) 70%)}
+.clones-cap{font-family:var(--mono);font-size:12px;color:var(--mute);margin-top:8px}
+
+.big-url{
+  font-family:var(--mono);font-weight:700;
+  font-size:clamp(20px,4.4vw,72px);letter-spacing:-.02em;line-height:1.05;
+  margin:36px 0 0;overflow-wrap:anywhere;
+}
+.big-url .d{color:var(--blue)}
+.big-url .id{background:var(--pink);color:var(--paper);padding:0 .15em}
+@media (prefers-color-scheme:dark){.big-url .id{color:#111219}}
+
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:0;margin-top:clamp(28px,5vh,56px);counter-reset:s}
+@media (max-width:860px){.steps{grid-template-columns:1fr}}
+.step{padding:20px clamp(12px,2vw,28px) 20px 0;border-top:3px solid var(--ink);position:relative}
+.step + .step{padding-left:clamp(12px,2vw,28px);border-left:1px solid var(--rule)}
+@media (max-width:860px){.step + .step{padding-left:0;border-left:0}}
+.step .n{
+  font-weight:800;font-variation-settings:"wdth" 75,"opsz" 96;
+  font-size:clamp(64px,8vw,140px);line-height:.8;color:var(--pink);display:block;margin-bottom:14px;
+}
+.step h3{margin:0 0 8px;font-size:clamp(22px,1.8vw + 10px,36px);line-height:1.05;letter-spacing:-.01em}
+.step p{margin:0;color:var(--mute)}
+.foot{margin-top:28px;font-family:var(--mono);font-size:13px;color:var(--mute);border-top:1px dashed var(--rule);padding-top:14px}
+
+.dial{margin-top:clamp(28px,5vh,56px);max-width:980px}
+.dial-track{display:grid;grid-template-columns:repeat(4,1fr);border:2px solid var(--ink)}
+.dial-track div{padding:14px 10px 12px;border-left:2px solid var(--ink);position:relative;min-width:0}
+.dial-track div:first-child{border-left:0}
+.dial-track b{display:block;font-family:var(--mono);font-size:12px;color:var(--mute);font-weight:400}
+.dial-track span{display:block;font-size:clamp(17px,1.4vw + 8px,30px);font-weight:700;line-height:1.1;overflow-wrap:anywhere}
+.dial-track .s1 span{font-family:Georgia,"Times New Roman",serif;font-weight:400}
+.dial-track .s2 span{font-weight:400;letter-spacing:-.02em}
+.dial-track .s3{background:var(--ink);color:var(--paper)}
+.dial-track .s3 b{color:var(--hi)}
+.dial-track .s3 span{font-weight:800;font-variation-settings:"wdth" 75}
+.dial-track .s4 span{font-family:var(--mono);font-style:italic;transform:rotate(-3deg);display:inline-block}
+.dial-here{font-family:var(--mono);font-size:12px;margin-top:8px;display:grid;grid-template-columns:repeat(4,1fr)}
+.dial-here span{grid-column:3;color:var(--pink)}
+.dial-here span::before{content:"\2191  "}
+.roles{margin-top:32px;display:flex;flex-wrap:wrap;gap:8px 10px}
+.roles span{border:1.5px solid var(--ink);border-radius:999px;padding:4px 14px;font-size:clamp(14px,.6vw + 11px,19px);font-weight:500}
+.where{margin-top:18px}
+
+.proof{display:grid;grid-template-columns:auto 1fr;gap:clamp(24px,6vw,96px);align-items:center}
+@media (max-width:760px){.proof{grid-template-columns:1fr}}
+.phone{width:clamp(150px,20vw,280px);height:auto;display:block;color:var(--ink)}
+.phone .scr{fill:var(--paper-2)}
+.phone .pk{fill:var(--pink)}
+.phone .bl{fill:var(--blue)}
+.phone .tx{fill:var(--mute)}
+@media (max-width:760px){.phone{width:140px}}
+.stats{display:flex;flex-wrap:wrap;gap:clamp(16px,3vw,48px);margin-top:28px}
+.stat{min-width:0}
+.stat b{display:block;font-weight:800;font-variation-settings:"wdth" 75,"opsz" 96;font-size:clamp(52px,7vw,128px);line-height:.85;letter-spacing:-.03em}
+.stat b small{font-size:.38em;letter-spacing:0;margin-left:.08em}
+.stat span{font-family:var(--mono);font-size:13px;color:var(--mute)}
+.runs{margin-top:28px;display:flex;flex-wrap:wrap;gap:0;font-family:var(--mono);font-size:13px}
+.runs span{padding:6px 12px;border:1px solid var(--rule);margin:-1px 0 0 -1px}
+
+.ask{background:var(--ink);color:var(--paper)}
+.ask .kicker{color:var(--hi)}
+.ask a:hover{color:var(--hi)}
+.ask .mis::after{mix-blend-mode:normal;color:var(--pink-ink);opacity:.9}
+.ask-grid{display:grid;grid-template-columns:1fr 1fr;gap:clamp(20px,4vw,64px);margin-top:clamp(28px,5vh,56px);max-width:1100px}
+@media (max-width:760px){.ask-grid{grid-template-columns:1fr}}
+.ask-grid div{border-top:3px solid var(--paper);padding-top:14px}
+.ask-grid h3{margin:0 0 8px;font-size:clamp(24px,2vw + 10px,40px);line-height:1}
+.ask-grid p{margin:0}
+.ask-grid code{background:var(--paper);color:var(--ink);padding:.1em .35em}
+.ticks{display:flex;gap:4px;margin-top:36px;flex-wrap:wrap;align-items:center}
+.ticks i{width:10px;height:22px;background:var(--hi);display:block}
+.ticks span{font-family:var(--mono);font-size:13px;margin-left:10px;opacity:.85}
+.colophon{margin-top:28px;font-family:var(--mono);font-size:12px;opacity:.7}
+
+.notes{
+  display:none;margin-top:28px;max-width:62ch;
+  font-family:var(--mono);font-size:14px;line-height:1.55;
+  border-left:3px solid var(--pink);padding:10px 14px;background:var(--paper-2);color:var(--ink);
+}
+.ask .notes{background:rgba(255,255,255,.08);color:var(--paper)}
+.show-notes .notes{display:block}
+.notes::before{content:"Speaker notes";display:block;font-weight:700;color:var(--pink);margin-bottom:4px;text-transform:uppercase;font-size:11px;letter-spacing:.08em}
+.hint{position:fixed;right:clamp(16px,3vw,40px);bottom:14px;z-index:10;font-family:var(--mono);font-size:12px;color:var(--mute)}
+.ask-on .hint{color:var(--paper);opacity:.7}
+@media (max-width:760px){.hint{display:none}}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{transition:none !important;animation:none !important}
+  .js .slide,.js .slide.past{transform:none}
+}
+@media print{
+  @page{size:landscape;margin:0}
+  .bar,.hint,.grain{display:none !important}
+  .js .deck{height:auto;overflow:visible}
+  .js .slide,.slide{
+    position:relative;inset:auto;opacity:1;visibility:visible;transform:none;
+    height:100vh;min-height:0;overflow:hidden;page-break-after:always;break-after:page;
+    padding-top:48px;border:0;
+  }
+  .notes{display:none !important}
+  body{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+}
+</style>
+</head>
+<body>
+<div class="grain" aria-hidden="true"></div>
+
+<header class="bar">
+  <div class="url" aria-hidden="true">https://<b>dumps.YOURDOMAIN</b>/<span class="slug" id="slug">01-hook</span>/</div>
+  <span class="count" id="count" aria-live="polite">01 / 07</span>
+  <button type="button" id="prev" aria-label="Previous slide">&larr;</button>
+  <button type="button" id="next" aria-label="Next slide">&rarr;</button>
+  <button type="button" class="notes-btn" id="notesBtn" aria-pressed="false">Notes</button>
+  <div class="progress" id="progress"></div>
+</header>
+
+<main class="deck" id="deck">
+
+  <section class="slide" id="s1" data-slug="01-hook" aria-label="Slide 1 of 7">
+    <div class="halftone" style="width:52vw;height:52vw;right:-12vw;top:-8vw" aria-hidden="true"></div>
+    <p class="kicker">A pitch in seven flyers</p>
+    <h1><span class="mis" data-t="One command.">One command.</span><br><em class="i">Your</em> domain.</h1>
+    <div class="cmd" aria-label="Example">
+      <div class="in">dumps publish ./report.html</div>
+      <div class="out">https://dumps.YOURDOMAIN/&lt;id&gt;/</div>
+    </div>
+    <aside class="notes">Open with the command, say nothing for two seconds. Then: any HTML file or folder your agent made, one line, and it is a link on a domain you own.</aside>
+  </section>
+
+  <section class="slide" id="s2" data-slug="02-problem" aria-label="Slide 2 of 7">
+    <p class="kicker">The problem</p>
+    <div class="split">
+      <div>
+        <h2>Generated pages all look the same, and they live on <mark>someone else's</mark> domain.</h2>
+      </div>
+      <div>
+        <div class="clones" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i></div>
+        <p class="clones-cap">fig. 1: the default artifact, six times</p>
+        <ul class="list" style="margin-top:28px">
+          <li><span>Look</span>Gradient hero, three cards, repeat.</li>
+          <li><span>Home</span>A link you rent, on a platform you do not run.</li>
+        </ul>
+      </div>
+    </div>
+    <aside class="notes">Ask the room: who has shared an AI made page this month? Whose domain was it on? Two problems: they all look alike, and the link is not yours.</aside>
+  </section>
+
+  <section class="slide" id="s3" data-slug="03-idea" aria-label="Slide 3 of 7">
+    <div class="halftone" style="width:38vw;height:38vw;left:-10vw;bottom:-14vw" aria-hidden="true"></div>
+    <p class="kicker">The idea</p>
+    <h2>Any HTML artifact, a file or a folder, becomes <span class="mis" data-t="your link.">your link.</span></h2>
+    <p class="big-url" aria-label="https://dumps.YOURDOMAIN/ followed by an id"><span class="d">dumps.YOURDOMAIN/</span><span class="id">&lt;id&gt;</span>/</p>
+    <p class="lede">Publish it with one command, or let an AI agent do it with <code>/dump-this</code>.</p>
+    <aside class="notes">This is the whole product in one sentence. Self hosted, your domain, one command or one agent call. Everything after this slide is how.</aside>
+  </section>
+
+  <section class="slide" id="s4" data-slug="04-how" aria-label="Slide 4 of 7">
+    <p class="kicker">How it works</p>
+    <h2>One small Go binary does the whole job.</h2>
+    <div class="steps">
+      <div class="step">
+        <span class="n" aria-hidden="true">1</span>
+        <h3>You publish</h3>
+        <p><code>dumps publish</code> a file or a folder, or ask your agent.</p>
+      </div>
+      <div class="step">
+        <span class="n" aria-hidden="true">2</span>
+        <h3>dumpsd prepares</h3>
+        <p>Adds a share bar, a footer and Open Graph previews to the page.</p>
+      </div>
+      <div class="step">
+        <span class="n" aria-hidden="true">3</span>
+        <h3>It goes live atomically</h3>
+        <p>Activated in one swap with rollback; the home and the private admin listing are rendered by a single writer.</p>
+      </div>
+    </div>
+    <p class="foot">Admin API behind Cloudflare Access or Tailscale. Runs on Android (Termux), Linux (systemd), macOS (launchd) or fully local.</p>
+    <aside class="notes">Stress atomic with rollback: a half written page never goes out. Single writer means the home and admin listing never race.</aside>
+  </section>
+
+  <section class="slide" id="s5" data-slug="05-agent" aria-label="Slide 5 of 7">
+    <p class="kicker">The agent</p>
+    <h2><code style="font-size:.62em;font-weight:700">/dump-this</code><br>makes the page the way a specialist would.</h2>
+    <div class="roles" aria-label="Specialists">
+      <span>analyst</span><span>editor</span><span>presentation coach</span><span>data viz specialist</span><span>technical writer</span><span>...</span>
+    </div>
+    <div class="dial" role="img" aria-label="Style dial with four levels: classic, refined, bold, avant-garde. This deck is level 3, bold.">
+      <div class="dial-track">
+        <div class="s1"><b>1</b><span>classic</span></div>
+        <div class="s2"><b>2</b><span>refined</span></div>
+        <div class="s3"><b>3 &middot; default</b><span>bold</span></div>
+        <div class="s4"><b>4</b><span>avant-garde</span></div>
+      </div>
+      <div class="dial-here"><span>this deck</span></div>
+    </div>
+    <p class="small where">In Claude Code, Codex, claude.ai and ChatGPT.</p>
+    <aside class="notes">Point at the dial: this deck itself was made at level 3, the default. Say "go wild" and you get level 4; say "for the board" and you get level 1.</aside>
+  </section>
+
+  <section class="slide" id="s6" data-slug="06-proof" aria-label="Slide 6 of 7">
+    <p class="kicker">The proof</p>
+    <div class="proof">
+      <svg class="phone" viewBox="0 0 200 380" role="img" aria-label="An old Android phone serving a page">
+        <rect x="6" y="6" width="188" height="368" rx="26" fill="none" stroke="currentColor" stroke-width="6"/>
+        <rect class="scr" x="20" y="40" width="160" height="290" rx="6"/>
+        <rect x="78" y="20" width="44" height="6" rx="3" fill="currentColor"/>
+        <circle cx="100" cy="352" r="9" fill="none" stroke="currentColor" stroke-width="4"/>
+        <rect class="pk" x="32" y="56" width="136" height="10"/>
+        <rect class="tx" x="32" y="80" width="96" height="6" opacity=".6"/>
+        <rect class="tx" x="32" y="94" width="120" height="6" opacity=".6"/>
+        <text x="32" y="170" font-family="JetBrains Mono, monospace" font-size="15" font-weight="700" fill="currentColor">$ dumpsd</text>
+        <rect class="bl" x="32" y="186" width="10" height="16"/>
+        <rect class="tx" x="32" y="230" width="136" height="6" opacity=".4"/>
+        <rect class="tx" x="32" y="244" width="110" height="6" opacity=".4"/>
+        <rect class="tx" x="32" y="258" width="124" height="6" opacity=".4"/>
+        <rect class="pk" x="32" y="296" width="60" height="20"/>
+      </svg>
+      <div>
+        <h2>It was born on an old Android phone in a living room.</h2>
+        <p class="small" style="margin-top:18px">Served through a Cloudflare Tunnel at <a href="https://dumps.gripp.link">dumps.gripp.link</a>.</p>
+        <div class="stats">
+          <div class="stat"><b data-count="2.4">2.4<small>MB</small></b><span>the dumpsd binary</span></div>
+          <div class="stat"><b data-count="10" data-prefix="~">~10<small>MB</small></b><span>of RAM, about</span></div>
+        </div>
+        <div class="runs" aria-label="Where it runs"><span>Android &middot; Termux</span><span>Linux &middot; systemd</span><span>macOS &middot; launchd</span><span>fully local</span></div>
+      </div>
+    </div>
+    <aside class="notes">If it runs on the phone in the drawer, it runs on whatever you have. Hold up a phone here if you brought one.</aside>
+  </section>
+
+  <section class="slide ask" id="s7" data-slug="07-ask" aria-label="Slide 7 of 7">
+    <p class="kicker">The ask</p>
+    <h2><span class="mis" data-t="Try it tonight.">Try it tonight.</span><br><em class="i">Send a PR</em> tomorrow.</h2>
+    <div class="ask-grid">
+      <div>
+        <h3>Try it</h3>
+        <p>Publish your first page with <code>dumps publish</code>. Docs and install at <a href="https://grippado.github.io/dumps/">grippado.github.io/dumps</a>.</p>
+      </div>
+      <div>
+        <h3>Contribute</h3>
+        <p>Open source, MIT. Issues and code at <a href="https://github.com/grippado/dumps">github.com/grippado/dumps</a>.</p>
+      </div>
+    </div>
+    <div class="ticks" role="img" aria-label="19 commits">
+      <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+      <span>19 commits on 19 Nov 2026, 17:39 to 21:34, 8 issues. Built end to end with <a href="https://grippado.github.io/flux/">flux</a>.</span>
+    </div>
+    <p class="colophon">Level 3 bold &middot; concept: a riso printed meetup flyer series, where the address bar is the slide counter &middot; Bricolage Grotesque + JetBrains Mono</p>
+    <aside class="notes">End on the one day build: 19 commits in one evening, 8 issues, made with flux. Leave the repo link up during questions.</aside>
+  </section>
+
+</main>
+
+<p class="hint" aria-hidden="true">&larr; &rarr; or swipe &middot; N for notes</p>
+
+<script>
+(function(){
+  var root=document.documentElement;
+  root.classList.add('js');
+  var slides=[].slice.call(document.querySelectorAll('.slide'));
+  var total=slides.length;
+  var count=document.getElementById('count');
+  var slug=document.getElementById('slug');
+  var progress=document.getElementById('progress');
+  var notesBtn=document.getElementById('notesBtn');
+  var cur=-1;
+  var reduce=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  function pad(n){return (n<10?'0':'')+n}
+  function countUp(el){
+    if(reduce||el.dataset.done)return;
+    el.dataset.done='1';
+    var target=parseFloat(el.dataset.count),prefix=el.dataset.prefix||'';
+    var small=el.querySelector('small');var unit=small?small.outerHTML:'';
+    var dec=(el.dataset.count.split('.')[1]||'').length;
+    var t0=null;
+    function f(t){
+      if(!t0)t0=t;
+      var p=Math.min(1,(t-t0)/900);var e=1-Math.pow(1-p,3);
+      el.innerHTML=prefix+(target*e).toFixed(dec)+unit;
+      if(p<1)requestAnimationFrame(f);
+    }
+    requestAnimationFrame(f);
+  }
+  function go(i,push){
+    i=Math.max(0,Math.min(total-1,i));
+    if(i===cur)return;
+    cur=i;
+    slides.forEach(function(s,k){
+      var on=k===i;
+      s.classList.toggle('on',on);
+      s.classList.toggle('past',k<i);
+      s.setAttribute('aria-hidden',on?'false':'true');
+      if('inert' in s)s.inert=!on;
+    });
+    count.textContent=pad(i+1)+' / '+pad(total);
+    slug.textContent=slides[i].dataset.slug;
+    progress.style.width=((i+1)/total*100)+'%';
+    document.body.classList.toggle('ask-on',slides[i].classList.contains('ask'));
+    slides[i].scrollTop=0;
+    [].forEach.call(slides[i].querySelectorAll('[data-count]'),countUp);
+    var h='#'+(i+1);
+    if(push!==false&&location.hash!==h)history.replaceState(null,'',h);
+  }
+  function fromHash(){var n=parseInt((location.hash||'').slice(1),10);return isNaN(n)?0:n-1}
+  function toggleNotes(){
+    var on=document.body.classList.toggle('show-notes');
+    notesBtn.setAttribute('aria-pressed',on?'true':'false');
+  }
+  document.getElementById('prev').addEventListener('click',function(){go(cur-1)});
+  document.getElementById('next').addEventListener('click',function(){go(cur+1)});
+  notesBtn.addEventListener('click',toggleNotes);
+  document.addEventListener('keydown',function(e){
+    if(e.metaKey||e.ctrlKey||e.altKey)return;
+    var tag=(e.target&&e.target.tagName)||'';
+    var k=e.key;
+    if(k==='ArrowRight'||k==='ArrowDown'||k==='PageDown'||(k===' '&&tag!=='BUTTON'&&tag!=='A')){e.preventDefault();go(cur+1)}
+    else if(k==='ArrowLeft'||k==='ArrowUp'||k==='PageUp'){e.preventDefault();go(cur-1)}
+    else if(k==='Home'){e.preventDefault();go(0)}
+    else if(k==='End'){e.preventDefault();go(total-1)}
+    else if(k==='n'||k==='N'){toggleNotes()}
+  });
+  var sx=0,sy=0,st=0;
+  document.addEventListener('touchstart',function(e){var t=e.changedTouches[0];sx=t.clientX;sy=t.clientY;st=Date.now()},{passive:true});
+  document.addEventListener('touchend',function(e){
+    var t=e.changedTouches[0],dx=t.clientX-sx,dy=t.clientY-sy;
+    if(Math.abs(dx)>50&&Math.abs(dx)>Math.abs(dy)*1.4&&Date.now()-st<800){go(cur+(dx<0?1:-1))}
+  },{passive:true});
+  window.addEventListener('hashchange',function(){go(fromHash(),false)});
+  window.addEventListener('beforeprint',function(){slides.forEach(function(s){s.inert=false;s.removeAttribute('aria-hidden')})});
+  window.addEventListener('afterprint',function(){var c=cur;cur=-1;go(c,false)});
+  go(fromHash(),false);
+})();
+</script>
+</body>
+</html>
