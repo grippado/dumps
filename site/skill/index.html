@@ -196,13 +196,13 @@ a{color:inherit}
 .ruler-stops button[aria-pressed="true"]{color:var(--red);font-weight:700}
 .ruler-stops button:focus-visible{outline-offset:4px}
 .ruler-stops button .ruler-no{font:600 14px/1.2 var(--mono);color:var(--mut)}
-.ruler-stops button .ruler-name{font-family:var(--disp);font-weight:700;text-transform:uppercase;font-size:clamp(.9rem,2vw,1.15rem);line-height:1.05;text-align:center}
+.ruler-stops button .ruler-name{min-width:0;max-width:100%;font-family:var(--disp);font-weight:700;text-transform:uppercase;font-size:clamp(.9rem,2vw,1.15rem);line-height:1.05;text-align:center;overflow-wrap:anywhere}
 .ruler-foot{display:grid;grid-template-columns:minmax(0,1.5fr) auto;gap:8px 18px;align-items:center;border-top:1px solid var(--rule);padding-top:8px}
 .ruler-foot p{margin:0}
 .ruler-foot .ruler-say{color:var(--mut);font-style:italic}
 .ruler-view{font-family:var(--mono);font-size:14px;color:var(--red);text-align:right}
 @media (max-width:760px){.ruler-foot{grid-template-columns:1fr}.ruler-view{text-align:left}}
-@media (max-width:420px){.ruler-stops{gap:2px}.ruler-stops button .ruler-name{font-size:.9rem}}
+@media (max-width:420px){.ruler-stops{gap:2px}.ruler-stops button .ruler-name{font-size:clamp(.58rem,2.8vw,.7rem);letter-spacing:0}}
 
 /* hero playbill */
 .hero{padding:clamp(28px,5vw,64px) 0 0}
@@ -299,9 +299,10 @@ a{color:inherit}
 .knob svg{width:100%;height:100%;display:block;overflow:visible}
 .knob .needle{transition:transform .45s cubic-bezier(.3,1.6,.5,1);transform-origin:150px 150px}
 .knob:focus-visible{outline-offset:6px;border-radius:50%}
-.stops{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;width:100%;max-width:360px}
-.stops button{font:inherit;font-family:var(--disp);font-weight:700;text-transform:uppercase;font-size:1rem;letter-spacing:.04em;background:transparent;color:var(--onstage);border:1.5px solid var(--stagemut);padding:8px 4px;cursor:pointer}
+.stops{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;width:100%;max-width:360px}
+.stops button{min-width:0;font:inherit;font-family:var(--disp);font-weight:700;text-transform:uppercase;font-size:1rem;letter-spacing:.04em;text-align:center;white-space:normal;overflow-wrap:anywhere;background:transparent;color:var(--onstage);border:1.5px solid var(--stagemut);padding:8px 4px;cursor:pointer}
 .stops button[aria-pressed="true"]{background:var(--stagered);border-color:var(--stagered);color:#17130e}
+@media (max-width:420px){.stops{gap:4px}.stops button{font-size:clamp(.58rem,2.8vw,.7rem);letter-spacing:0;padding:8px 1px}}
 .readout{border-top:2px solid var(--onstage);padding-top:16px;min-width:0}
 .readout .say{font-style:italic;font-size:1.15rem;color:var(--stagemut);margin:0 0 4px}
 .readout .say q{color:var(--onstage)}
