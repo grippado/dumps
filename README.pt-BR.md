@@ -127,6 +127,7 @@ O agente executa o comando `dumps`, então ponha `cli/dumps` no seu `PATH`. Mais
 - [Modo local](docs/pt-BR/local.md)
 - [Skill de agente](docs/pt-BR/agent.md): `dump-this`, as receitas e o fluxo de revisão
 - [Publicação Enterprise](docs/pt-BR/enterprise.md): domínios internos, acesso e distribuição da skill
+- [Proposta de roadmap Enterprise](docs/pt-BR/enterprise-roadmap.md): armazenamento S3-compatible e acesso Google Workspace propostos
 - Hosts: [Linux](docs/pt-BR/hosts/linux.md), [macOS](docs/pt-BR/hosts/macos.md), [Android (Termux)](docs/pt-BR/hosts/android-termux.md)
 - Exposição: [Cloudflare Tunnel e Access](docs/pt-BR/exposure/cloudflare.md), [alternativas](docs/pt-BR/exposure/alternatives.md)
 - [Autenticação do admin](docs/pt-BR/auth.md)

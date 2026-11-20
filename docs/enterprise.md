@@ -61,6 +61,12 @@ must not be placed behind a proxy. Other identity-aware proxies are not natively
 [authentication guide](auth.md), [Cloudflare guide](exposure/cloudflare.md) and
 [exposure alternatives](exposure/alternatives.md).
 
+If the organization uses Google Workspace, Cloudflare Access can use it as the identity provider.
+Create separate Access applications and policies for the entire artifact origin and the admin
+origin. Keep `DUMPS_AUTH=access` on the admin so `dumpsd` verifies the Access JWT. In this setup,
+Cloudflare handles Google sign-in; `dumpsd` does not validate Google tokens directly. See the
+[Cloudflare Google Workspace guide](https://developers.cloudflare.com/cloudflare-one/integrations/identity-providers/google-workspace/).
+
 Each dump runs in the same browser origin as the other dumps. A page's JavaScript can read other
 pages on that host, so SSO or VPN is not a boundary between teams. Publish only trusted HTML,
 restrict publishing rights, and use separate instances and artifact origins for groups that must
@@ -73,6 +79,9 @@ unknown, do not publish internal material. Keep the HTML in the approved workspa
 service owner for the managed destination.
 
 ## Distribute the skill
+
+An S3-compatible storage backend and native Google Workspace access are roadmap proposals, not
+current dumps features. See the [Enterprise roadmap proposal](enterprise-roadmap.md).
 
 For Claude Code and Codex, install `dump-this` alongside the CLI using
 [`cli/dumps install-agent`](agent.md). The skill package includes the enterprise recipe. An
