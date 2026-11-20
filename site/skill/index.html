@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-style="3">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
@@ -32,6 +32,99 @@
   --stage:#271a12;--onstage:#f6ecd6;--stagemut:#c9b9a0;--stagered:#ff8a70;
   --codebg:#0d0b08;--focus:#8ab4ff;
 }}
+
+/* The same skill page can preview all four art directions. */
+:root[data-style="1"]{
+  --paper:#fff;--paper2:#f1f4f7;--ink:#1c2732;--mut:#526171;--rule:#8995a1;
+  --red:#294864;--redbig:#294864;--onred:#fff;
+  --stage:#f1f4f7;--onstage:#1c2732;--stagemut:#526171;--stagered:#365d7a;
+  --codebg:#e7edf2;--focus:#0b57d0;--disp:ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
+  --serif:Georgia,"Times New Roman",serif;--mono:ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+}
+:root[data-style="2"]{
+  --paper:#fbfaf7;--paper2:#f0eee8;--ink:#26322f;--mut:#66716c;--rule:#d2d6d0;
+  --red:#53766a;--redbig:#53766a;--onred:#fff;
+  --stage:#f0eee8;--onstage:#26322f;--stagemut:#66716c;--stagered:#53766a;
+  --codebg:#e9e7e0;--focus:#315c8c;--disp:ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
+  --serif:ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;--mono:ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+}
+:root[data-style="3"]{
+  --paper:#fff4d8;--paper2:#f5e5b9;--ink:#17130e;--mut:#564d41;--rule:#17130e;
+  --red:#a82d19;--redbig:#c8321b;--onred:#fff8ec;
+  --stage:#203b66;--onstage:#fff4d8;--stagemut:#c4d0e3;--stagered:#ffd34f;
+  --codebg:#182a49;--focus:#0b57d0;--disp:"Big Shoulders Display","Arial Narrow","Helvetica Neue Condensed",Impact,sans-serif;
+  --serif:ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;--mono:ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme:dark){
+  :root[data-style="1"]{
+    --paper:#121a22;--paper2:#1a2631;--ink:#e8edf2;--mut:#bac4ce;--rule:#667482;
+    --red:#a9c5df;--redbig:#cadff3;--onred:#101820;
+    --stage:#1a2631;--onstage:#e8edf2;--stagemut:#bac4ce;--stagered:#9dc3e9;
+    --codebg:#0b1218;--focus:#8ab4ff;
+  }
+  :root[data-style="2"]{
+    --paper:#151a18;--paper2:#202824;--ink:#e7ece8;--mut:#acb7b0;--rule:#56615b;
+    --red:#9cc9b4;--redbig:#a9d7c2;--onred:#112018;
+    --stage:#202824;--onstage:#e7ece8;--stagemut:#acb7b0;--stagered:#9cc9b4;
+    --codebg:#101512;--focus:#8ab4ff;
+  }
+  :root[data-style="3"]{
+    --paper:#171716;--paper2:#27231b;--ink:#fff4d8;--mut:#d0c2a1;--rule:#fff4d8;
+    --red:#e75a3e;--redbig:#ed583b;--onred:#17130e;
+    --stage:#152847;--onstage:#fff4d8;--stagemut:#c4d0e3;--stagered:#ffd34f;
+    --codebg:#0b172b;--focus:#8ab4ff;
+  }
+}
+
+/* Level 1: classic */
+:root[data-style="1"] .wood{font-size:clamp(3.6rem,11vw,8rem);line-height:1;text-transform:none;letter-spacing:-.045em;margin:.1em 0 0}
+:root[data-style="1"] .wood .l2{padding-left:0;color:var(--ink)}
+:root[data-style="1"] .h1-sub{font-style:normal;font-size:clamp(1.35rem,2.4vw,2rem);line-height:1.25}
+:root[data-style="1"] .billing{border:1px solid var(--rule);text-align:left;padding:18px}
+:root[data-style="1"] .billing ol{font-family:var(--serif);text-transform:none;line-height:1.3}
+:root[data-style="1"] .billing .b1,:root[data-style="1"] .billing .b2,:root[data-style="1"] .billing .b3,:root[data-style="1"] .billing .b4{font-family:var(--disp);font-weight:600;font-size:1.05rem;letter-spacing:0}
+:root[data-style="1"] .billing .and{margin:3px 0}
+:root[data-style="1"] .ticker{white-space:normal}
+:root[data-style="1"] .ticker .run{display:flex;flex-wrap:wrap;gap:8px 20px;padding:0;animation:none;font:500 1rem/1.4 var(--disp);text-transform:none}
+:root[data-style="1"] .ticker .run:nth-child(2){display:none}
+:root[data-style="1"] .act-no{font-size:clamp(2.6rem,7vw,5rem)}
+:root[data-style="1"] .act-head h2,:root[data-style="1"] .finale .big{text-transform:none;font-weight:600;font-size:clamp(1.8rem,4vw,3.2rem);line-height:1.08;letter-spacing:-.025em}
+:root[data-style="1"] .role .type{font-weight:600;font-size:clamp(2rem,8vw,3.4rem);line-height:1;text-transform:none}
+:root[data-style="1"] .role:nth-child(even) .thumb,:root[data-style="1"] .role:nth-child(odd) .thumb{transform:none}
+:root[data-style="1"] .role.lit{background:var(--paper2);border-left:4px solid var(--redbig);padding-left:14px}
+:root[data-style="1"] .stage{margin-top:56px;padding:48px 0;border-block:1px solid var(--rule)}
+:root[data-style="1"] .cmd{background:var(--ink);color:var(--paper)}
+
+/* Level 2: refined */
+:root[data-style="2"] .wood{font-size:clamp(4rem,15vw,11rem);line-height:.92;text-transform:none;letter-spacing:-.065em;font-weight:700;margin:.12em 0 0}
+:root[data-style="2"] .wood .l2{padding-left:clamp(0px,5vw,64px)}
+:root[data-style="2"] .h1-sub{font-style:normal;font-size:clamp(1.35rem,2.6vw,2.1rem);letter-spacing:-.025em}
+:root[data-style="2"] .billing{border:1px solid var(--rule);text-align:left;padding:22px;background:transparent}
+:root[data-style="2"] .billing ol{text-transform:none;line-height:1.15}
+:root[data-style="2"] .billing .b1,:root[data-style="2"] .billing .b2,:root[data-style="2"] .billing .b3,:root[data-style="2"] .billing .b4{font-weight:700;letter-spacing:-.025em}
+:root[data-style="2"] .ticker{white-space:normal}
+:root[data-style="2"] .ticker .run{display:flex;flex-wrap:wrap;gap:8px 22px;padding:0;animation:none;font-size:1.1rem}
+:root[data-style="2"] .ticker .run:nth-child(2){display:none}
+:root[data-style="2"] .act-head h2,:root[data-style="2"] .finale .big{text-transform:none;font-size:clamp(2.1rem,5vw,3.8rem);letter-spacing:-.045em;line-height:1}
+:root[data-style="2"] .role .type{font-size:clamp(2.5rem,13cqi,5.2rem);line-height:.95;letter-spacing:-.04em;text-transform:none}
+:root[data-style="2"] .role:nth-child(even) .thumb,:root[data-style="2"] .role:nth-child(odd) .thumb{transform:none}
+:root[data-style="2"] .role.lit{background:color-mix(in srgb,var(--redbig) 9%,transparent)}
+:root[data-style="2"] .stage{margin-top:64px;padding:64px 0;border-block:1px solid var(--rule)}
+:root[data-style="2"] .cmd{background:var(--ink);color:var(--paper)}
+
+/* Level 3: bold */
+:root[data-style="3"] .wood{font-size:clamp(5rem,23vw,15rem);line-height:.86;letter-spacing:-.025em;margin:.08em 0 0}
+:root[data-style="3"] .wood .l2{padding-left:clamp(0px,6vw,90px)}
+:root[data-style="3"] .hero .billing{background:var(--redbig);border-color:var(--redbig);color:var(--onred);text-align:left}
+:root[data-style="3"] .billing .tiny{color:var(--onred)}
+:root[data-style="3"] .billing li a:hover{color:var(--onred)}
+:root[data-style="3"] .ticker{background:var(--stage);color:var(--onstage)}
+:root[data-style="3"] .ticker .run i{color:var(--stagered)}
+:root[data-style="3"] .act-head h2,:root[data-style="3"] .finale .big{letter-spacing:-.025em}
+:root[data-style="3"] .role .type{font-size:clamp(2.8rem,17cqi,6rem);line-height:.88}
+:root[data-style="3"] .role.lit{background:color-mix(in srgb,var(--redbig) 18%,transparent)}
+:root[data-style="3"] .thumb{border-width:3px}
+
 *{box-sizing:border-box}
 html{scroll-behavior:smooth}
 body{margin:0;background:var(--paper);color:var(--ink);font:17px/1.6 var(--serif);-webkit-font-smoothing:antialiased;overflow-x:clip}
@@ -69,17 +162,12 @@ a{color:inherit}
 .ruler-stops button:focus-visible{outline-offset:4px}
 .ruler-stops button .ruler-no{font:600 14px/1.2 var(--mono);color:var(--mut)}
 .ruler-stops button .ruler-name{font-family:var(--disp);font-weight:700;text-transform:uppercase;font-size:clamp(.9rem,2vw,1.15rem);line-height:1.05;text-align:center}
-.ruler-foot{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr) auto;gap:8px 18px;align-items:center;border-top:1px solid var(--rule);padding-top:8px}
+.ruler-foot{display:grid;grid-template-columns:minmax(0,1.5fr) auto;gap:8px 18px;align-items:center;border-top:1px solid var(--rule);padding-top:8px}
 .ruler-foot p{margin:0}
 .ruler-foot .ruler-say{color:var(--mut);font-style:italic}
-.ruler-foot a{font-family:var(--mono);font-size:14px;text-decoration-thickness:1px;text-underline-offset:3px}
-.ruler-sample[data-l="1"]{font-family:var(--serif);font-size:1.05rem;font-weight:400;border-bottom:1px solid var(--rule);padding-bottom:2px}
-.ruler-sample[data-l="2"]{font-family:ui-sans-serif,system-ui,sans-serif;font-size:1.08rem;font-weight:600;letter-spacing:-.025em}
-.ruler-sample[data-l="3"]{font-family:var(--disp);font-weight:900;text-transform:uppercase;font-size:1.18rem;letter-spacing:.01em;color:var(--red)}
-.ruler-sample[data-l="4"]{font-family:var(--disp);font-weight:900;text-transform:uppercase;font-size:1.28rem;line-height:.9;letter-spacing:-.02em;color:transparent;-webkit-text-stroke:1px var(--ink);transform:rotate(-1deg)}
-.ruler-sample[data-l="4"] em{color:var(--redbig);-webkit-text-stroke:0;font-style:normal}
-@media (max-width:760px){.ruler-foot{grid-template-columns:1fr 1fr}.ruler-foot>p:first-child{grid-column:1/-1}}
-@media (max-width:420px){.ruler-stops{gap:2px}.ruler-stops button .ruler-name{font-size:.9rem}.ruler-foot{grid-template-columns:1fr}.ruler-foot>p:first-child{grid-column:auto}}
+.ruler-view{font-family:var(--mono);font-size:14px;color:var(--red);text-align:right}
+@media (max-width:760px){.ruler-foot{grid-template-columns:1fr}.ruler-view{text-align:left}}
+@media (max-width:420px){.ruler-stops{gap:2px}.ruler-stops button .ruler-name{font-size:.9rem}}
 
 /* hero playbill */
 .hero{padding:clamp(28px,5vw,64px) 0 0}
@@ -296,7 +384,7 @@ code{font-family:var(--mono);font-size:.88em;background:var(--paper2);padding:1p
 <section class="style-ruler" id="style-ruler" aria-labelledby="ruler-title">
   <div class="wrap">
     <div class="ruler-head">
-      <div><p class="mono">The style ruler · four levels</p><h2 id="ruler-title">One brief. Four directions.</h2></div>
+      <div><p class="mono">The style ruler · four levels</p><h2 id="ruler-title">This skill page. Four directions.</h2></div>
       <output class="ruler-current" id="ruler-current" aria-label="Selected style level" aria-live="polite">3 · Bold</output>
     </div>
     <div class="ruler-stops" role="group" aria-label="Choose a visual style level" aria-describedby="ruler-help">
@@ -306,11 +394,10 @@ code{font-family:var(--mono);font-size:.88em;background:var(--paper2);padding:1p
       <button type="button" data-ruler-level="4" aria-pressed="false" aria-label="Level 4, avant-garde"><span class="ruler-no">04</span><span class="ruler-name">Avant-garde</span></button>
     </div>
     <div class="ruler-foot" id="ruler-preview">
-      <p><span id="ruler-summary">Editorial type, confident color, and a grid broken on purpose.</span> <span class="ruler-say">Try: “<span id="ruler-say">make it nice, or nothing at all</span>”</span></p>
-      <p class="ruler-sample" id="ruler-sample" data-l="3">Make the page a specialist <em>would make.</em></p>
-      <a id="ruler-example" href="../examples/landing/">See a bold example</a>
+      <p><span id="ruler-summary">Bold: editorial type, confident color, and a grid broken on purpose.</span> <span class="ruler-say">Try: “<span id="ruler-say">make it nice, or nothing at all</span>”</span></p>
+      <p class="ruler-view" id="ruler-view" aria-live="polite">This same page is shown in bold style.</p>
     </div>
-    <p class="sr" id="ruler-help">Choose one of four levels. The selection also updates the dial and specialist examples below.</p>
+    <p class="sr" id="ruler-help">Choose one of four levels. The selection changes this page's art direction and highlights matching specialists below.</p>
   </div>
 </section>
 
@@ -498,7 +585,7 @@ code{font-family:var(--mono);font-size:.88em;background:var(--paper2);padding:1p
       <div class="act-no" aria-hidden="true">II</div>
       <div>
         <h2 id="dial-h">You set the volume in plain words</h2>
-        <p>The style dial reads how far to push from what you say. Content and accessibility never move with it, only the art direction. Say nothing and you get bold. Turn the knob: the specialists whose example plays at that level light up in the cast.</p>
+        <p>Choose a level to preview this same page in that art direction. The copy and accessibility stay the same. Say nothing and the skill chooses bold. The matching specialists light up in the cast.</p>
       </div>
     </div>
     <div class="dial-grid">
@@ -676,25 +763,25 @@ code{font-family:var(--mono);font-size:.88em;background:var(--paper2);padding:1p
        color:'Near black on white, one restrained accent like navy or oxblood, no gradients.',
        layout:'A strict column or a 12 column grid, left aligned, thin rules.',
        sig:'Impeccable tables and alignment. A top consultancy could have printed it.',
-       summary:'A strict grid, calm type, and one restrained accent.',exampleHref:'../examples/report/',exampleLabel:'See the classic report'},
+       summary:'Classic: a strict grid, calm type, and one restrained accent.'},
     2:{name:'Refined',say:'clean, minimal, elegante',
        type:'A modern grotesk, tight spacing on large headings, tabular numbers.',
        color:'A warm neutral scale, one accent used sparingly, hairlines instead of shadows.',
        layout:'Generous whitespace, asymmetric two column moments, around 720px of text.',
        sig:'One precise detail done perfectly, like a beautiful KPI.',
-       summary:'Warm neutrals, generous space, and one precise detail.',exampleHref:'../examples/doc/',exampleLabel:'See the refined document'},
+       summary:'Refined: warm neutrals, generous space, and one precise detail.'},
     3:{name:'Bold',say:'make it nice, or nothing at all',
        type:'A display face with character for oversized headings, paired with a quiet text face.',
        color:'Two or three confident colors with one surprising accent, full-bleed blocks.',
        layout:'Editorial and asymmetric, the grid broken on purpose.',
        sig:'One memorable element made from the content itself.',
-       summary:'Editorial type, confident color, and a grid broken on purpose.',exampleHref:'../examples/landing/',exampleLabel:'See a bold landing page'},
+       summary:'Bold: editorial type, confident color, and a grid broken on purpose.'},
     4:{name:'Avant-garde',say:'go wild, master innovation, inovação máxima',
        type:'Kinetic, variable, display only or monospace on purpose.',
        color:'Whatever the concept demands, with contrast still passing AA.',
        layout:'Swiss poster, brutalist, scroll driven or keyboard first navigation.',
        sig:'The page itself is the idea, described in one sentence after closing it.',
-       summary:'A strong concept, kinetic type, and unexpected navigation.',exampleHref:'../examples/dashboard/',exampleLabel:'See an avant-garde dashboard'}
+       summary:'Experimental: a strong concept, kinetic type, and unexpected navigation.'}
   };
   var ANG = {1:-120, 2:-40, 3:40, 4:120};
   var cur = 3;
@@ -705,8 +792,7 @@ code{font-family:var(--mono);font-size:.88em;background:var(--paper2);padding:1p
   var rulerCurrent = document.getElementById('ruler-current');
   var rulerSummary = document.getElementById('ruler-summary');
   var rulerSay = document.getElementById('ruler-say');
-  var rulerSample = document.getElementById('ruler-sample');
-  var rulerExample = document.getElementById('ruler-example');
+  var rulerView = document.getElementById('ruler-view');
   var ticks = document.getElementById('ticks');
   var NS = 'http://www.w3.org/2000/svg';
   for (var a = -135; a <= 135; a += 9){
@@ -730,6 +816,7 @@ code{font-family:var(--mono);font-size:.88em;background:var(--paper2);padding:1p
   var btns = document.querySelectorAll('.stops button');
   function set(n){
     n = Math.max(1, Math.min(4, n)); cur = n; var l = L[n];
+    document.documentElement.setAttribute('data-style', n);
     needle.style.transform = 'rotate(' + ANG[n] + 'deg)';
     knob.setAttribute('aria-valuenow', n);
     knob.setAttribute('aria-valuetext', 'Level ' + n + ', ' + l.name);
@@ -744,9 +831,7 @@ code{font-family:var(--mono);font-size:.88em;background:var(--paper2);padding:1p
     rulerCurrent.textContent = n + ' · ' + l.name;
     rulerSummary.textContent = l.summary;
     rulerSay.textContent = l.say;
-    rulerSample.setAttribute('data-l', n);
-    rulerExample.href = l.exampleHref;
-    rulerExample.textContent = l.exampleLabel;
+    rulerView.textContent = 'This same page is shown in ' + l.name.toLowerCase() + ' style.';
     btns.forEach(function(b){ b.setAttribute('aria-pressed', String(+b.dataset.l === n)); });
     rulerBtns.forEach(function(b){ b.setAttribute('aria-pressed', String(+b.dataset.rulerLevel === n)); });
     roles.forEach(function(r){ r.classList.toggle('lit', +r.dataset.level === n); });
