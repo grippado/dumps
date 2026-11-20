@@ -18,12 +18,27 @@ segue a receita dele:
 Toda página segue também uma base comum: tema claro e escuro, legível no celular, acessível,
 resposta primeiro e só dados reais (a skill nunca inventa número, data ou citação).
 
-**Você não precisa de um servidor dumps para usar.** Sem o dumps, a skill entrega o HTML (ou um
-artefato ou canvas, onde a ferramenta tiver). Com o dumps, ela também publica a página no seu
-domínio e devolve o link.
+**O publicador segue o perfil ativo.** Defina `DUMP_THIS_PUBLISHER` como `dumps`, `native`, `file`
+ou `auto`:
+
+| Valor | Entrega |
+|---|---|
+| `dumps` | Confere `dumps config`, publica no servidor configurado e devolve o link. |
+| `native` | Usa o publicador do harness autenticado: Claude Artifacts, ChatGPT Sites ou outra integração disponível. Nunca usa o CLI dumps como fallback. |
+| `file` | Mantém o HTML no workspace local aprovado. |
+| `auto` | Prioriza o publicador nativo disponível, depois um CLI dumps verificado e, por último, o arquivo HTML. |
+
+Um perfil pessoal de máquina com acesso ao CLI pode escolher seu servidor dumps configurado. Um
+perfil hospedado de trabalho pode usar o publicador nativo da conta ou workspace ativo do Claude ou
+ChatGPT quando o harness o expuser. A skill não troca de conta nem muda silenciosamente de uma
+rota nativa para um host pessoal. Se o harness atual não puder publicar,
+ela deixa o HTML pronto e informa que ainda não publicou.
 
 A skill mora em [`agents/skills/dump-this`](../../agents/skills/dump-this): o `SKILL.md` e as
 receitas em `recipes/`.
+
+Para ver os limites de conta e compartilhamento dos publicadores nativos, leia
+[`recipes/publishing.md`](../../agents/skills/dump-this/recipes/publishing.md).
 
 ## O dial de estilo: do conservador à inovação máxima
 
@@ -134,8 +149,9 @@ prompt `/prompts:dump-this` em `~/.codex/prompts/dump-this.md` (`CODEX_HOME` é 
    habilitadas na sua conta ou organização.
 3. Num chat, peça "faz um dump disso como dashboard" ou anexe um arquivo e peça um relatório.
 
-O Claude monta a página como artefato HTML, e você compartilha pelo botão de publicar do próprio
-artefato. A saída segue as mesmas receitas de especialista do Claude Code.
+O Claude monta a página como Artifact HTML na conta autenticada. O compartilhamento segue as
+regras dessa conta; Artifacts do Claude for Work ficam dentro da organização. A saída segue as
+mesmas receitas de especialista do Claude Code.
 
 ## ChatGPT (GPT personalizado ou Projeto)
 
@@ -144,14 +160,16 @@ O ChatGPT não carrega pastas de skill, então use as instruções compactas:
 1. Copie o [dump-this-chatgpt.txt](https://grippado.github.io/dumps/dump-this-chatgpt.txt)
    (fonte: [`agents/chatgpt/instructions.md`](../../agents/chatgpt/instructions.md)).
 2. Cole como instruções de um GPT personalizado, ou de um Projeto, para valer em todo chat dele.
-3. Peça um dump. O ChatGPT entrega o HTML no canvas, onde você vê a prévia e compartilha.
+3. Peça um dump. Use ChatGPT Sites no workspace ativo quando estiver disponível e selecionado; caso
+   contrário, o ChatGPT entrega o HTML no canvas para você ver a prévia.
 
 A versão compacta leva os mesmos especialistas e regras, condensados para caber no limite de
 instruções.
 
 ## Publicando com o dumps
 
-Quando o comando `dumps` funciona na máquina, a skill publica por você:
+Quando o perfil ativo seleciona `DUMP_THIS_PUBLISHER=dumps` e o comando `dumps` confirma o servidor
+esperado, a skill publica por você:
 
 ```bash
 dumps publish <página> --title "<título>" --hidden --source agent

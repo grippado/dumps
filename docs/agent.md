@@ -18,12 +18,27 @@ specialist's recipe:
 Every page also follows a shared base: light and dark themes, readable on a phone, accessible,
 answer first, and real data only (it never invents numbers, dates or quotes).
 
-**You do not need a dumps server to use it.** Without dumps, the skill hands you the HTML (or an
-artifact or canvas, where the tool has one). With dumps, it also publishes the page to your own
-domain and gives you the link.
+**Publisher choice follows the active profile.** Set `DUMP_THIS_PUBLISHER` to `dumps`, `native`,
+`file` or `auto`:
+
+| Value | Delivery |
+|---|---|
+| `dumps` | Verify `dumps config`, publish through that configured server and return its URL. |
+| `native` | Use the publisher exposed by the signed-in harness: Claude Artifacts, ChatGPT Sites, or another connected publisher. Never fall back to the dumps CLI. |
+| `file` | Keep the HTML in the approved local workspace. |
+| `auto` | Prefer the current harness's native publisher, then a verified dumps CLI, then an HTML file. |
+
+A personal machine profile with CLI access can select its configured dumps server. A hosted work
+profile can select the native publisher in the active Claude or ChatGPT account/workspace when
+that harness exposes it. The skill never changes accounts or silently crosses from a native route
+to a personal host. If the active harness cannot publish,
+it leaves the HTML ready and reports that it was not published.
 
 The skill lives in [`agents/skills/dump-this`](../agents/skills/dump-this): `SKILL.md` plus the
 recipes in `recipes/`.
+
+For the account and sharing limits of native publishers, see
+[`recipes/publishing.md`](../agents/skills/dump-this/recipes/publishing.md).
 
 ## The style dial: from conservative to master innovation
 
@@ -134,8 +149,9 @@ Start a new Codex session and ask for a dump in plain words ("dump this as a das
    for your account or organization.
 3. In a chat, ask "dump this as a dashboard" or attach a file and ask for a report.
 
-Claude builds the page as an HTML artifact, and you share it with the artifact's own publish
-button. The output follows the same specialist recipes as in Claude Code.
+Claude builds the page as an HTML Artifact in the signed-in account. Sharing follows that
+account's controls; Claude for Work Artifacts stay within the organization. The output follows
+the same specialist recipes as in Claude Code.
 
 ## ChatGPT (custom GPT or Project)
 
@@ -144,14 +160,16 @@ ChatGPT does not load skill folders, so use the compact instructions instead:
 1. Copy [dump-this-chatgpt.txt](https://grippado.github.io/dumps/dump-this-chatgpt.txt)
    (source: [`agents/chatgpt/instructions.md`](../agents/chatgpt/instructions.md)).
 2. Paste it as the instructions of a custom GPT, or of a Project, so every chat in it uses them.
-3. Ask for a dump. ChatGPT delivers the HTML in canvas, where you can preview and share it.
+3. Ask for a dump. Use ChatGPT Sites in the active workspace when available and selected; otherwise
+   ChatGPT delivers the HTML in canvas, where you can preview it.
 
 The compact version carries the same specialists and rules, condensed to fit the instruction
 limits.
 
 ## Publishing with dumps
 
-When the `dumps` command works on the machine, the skill publishes for you:
+When the active profile selects `DUMP_THIS_PUBLISHER=dumps` and the `dumps` command verifies the
+intended server, the skill publishes for you:
 
 ```bash
 dumps publish <page> --title "<title>" --hidden --source agent

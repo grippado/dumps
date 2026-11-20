@@ -89,8 +89,11 @@ organization may distribute that package from an internal mirror and add a priva
 overlay, but should keep domains, credentials, customer data and identity-provider settings out
 of the public repository.
 
-claude.ai Skills and ChatGPT instructions can generate the HTML, but they cannot run the local
-CLI or reach a private network by themselves. Direct publication from those hosted harnesses
-requires an organization-approved connector. Without one, deliver the HTML only through a
-destination the organization's policy approves; do not present a hosted artifact as an internal
-dumps publication.
+Hosted harnesses can publish through their native account when organization policy allows it. In
+Claude for Work, shared Artifacts stay inside the Team or Enterprise organization. ChatGPT Sites
+can be kept private to the active workspace; public publishing in Enterprise is disabled by
+default and requires workspace permission. The skill uses the account already signed in and never
+switches to a personal account. If the native publisher is unavailable or its audience cannot be
+verified, keep the HTML in the approved workspace or use an approved internal dumps CLI profile.
+See [`agents/skills/dump-this/recipes/publishing.md`](../agents/skills/dump-this/recipes/publishing.md)
+for the publisher rules.

@@ -18,9 +18,10 @@ dashboards, and more). It works in your favorite harness, with or without a dump
   `~/.claude/skills` (no clone needed), then type `/dump-this <what you want>`. Codex: same zip
   into `~/.codex/skills`. Commands in [docs/agent.md](docs/agent.md).
 - **claude.ai:** upload [dump-this.zip](https://grippado.github.io/dumps/dump-this.zip) in
-  Settings, Capabilities, Skills, and get the page as an artifact.
+  Settings, Capabilities, Skills, and get a native Artifact in the signed-in account.
 - **ChatGPT:** paste [dump-this-chatgpt.txt](https://grippado.github.io/dumps/dump-this-chatgpt.txt)
-  into a custom GPT or a Project, and get the page in canvas.
+  into a custom GPT or a Project. Use Sites in the active workspace when available; otherwise get
+  the page in canvas.
 
 Its own page, with the eight specialists: [grippado.github.io/dumps/skill](https://grippado.github.io/dumps/skill/).
 It is opinionated on purpose: a style dial read from your own words goes from "conservative"
@@ -31,6 +32,14 @@ format](https://grippado.github.io/dumps/style-packs/) or read the [contribution
 
 Full guide: [docs/agent.md](docs/agent.md).
 For organization-owned internal hosts, see the [enterprise publishing guide](docs/enterprise.md).
+
+### One skill, account-aware publishing
+
+`dump-this` can send the HTML to the publisher selected by the active profile: a configured dumps
+server from a personal machine profile with CLI access, Claude Artifacts or ChatGPT Sites in the
+currently signed-in work account, or another publisher exposed by the current harness. Set `DUMP_THIS_PUBLISHER` to
+`dumps`, `native`, `file` or `auto`. It never switches accounts or silently falls back to another
+publisher. The account and workspace control who can see a native artifact or Site.
 
 ## Features
 
@@ -43,7 +52,7 @@ For organization-owned internal hosts, see the [enterprise publishing guide](doc
 - Private admin listing behind a login (Cloudflare Access or Tailscale): archive, unarchive, rename and delete.
 - Atomic publish with rollback: a failed publish leaves the previous version online.
 - Thumbnails rendered locally with headless Chrome or Chromium.
-- An agent skill, `dump-this`, that lets Claude Code and Codex turn a request into a page and publish it hidden for your review.
+- An agent skill, `dump-this`, that turns a request into a page and routes it to the publisher selected by the active profile.
 - An enterprise delivery recipe for organization-managed CLI profiles and internal `dumps.<org-domain>` hosts protected by corporate SSO or VPN.
 - Local mode with no server, no tunnel and no login, with the dumps and the admin on separate origins.
 - One small Go binary on the server (`dumpsd`, no CGO), one bash CLI on your machine.
