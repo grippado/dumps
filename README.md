@@ -22,6 +22,7 @@ dashboards, and more). It works in your favorite harness, with or without a dump
 - **ChatGPT:** paste [dump-this-chatgpt.txt](https://grippado.github.io/dumps/dump-this-chatgpt.txt)
   into a custom GPT or a Project, and get the page in canvas.
 
+Its own page, with the eight specialists: [grippado.github.io/dumps/skill](https://grippado.github.io/dumps/skill/).
 It is opinionated on purpose: a style dial read from your own words goes from "conservative"
 to "master innovation", and it refuses the default artifact look. See one example per type at
 [grippado.github.io/dumps/examples](https://grippado.github.io/dumps/examples/).
