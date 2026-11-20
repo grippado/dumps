@@ -1,0 +1,39 @@
+# dumps CLI configuration. Copy to ~/.config/dumps/config (or point DUMPS_CONFIG at it).
+# Lines are DUMPS_KEY=value. Environment variables win over this file.
+
+# "local" publishes on this machine (no ssh). Anything else is an ssh host from ~/.ssh/config.
+DUMPS_HOST=local
+
+# Where dumps live on the server. Defaults: ~/.local/share/dumps (local) or the ssh home (remote).
+# DUMPS_ROOT=~/.local/share/dumps
+
+# Public base URL of the dumps. Local default: http://localhost:8090
+# DUMPS_URL=https://dumps.example.com
+# DUMPS_LIST_URL=https://admin.example.com/_dumps/
+
+# Default authors for the footer: "Name|URL", separated by ";".
+# DUMPS_AUTHORS="Ada Lovelace|https://example.com"
+
+# Refuse to publish anything under these paths (":"-separated).
+# DUMPS_BLOCKED_PATHS=~/work:~/clients
+
+# Site texts, featured links and where the private listing is written. See examples/site.json.
+# DUMPS_SITE=~/.config/dumps/site.json
+
+# Admin service: none | termux-runit | systemd-user | launchd
+# DUMPS_SERVICE=systemd-user
+# Build target for a remote server (GOOS/GOARCH). Local builds use this machine.
+# DUMPS_TARGET=linux/arm64
+# DUMPS_LISTEN=127.0.0.1:8090
+# Exact origin the admin page is served from (CSRF check).
+# DUMPS_ADMIN_ORIGIN=https://admin.example.com
+
+# Admin login: access (Cloudflare Access JWT) | tailscale (tailscale serve identity) | none (loopback only)
+# DUMPS_AUTH=access
+# DUMPS_ACCESS_TEAM=yourteam.cloudflareaccess.com
+# DUMPS_ACCESS_AUD=<Application Audience (AUD) tag of the admin Access app>
+# DUMPS_TAILSCALE_ALLOW="ada@example.com bob@example.com"
+
+# Optional GA4 measurement ID (G-XXXXXXX). Empty disables analytics.
+# DUMPS_GA_ID=
+# DUMPS_MACHINE=laptop

@@ -1,0 +1,23 @@
+{
+  "v": 1,
+  "id": "abc",
+  "title": "Primeiro dump",
+  "kind": "file",
+  "entry": "index.html",
+  "source_name": "a.html",
+  "bytes": 2048,
+  "created": "2026-11-19T18:37:00-0300",
+  "updated": "2026-11-19T18:37:10-0300",
+  "url": "https://dumps.example.com/abc/",
+  "machine": "laptop",
+  "bar": true,
+  "footer": true,
+  "authors": [
+    {
+      "name": "Ada Lovelace"
+    }
+  ],
+  "thumb": true,
+  "archived": false,
+  "title_locked": false
+}

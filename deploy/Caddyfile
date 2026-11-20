@@ -1,0 +1,39 @@
+# Two local listeners behind a tunnel (cloudflared, Tailscale Funnel, frp...).
+# Replace /home/you with the absolute DUMPS_ROOT on the server.
+
+{
+	admin off
+	auto_https off
+}
+
+# Public dumps: only the dumps/ folder, clean URLs, no listing, dotfiles hidden.
+:8081 {
+	bind 127.0.0.1
+	root * /home/you/dumps
+	encode gzip
+	@index path_regexp idx ^(.*/)index\.html$
+	@page path_regexp page ^(.+)\.html$
+	route {
+		redir @index {re.idx.1} 308
+		redir @page {re.page.1} 308
+		try_files {path} {path}.html
+		file_server {
+			hide .*
+		}
+	}
+}
+
+# Private admin: put this hostname behind your login (Cloudflare Access, Tailscale...).
+:8080 {
+	bind 127.0.0.1
+	encode gzip
+	handle /_dumps/api/* {
+		reverse_proxy 127.0.0.1:8090
+	}
+	handle /_dumps/* {
+		root * /home/you/admin
+		uri strip_prefix /_dumps
+		file_server
+	}
+	redir / /_dumps/ 302
+}

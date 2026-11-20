@@ -1,0 +1,23 @@
+{
+  "v": 1,
+  "id": "cvyk5ztrp2",
+  "title": "Primeiro dump",
+  "kind": "file",
+  "entry": "index.html",
+  "source_name": "primeiro.html",
+  "bytes": 983,
+  "created": "2026-11-19T17:22:14-0300",
+  "updated": "2026-11-19T18:37:21-0300",
+  "url": "https://dumps.example.com/cvyk5ztrp2/",
+  "machine": "laptop",
+  "bar": true,
+  "footer": true,
+  "authors": [
+    {
+      "name": "Ada Lovelace",
+      "url": "https://example.com/ada"
+    }
+  ],
+  "thumb": true,
+  "archived": false
+}

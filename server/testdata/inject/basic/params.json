@@ -1,0 +1,10 @@
+{
+  "title": "Relato & \"aspas\" <x>",
+  "url": "https://dumps.example.com/basic/",
+  "version": "abcdef0123",
+  "authors": "[{\"name\":\"Ada Lovelace\",\"url\":\"https://example.com/ada\"}]",
+  "bar": "true",
+  "footer": "true",
+  "image": "https://dumps.example.com/_/thumbs/basic.jpg?v=20261119200000",
+  "names": "Ada Lovelace"
+}

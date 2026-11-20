@@ -1,0 +1,23 @@
+{
+  "v": 1,
+  "id": "j6onrjyj6j",
+  "title": "Teste de pasta",
+  "kind": "dir",
+  "entry": "index.html",
+  "source_name": "pasta-demo",
+  "bytes": 1957,
+  "created": "2026-11-19T17:27:09-0300",
+  "updated": "2026-11-19T18:36:52-0300",
+  "url": "https://dumps.example.com/j6onrjyj6j/",
+  "machine": "laptop",
+  "bar": true,
+  "footer": true,
+  "authors": [
+    {
+      "name": "Ada Lovelace",
+      "url": "https://example.com/ada"
+    }
+  ],
+  "thumb": true,
+  "archived": false
+}

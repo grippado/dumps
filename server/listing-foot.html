@@ -1,0 +1,16 @@
+</tbody></table><p id="msg" role="status" aria-live="polite"></p></main><dialog id="dlg"><form method="dialog"><h2></h2><p></p><input name="title" maxlength="200" autocomplete="off"><menu><button value="ok" class="ok">Confirmar</button><button value="cancel" formnovalidate>Cancelar</button></menu></form></dialog><script>
+(function(){var dlg=document.getElementById("dlg"),form=dlg.querySelector("form"),h=dlg.querySelector("h2"),p=dlg.querySelector("p"),input=dlg.querySelector("input"),ok=dlg.querySelector(".ok"),msg=document.getElementById("msg"),pending=null;
+function say(t,err){msg.textContent=t;msg.className=err?"err":""}
+function call(action,body,btn){btn&&(btn.disabled=true);say("Aplicando…");
+return fetch("/_dumps/api/"+action,{method:"POST",credentials:"same-origin",redirect:"manual",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)}).then(function(r){
+if(r.type==="opaqueredirect"||r.status===0||r.status===302)throw new Error("A sessão do Access expirou. Recarregue a página.");
+return r.json().catch(function(){return{}}).then(function(j){if(!r.ok)throw new Error(j.error||("Erro "+r.status));say("Feito. Atualizando…");setTimeout(function(){location.reload()},300)})}).catch(function(e){btn&&(btn.disabled=false);say(e.message&&e.message!=="Failed to fetch"?e.message:"Sem resposta do servidor. Recarregue a página e tente de novo.",true)})}
+document.addEventListener("click",function(e){var b=e.target.closest("button[data-act]");if(!b)return;var tr=b.closest("tr"),id=tr.dataset.id,act=b.dataset.act;
+if(act==="archive"||act==="unarchive"){call(act,{id:id},b);return}
+pending={act:act,id:id,btn:b};ok.classList.toggle("danger",act==="delete");
+if(act==="title"){h.textContent="Renomear";p.textContent=id;input.hidden=false;input.required=true;input.value=tr.dataset.title||"";ok.textContent="Salvar"}
+else{h.textContent="Apagar "+id+"?";p.textContent="O link sai do ar e o conteúdo é apagado do servidor. Não tem volta.";input.hidden=true;input.required=false;ok.textContent="Apagar"}
+dlg.returnValue="";dlg.showModal();if(act==="title"){input.focus();input.select()}});
+dlg.addEventListener("close",function(){var x=pending;pending=null;if(dlg.returnValue!=="ok"||!x)return;
+if(x.act==="title")call("title",{id:x.id,title:input.value},x.btn);else call("delete",{id:x.id},x.btn)});})();
+</script></body></html>

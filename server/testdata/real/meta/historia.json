@@ -1,0 +1,24 @@
+{
+  "v": 1,
+  "id": "historia",
+  "title": "Do fundo da caixa ao dumps",
+  "kind": "dir",
+  "entry": "index.html",
+  "source_name": "dist",
+  "bytes": 207676,
+  "created": "2026-11-19T18:45:42-0300",
+  "updated": "2026-11-19T19:49:25-0300",
+  "url": "https://dumps.example.com/historia/",
+  "machine": "laptop",
+  "bar": true,
+  "footer": true,
+  "authors": [
+    {
+      "name": "Ada Lovelace",
+      "url": "https://example.com/ada"
+    }
+  ],
+  "thumb": true,
+  "archived": false,
+  "title_locked": true
+}

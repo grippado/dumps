@@ -1,0 +1,714 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "$(realpath "${BASH_SOURCE[0]}")")" && pwd)"
+REPO_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
+DUMPSD_SRC="$REPO_ROOT/server"
+BAR_JS="$REPO_ROOT/web/dumps-bar.js"
+GA_JS="$REPO_ROOT/web/dumps-ga.js"
+DUMPS_CONFIG="${DUMPS_CONFIG:-${XDG_CONFIG_HOME:-$HOME/.config}/dumps/config}"
+
+load_config() {
+  local key val
+  [[ -f "$DUMPS_CONFIG" ]] || return 0
+  while IFS= read -r line || [[ -n "$line" ]]; do
+    [[ "$line" =~ ^[[:space:]]*(DUMPS_[A-Z0-9_]+)=(.*)$ ]] || continue
+    key="${BASH_REMATCH[1]}"
+    val="${BASH_REMATCH[2]}"
+    [[ -z "${!key+x}" ]] || continue
+    if [[ "$val" =~ ^\"(.*)\"$ || "$val" =~ ^\'(.*)\'$ ]]; then
+      val="${BASH_REMATCH[1]}"
+    fi
+    val="${val//\$HOME/$HOME}"
+    [[ "$val" != \~/* ]] || val="$HOME/${val#\~/}"
+    export "$key=$val"
+  done <"$DUMPS_CONFIG"
+}
+load_config
+
+HOST="${DUMPS_HOST:-local}"
+if [[ "$HOST" == "local" ]]; then
+  ROOT="${DUMPS_ROOT:-${XDG_DATA_HOME:-$HOME/.local/share}/dumps}"
+  BASE_URL="${DUMPS_URL:-http://localhost:8090}"
+else
+  ROOT="${DUMPS_ROOT:-.}"
+  BASE_URL="${DUMPS_URL:-}"
+fi
+BASE_URL="${BASE_URL%/}"
+ADMIN_LISTEN="${DUMPS_ADMIN_LISTEN:-127.0.0.1:8091}"
+if [[ "$HOST" == "local" ]]; then
+  LIST_URL="${DUMPS_LIST_URL:-http://localhost:${ADMIN_LISTEN##*:}/_dumps/}"
+else
+  LIST_URL="${DUMPS_LIST_URL:-$BASE_URL/_dumps/}"
+fi
+GA_ID="$(tr -d '[:space:]' <<<"${DUMPS_GA_ID:-}")"
+DEFAULT_AUTHORS="${DUMPS_AUTHORS:-}"
+BLOCKED_PATHS=()
+IFS=':' read -r -a _blocked_raw <<<"${DUMPS_BLOCKED_PATHS:-}"
+for _p in "${_blocked_raw[@]}"; do
+  [[ -n "$_p" ]] || continue
+  [[ "$_p" != \~ ]] || _p="$HOME"
+  [[ "$_p" != \~/* ]] || _p="$HOME/${_p#\~/}"
+  BLOCKED_PATHS+=("$_p")
+done
+unset _p _blocked_raw
+SSH_OPTS=(-o BatchMode=yes -o ConnectTimeout=30)
+_THUMB_PROFILE=""
+[[ "$ROOT" != *"'"* ]] || { echo "erro: DUMPS_ROOT não pode ter aspas simples" >&2; exit 1; }
+SERVICE="${DUMPS_SERVICE:-none}"
+TARGET="${DUMPS_TARGET:-linux/arm64}"
+AUTH="${DUMPS_AUTH:-access}"
+LISTEN="${DUMPS_LISTEN:-127.0.0.1:8090}"
+ADMIN_ORIGIN="${DUMPS_ADMIN_ORIGIN:-}"
+
+usage() {
+  cat <<EOF
+Uso:
+  dumps publish <arquivo.html|pasta> [--id <id>] [--title <texto>] [--author "Nome|URL"]... [--no-bar] [--no-footer] [--hidden] [--source agent]
+  dumps list
+  dumps archive <id>
+  dumps unarchive <id>
+  dumps edit <id> --title <texto>
+  dumps rm <id>
+  dumps regen                        regenera home e listagem a partir dos manifests
+  dumps install-dumpsd               compila o dumpsd, instala no servidor e atualiza o serviço
+  dumps serve-local                  serve home, dumps e admin em $LISTEN (só com DUMPS_HOST=local)
+  dumps config                       mostra a configuração efetiva
+  dumps install-agent [claude|codex|all]  instala a skill e o comando /dump-this (symlink)
+
+archive tira o dump da home pública sem tirar do ar; unarchive devolve.
+--hidden publica já arquivado: o link funciona, mas o dump não entra na home.
+edit troca o título na home e na listagem; a barra do HTML só muda no próximo publish.
+Home e listagem são montadas no servidor pelo dumpsd, o único escritor.
+
+Publica em $BASE_URL/<id>/ e mantém a listagem privada em $LIST_URL
+
+Saída: 0 ok · 1 uso ou validação · 2 caminho bloqueado · 3 servidor inalcançável · 4 falha remota
+
+Configuração: $DUMPS_CONFIG (linhas DUMPS_*=valor; variável de ambiente vence).
+Veja examples/config e docs/configuration.md.
+EOF
+}
+
+die() {
+  local code="$1"
+  shift
+  echo "erro: $*" >&2
+  exit "$code"
+}
+
+remote() {
+  if [[ "$HOST" == "local" ]]; then
+    mkdir -p "$ROOT" && (cd "$ROOT" && bash -c "$1")
+  else
+    ssh "${SSH_OPTS[@]}" "$HOST" "cd '$ROOT' && $1"
+  fi
+}
+
+push() {
+  local src="$1" dest="$2"
+  shift 2
+  if [[ "$HOST" == "local" ]]; then
+    mkdir -p "$ROOT" && rsync -a "$@" "$src" "$ROOT/$dest"
+  else
+    rsync -az -e "ssh ${SSH_OPTS[*]}" "$@" "$src" "$HOST:$ROOT/$dest"
+  fi
+}
+
+valid_id() {
+  [[ "$1" =~ ^[a-z0-9][a-z0-9-]{0,62}$ ]]
+}
+
+new_id() {
+  local id
+  id="$(LC_ALL=C tr -dc 'a-z2-7' </dev/urandom 2>/dev/null | head -c 10 || true)"
+  [[ ${#id} -eq 10 ]] || die 1 "não consegui gerar id"
+  echo "$id"
+}
+
+machine_name() {
+  if [[ -n "${DUMPS_MACHINE:-}" ]]; then
+    echo "$DUMPS_MACHINE"
+  else
+    hostname -s 2>/dev/null || hostname
+  fi
+}
+
+guard_blocked() {
+  local src="$1" root rroot
+  for root in "${BLOCKED_PATHS[@]}"; do
+    [[ -n "$root" ]] || continue
+    rroot="$(realpath "$root" 2>/dev/null || echo "$root")"
+    case "$src/" in
+      "$rroot/"*) die 2 "publicação bloqueada: origem dentro de $root (DUMPS_BLOCKED_PATHS)" ;;
+    esac
+    case "$rroot/" in
+      "$src/"*) die 2 "publicação bloqueada: a origem contém $root (DUMPS_BLOCKED_PATHS)" ;;
+    esac
+  done
+}
+
+check_symlinks() {
+  local dir="$1" link target
+  while IFS= read -r -d '' link; do
+    target="$(realpath "$link" 2>/dev/null)" || die 1 "symlink quebrado: ${link#"$dir"/}"
+    case "$target/" in
+      "$dir/"*) guard_blocked "$target" ;;
+      *) die 1 "symlink sai da pasta: ${link#"$dir"/}" ;;
+    esac
+  done < <(find "$dir" -type l -print0)
+}
+
+dumpsd_version() {
+  local h
+  h="$(git -C "$REPO_ROOT" log -1 --format=%h -- server 2>/dev/null || true)"
+  [[ -n "$h" ]] || return 0
+  if [[ -n "$(git -C "$REPO_ROOT" status --porcelain -- server 2>/dev/null)" ]]; then
+    h="$h-dirty"
+  fi
+  echo "$h"
+}
+
+dumpsd_render_cmd() {
+  local ga=""
+  ! ga_enabled || ga=" --ga"
+  printf "bin/dumpsd render --base-url '%s'%s" "$BASE_URL" "$ga"
+}
+
+require_url() {
+  [[ "$BASE_URL" =~ ^https?://[A-Za-z0-9.-]+(:[0-9]+)?$ ]] || die 1 "DUMPS_URL ausente ou fora do formato http(s)://host[:porta]: '$BASE_URL'"
+}
+
+preflight_ssh() {
+  require_url
+  remote true 2>/dev/null || die 3 "servidor inalcançável ($HOST). Confira o ssh, e o login do túnel se houver"
+}
+
+preflight() {
+  preflight_ssh
+  local got want rc=0
+  got="$(remote "bin/dumpsd version" 2>/dev/null)" || rc=$?
+  [[ $rc -ne 255 ]] || die 3 "conexão com o servidor caiu ($HOST)"
+  [[ $rc -eq 0 ]] || die 4 "dumpsd ausente no servidor; rode: dumps install-dumpsd"
+  want="$(dumpsd_version)"
+  if [[ -n "$want" && "$got" != "$want" ]]; then
+    echo "aviso: dumpsd no servidor é $got, o repo tem $want; rode: dumps install-dumpsd" >&2
+  fi
+}
+
+require_dumpsd_capability() {
+  local caps
+  caps="$(remote "bin/dumpsd capabilities" 2>/dev/null || true)"
+  [[ " $caps " == *" $1 "* ]] || die 4 "o dumpsd do servidor é antigo e não tem '$1'; rode: dumps install-dumpsd"
+}
+
+build_target() {
+  if [[ "$HOST" == "local" ]]; then
+    echo "$(go env GOOS)/$(go env GOARCH)"
+  else
+    echo "$TARGET"
+  fi
+}
+
+install_dumpsd() {
+  [[ $# -eq 0 ]] || die 1 "uso: dumps install-dumpsd"
+  command -v go >/dev/null || die 1 "go não encontrado nesta máquina"
+  preflight_ssh
+  local out version target
+  out="$(mktemp -d)"
+  version="$(dumpsd_version)"
+  [[ -n "$version" ]] || version="dev"
+  target="$(build_target)"
+  (cd "$DUMPSD_SRC" && go test ./... >/dev/null && GOOS="${target%/*}" GOARCH="${target#*/}" CGO_ENABLED=0 go build -trimpath -ldflags "-s -w -X main.version=$version" -o "$out/dumpsd" .) || { rm -rf "$out"; die 4 "falha ao testar ou compilar o dumpsd"; }
+  remote "mkdir -p bin dumps dumps-meta dumps-staging" || { rm -rf "$out"; die 4 "falha ao preparar $ROOT no servidor"; }
+  push "$out/dumpsd" "bin/.dumpsd.tmp" || { rm -rf "$out"; die 4 "falha ao enviar o dumpsd"; }
+  rm -rf "$out"
+  remote "chmod 755 bin/.dumpsd.tmp && bin/.dumpsd.tmp version >/dev/null && mv bin/.dumpsd.tmp bin/dumpsd && bin/dumpsd version" || {
+    remote "rm -f bin/.dumpsd.tmp" >/dev/null 2>&1 || true
+    die 4 "o dumpsd novo não rodou no servidor; o anterior continua instalado"
+  }
+  push_site
+  install_service
+}
+
+push_site() {
+  [[ -n "${DUMPS_SITE:-}" ]] || return 0
+  [[ -f "$DUMPS_SITE" ]] || die 1 "DUMPS_SITE não encontrado: $DUMPS_SITE"
+  jq -e 'type == "object"' "$DUMPS_SITE" >/dev/null || die 1 "DUMPS_SITE não é um JSON de objeto: $DUMPS_SITE"
+  push "$DUMPS_SITE" "dumps-meta/.site.json.tmp" || die 4 "falha ao enviar o site.json"
+  local render rc=0
+  render="$(dumpsd_render_cmd)"
+  remote "
+    m=dumps-meta
+    rm -f \$m/.site.json.bak
+    if [ -f \$m/.site.json ]; then cp -p \$m/.site.json \$m/.site.json.bak || exit 4; fi
+    mv \$m/.site.json.tmp \$m/.site.json || exit 4
+    if $render; then rm -f \$m/.site.json.bak; exit 0; fi
+    if [ -f \$m/.site.json.bak ]; then mv \$m/.site.json.bak \$m/.site.json; else rm -f \$m/.site.json; fi
+    $render >/dev/null 2>&1 || true
+    exit 4" || rc=$?
+  [[ $rc -eq 0 ]] || die 4 "site.json recusado pelo dumpsd; o anterior foi mantido"
+  echo "site.json aplicado"
+}
+
+safe_arg() {
+  [[ "$2" =~ ^[A-Za-z0-9:/._@-]+$ ]] || die 1 "$1 com caracteres não aceitos no serviço (sem espaço nem aspas): '$2'"
+}
+
+serve_args() {
+  local abs="$1" args a
+  local -a allow=()
+  [[ -n "$ADMIN_ORIGIN" ]] || die 1 "DUMPS_ADMIN_ORIGIN é obrigatório para o serviço (origem do admin, ex.: https://admin.example.com)"
+  safe_arg "raiz no servidor" "$abs"
+  safe_arg DUMPS_LISTEN "$LISTEN"
+  safe_arg DUMPS_URL "$BASE_URL"
+  safe_arg DUMPS_ADMIN_ORIGIN "$ADMIN_ORIGIN"
+  args="serve --listen $LISTEN --base-url $BASE_URL --origin $ADMIN_ORIGIN --root $abs --auth $AUTH"
+  case "$AUTH" in
+    access)
+      [[ -n "${DUMPS_ACCESS_TEAM:-}" && -n "${DUMPS_ACCESS_AUD:-}" ]] || die 1 "DUMPS_AUTH=access exige DUMPS_ACCESS_TEAM e DUMPS_ACCESS_AUD"
+      safe_arg DUMPS_ACCESS_TEAM "$DUMPS_ACCESS_TEAM"
+      safe_arg DUMPS_ACCESS_AUD "$DUMPS_ACCESS_AUD"
+      args="$args --team $DUMPS_ACCESS_TEAM --aud $DUMPS_ACCESS_AUD" ;;
+    tailscale)
+      read -r -a allow <<<"${DUMPS_TAILSCALE_ALLOW:-}"
+      for a in "${allow[@]}"; do
+        safe_arg DUMPS_TAILSCALE_ALLOW "$a"
+        args="$args --allow $a"
+      done ;;
+    none) die 1 "DUMPS_AUTH=none não vale para serviço: sem login, qualquer pedido que chegue pelo proxy ou túnel apagaria dumps. Use dumps serve-local" ;;
+    *) die 1 "DUMPS_AUTH precisa ser access ou tailscale" ;;
+  esac
+  echo "$args"
+}
+
+install_service() {
+  local abs args
+  [[ "$SERVICE" != "none" ]] || { echo "DUMPS_SERVICE=none: o admin não é instalado como serviço"; return 0; }
+  abs="$(remote pwd)" || die 4 "não consegui resolver $ROOT no servidor"
+  args="$(serve_args "$abs")"
+  case "$SERVICE" in
+    termux-runit)
+      remote "
+        set -e
+        d=\$PREFIX/var/service/dumpsd
+        mkdir -p \$d/log
+        printf '%s\\n' '#!/data/data/com.termux/files/usr/bin/sh' 'exec 2>&1' 'exec $abs/bin/dumpsd $args' > \$d/run.tmp
+        chmod 700 \$d/run.tmp
+        mv \$d/run.tmp \$d/run
+        if [ ! -f \$d/log/run ]; then printf '%s\\n' '#!/data/data/com.termux/files/usr/bin/sh' 'mkdir -p \"\$LOGDIR/sv/dumpsd\"' 'exec svlogd -tt \"\$LOGDIR/sv/dumpsd\"' > \$d/log/run; chmod 700 \$d/log/run; fi
+        if [ -d \$d/supervise ]; then SVDIR=\$PREFIX/var/service sv restart dumpsd; else echo 'serviço dumpsd criado; para ligar: sv-enable dumpsd'; fi
+      " || die 4 "binário instalado, mas o serviço dumpsd não foi atualizado" ;;
+    systemd-user)
+      remote "
+        set -e
+        d=\$HOME/.config/systemd/user
+        mkdir -p \$d
+        printf '%s\\n' '[Unit]' 'Description=dumpsd (dumps admin)' 'After=network-online.target' '' '[Service]' 'ExecStart=$abs/bin/dumpsd $args' 'Restart=on-failure' 'RestartSec=2' 'NoNewPrivileges=true' '' '[Install]' 'WantedBy=default.target' > \$d/dumpsd.service
+        systemctl --user daemon-reload
+        systemctl --user enable dumpsd >/dev/null 2>&1
+        systemctl --user restart dumpsd
+        systemctl --user is-active dumpsd
+      " || die 4 "binário instalado, mas o serviço systemd não subiu" ;;
+    launchd)
+      local plist="\$HOME/Library/LaunchAgents/io.github.grippado.dumpsd.plist" xml a
+      xml='<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd"><plist version="1.0"><dict><key>Label</key><string>io.github.grippado.dumpsd</string><key>ProgramArguments</key><array><string>'"$abs"'/bin/dumpsd</string>'
+      for a in $args; do xml="$xml<string>$a</string>"; done
+      xml="$xml"'</array><key>RunAtLoad</key><true/><key>KeepAlive</key><true/><key>StandardErrorPath</key><string>'"$abs"'/dumpsd.log</string></dict></plist>'
+      remote "
+        set -e
+        mkdir -p \$HOME/Library/LaunchAgents
+        printf '%s\\n' '$xml' > $plist
+        launchctl bootout gui/\$(id -u) $plist >/dev/null 2>&1 || true
+        launchctl bootstrap gui/\$(id -u) $plist
+      " || die 4 "binário instalado, mas o launchd não subiu o dumpsd" ;;
+    *) die 1 "DUMPS_SERVICE precisa ser none, termux-runit, systemd-user ou launchd" ;;
+  esac
+}
+
+serve_local() {
+  [[ $# -eq 0 ]] || die 1 "uso: dumps serve-local"
+  [[ "$HOST" == "local" ]] || die 1 "serve-local só vale com DUMPS_HOST=local"
+  require_url
+  [[ -x "$ROOT/bin/dumpsd" ]] || die 4 "dumpsd ausente em $ROOT; rode: dumps install-dumpsd"
+  remote "$(dumpsd_render_cmd)" >/dev/null || die 4 "falha ao montar home e listagem"
+  local admin_origin="${ADMIN_ORIGIN:-http://localhost:${ADMIN_LISTEN##*:}}"
+  echo "dumps local em $BASE_URL/ e admin em $admin_origin/_dumps/ (origens separadas). Ctrl-C para sair."
+  exec "$ROOT/bin/dumpsd" serve --listen "$LISTEN" --admin-listen "$ADMIN_LISTEN" --base-url "$BASE_URL" --origin "$admin_origin" --root "$ROOT" --auth none --static
+}
+
+link_into() {
+  local src="$1" dest="$2"
+  mkdir -p "$(dirname "$dest")"
+  if [[ -e "$dest" && ! -L "$dest" ]]; then
+    die 1 "já existe e não é symlink, não vou sobrescrever: $dest"
+  fi
+  ln -sfn "$src" "$dest"
+  echo "  $dest -> $src"
+}
+
+install_agent() {
+  local which="${1:-all}"
+  [[ $# -le 1 ]] || die 1 "uso: dumps install-agent [claude|codex|all]"
+  case "$which" in
+    claude|codex|all) ;;
+    *) die 1 "uso: dumps install-agent [claude|codex|all]" ;;
+  esac
+  if [[ "$which" == claude || "$which" == all ]]; then
+    echo "Claude Code:"
+    link_into "$REPO_ROOT/agents/skills/dump-this" "${CLAUDE_CONFIG_DIR:-$HOME/.claude}/skills/dump-this"
+    link_into "$REPO_ROOT/agents/commands/dump-this.md" "${CLAUDE_CONFIG_DIR:-$HOME/.claude}/commands/dump-this.md"
+  fi
+  if [[ "$which" == codex || "$which" == all ]]; then
+    echo "Codex:"
+    link_into "$REPO_ROOT/agents/skills/dump-this" "${CODEX_HOME:-$HOME/.codex}/skills/dump-this"
+    link_into "$REPO_ROOT/agents/commands/dump-this.md" "${CODEX_HOME:-$HOME/.codex}/prompts/dump-this.md"
+  fi
+  command -v dumps >/dev/null || echo "aviso: 'dumps' não está no PATH; o agente chama 'dumps'. Ex.: ln -s $REPO_ROOT/cli/dumps ~/.local/bin/dumps"
+}
+
+show_config() {
+  [[ $# -eq 0 ]] || die 1 "uso: dumps config"
+  printf '%-22s %s\n' config "$DUMPS_CONFIG" host "$HOST" root "$ROOT" url "$BASE_URL" list_url "$LIST_URL" \
+    service "$SERVICE" target "$(build_target 2>/dev/null || echo "$TARGET")" auth "$AUTH" listen "$LISTEN" admin_listen "$ADMIN_LISTEN" \
+    admin_origin "${ADMIN_ORIGIN:-}" site "${DUMPS_SITE:-}" blocked_paths "${DUMPS_BLOCKED_PATHS:-}" \
+    authors "$DEFAULT_AUTHORS" machine "$(machine_name)" ga "${GA_ID:-desligado}"
+}
+
+html_title() {
+  python3 - "$1" <<'PY' 2>/dev/null || true
+import html, re, sys
+raw = open(sys.argv[1], encoding="utf-8", errors="replace").read()
+m = re.search(r"<title[^>]*>(.*?)</title>", raw, re.I | re.S)
+if m:
+    print(" ".join(html.unescape(m.group(1)).split()))
+PY
+}
+
+authors_json() {
+  python3 - "$@" <<'PY2'
+import json, sys
+out = []
+for item in sys.argv[1:]:
+    name, _, url = item.partition("|")
+    name, url = name.strip(), url.strip()
+    if name:
+        out.append({"name": name, "url": url} if url else {"name": name})
+print(json.dumps(out, ensure_ascii=False))
+PY2
+}
+
+ga_enabled() {
+  [[ "$GA_ID" =~ ^G-[A-Z0-9]+$ ]]
+}
+
+build_bar() {
+  local out="$1"
+  [[ -f "$BAR_JS" ]] || die 1 "barra não encontrada: $BAR_JS"
+  [[ -n "$GA_ID" ]] && ! ga_enabled && die 1 "DUMPS_GA_ID inválido: $GA_ID"
+  cp "$BAR_JS" "$out" || exit 1
+  if ga_enabled; then
+    [[ -f "$GA_JS" ]] || die 1 "snippet do GA4 não encontrado: $GA_JS"
+    sed "s/__DUMPS_GA_ID__/$GA_ID/" "$GA_JS" >>"$out" || exit 1
+  fi
+  shasum -a 256 "$out" | cut -c1-10
+}
+
+total_bytes() {
+  find "$1" -type f -print0 | xargs -0 cat 2>/dev/null | wc -c | tr -d ' '
+}
+
+fetch_manifests() {
+  remote 'for f in dumps-meta/*.json; do if [ -f "$f" ]; then cat "$f"; echo; fi; done; true' | jq -s '.'
+}
+
+chrome_bin() {
+  local c
+  for c in "${DUMPS_CHROME:-}" \
+    "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" \
+    "/Applications/Brave Browser.app/Contents/MacOS/Brave Browser" \
+    "/Applications/Chromium.app/Contents/MacOS/Chromium" \
+    "$(command -v google-chrome 2>/dev/null || true)" "$(command -v chromium 2>/dev/null || true)" \
+    "$(command -v chromium-browser 2>/dev/null || true)"; do
+    [[ -n "$c" && -x "$c" ]] && { echo "$c"; return 0; }
+  done
+  return 1
+}
+
+thumb_cleanup() {
+  if [[ -n "${_THUMB_PROFILE:-}" ]]; then
+    pkill -9 -f -- "--user-data-dir=$_THUMB_PROFILE" 2>/dev/null || true
+    rm -rf "$_THUMB_PROFILE"
+    _THUMB_PROFILE=""
+  fi
+}
+
+make_thumb() {
+  local dir="$1" out="$2" chrome profile pid waited=0
+  chrome="$(chrome_bin)" || return 1
+  profile="$(mktemp -d)"
+  _THUMB_PROFILE="$profile"
+  "$chrome" --headless=new --disable-gpu --hide-scrollbars --mute-audio --no-first-run \
+    --no-default-browser-check --disable-extensions --user-data-dir="$profile" \
+    --window-size=1280,800 --virtual-time-budget=2500 \
+    --screenshot="$out.png" "file://$dir/index.html" >/dev/null 2>&1 &
+  pid=$!
+  while kill -0 "$pid" 2>/dev/null; do
+    if [[ $waited -ge 25 ]]; then
+      kill "$pid" 2>/dev/null || true
+      sleep 2
+      kill -9 "$pid" 2>/dev/null || true
+      break
+    fi
+    sleep 1
+    waited=$((waited + 1))
+  done
+  wait "$pid" 2>/dev/null || true
+  thumb_cleanup
+  [[ -s "$out.png" ]] || return 1
+  if command -v sips >/dev/null 2>&1; then
+    sips -s format jpeg -s formatOptions 72 --resampleWidth 640 "$out.png" --out "$out" >/dev/null 2>&1 || return 1
+  elif command -v magick >/dev/null 2>&1; then
+    magick "$out.png" -resize 640x -quality 72 "$out" >/dev/null 2>&1 || return 1
+  elif command -v convert >/dev/null 2>&1; then
+    convert "$out.png" -resize 640x -quality 72 "$out" >/dev/null 2>&1 || return 1
+  else
+    rm -f "$out.png"
+    return 1
+  fi
+  rm -f "$out.png"
+  [[ -s "$out" ]]
+}
+
+publish() {
+  local src="" id="" title="" bar=true footer=true title_flag=false hidden=false source_kind=""
+  local -a authors=()
+  while [[ $# -gt 0 ]]; do
+    case "$1" in
+      --no-bar) bar=false; shift ;;
+      --no-footer) footer=false; shift ;;
+      --hidden) hidden=true; shift ;;
+      --source) [[ $# -ge 2 ]] || die 1 "--source precisa de valor"; [[ "$2" =~ ^(cli|agent)$ ]] || die 1 "--source aceita cli ou agent"; source_kind="$2"; shift 2 ;;
+      --author) [[ $# -ge 2 ]] || die 1 "--author precisa de valor"; authors+=("$2"); shift 2 ;;
+      --id) [[ $# -ge 2 ]] || die 1 "--id precisa de valor"; id="$2"; shift 2 ;;
+      --title) [[ $# -ge 2 ]] || die 1 "--title precisa de valor"; title="$2"; title_flag=true; shift 2 ;;
+      -*) die 1 "opção desconhecida: $1" ;;
+      *) [[ -z "$src" ]] || die 1 "só uma origem por vez"; src="$1"; shift ;;
+    esac
+  done
+  [[ -n "$src" ]] || { usage; exit 1; }
+  [[ -e "$src" ]] || die 1 "não encontrado: $src"
+
+  local real kind entry bytes source_name
+  real="$(realpath "$src")"
+  guard_blocked "$real"
+
+  if [[ -d "$real" ]]; then
+    [[ -f "$real/index.html" ]] || die 1 "pasta sem index.html: $src"
+    check_symlinks "$real"
+    kind="dir"
+    entry="$real/index.html"
+  elif [[ -f "$real" ]]; then
+    case "$real" in
+      *.html|*.htm) ;;
+      *) die 1 "arquivo precisa ser .html: $src" ;;
+    esac
+    kind="file"
+    entry="$real"
+  else
+    die 1 "origem inválida: $src"
+  fi
+  source_name="$(basename "$real")"
+
+  if [[ -z "$title" ]]; then
+    title="$(html_title "$entry")"
+    [[ -n "$title" ]] || title="${source_name%.*}"
+  fi
+
+  if [[ -n "$id" ]]; then
+    valid_id "$id" || die 1 "id inválido: use minúsculas, números e hífen"
+  fi
+
+  [[ -f "$BAR_JS" ]] || die 1 "barra não encontrada: $BAR_JS"
+  [[ -z "$GA_ID" ]] || ga_enabled || die 1 "DUMPS_GA_ID inválido: $GA_ID"
+  local bar_version authors_doc
+  [[ ${#authors[@]} -gt 0 ]] || IFS=';' read -r -a authors <<<"$DEFAULT_AUTHORS"
+  authors_doc="$(authors_json "${authors[@]}")"
+
+  preflight
+  require_dumpsd_capability prepare
+  require_dumpsd_capability activate
+
+  if [[ -z "$id" ]]; then
+    local rc
+    for _ in 1 2 3; do
+      id="$(new_id)"
+      rc=0
+      remote "[ ! -e 'dumps/$id' ] && [ ! -e 'dumps-meta/$id.json' ]" || rc=$?
+      [[ $rc -ne 255 ]] || die 3 "conexão com o servidor caiu ($HOST)"
+      [[ $rc -eq 0 ]] && break
+      id=""
+    done
+    [[ -n "$id" ]] || die 4 "não achei id livre em 3 tentativas"
+  fi
+
+  local work previous created now
+  work="$(mktemp -d)"
+  trap 'thumb_cleanup; rm -rf "$work"; remote "rm -rf '"'"'dumps-staging/$id'"'"' '"'"'dumps-staging/$id.bar.tmp'"'"' '"'"'dumps-staging/$id.thumb.tmp'"'"' '"'"'dumps-meta/.$id.json.tmp'"'"'" >/dev/null 2>&1 || true; echo "erro: publicação falhou, nada mudou no ar" >&2; exit 4' ERR INT TERM HUP
+
+  previous="$(remote "cat 'dumps-meta/$id.json' 2>/dev/null" || true)"
+  now="$(date +%Y-%m-%dT%H:%M:%S%z)"
+  created=""
+  if [[ -n "$previous" ]]; then
+    created="$(jq -r '.created // empty' <<<"$previous" 2>/dev/null || true)"
+  fi
+  [[ -n "$created" ]] || created="$now"
+  local archived=false title_locked="$title_flag"
+  if [[ -n "$previous" ]]; then
+    [[ "$(jq -r '.archived // false' <<<"$previous" 2>/dev/null)" == "true" ]] && archived=true
+    if [[ "$title_flag" == "false" && "$(jq -r '.title_locked // false' <<<"$previous" 2>/dev/null)" == "true" ]]; then
+      title="$(jq -r '.title' <<<"$previous")"
+      title_locked=true
+    fi
+  fi
+  [[ "$hidden" == "false" ]] || archived=true
+  if [[ -z "$source_kind" ]]; then
+    source_kind="$(jq -r '.source // "cli"' <<<"${previous:-{\}}" 2>/dev/null || echo cli)"
+    [[ "$source_kind" =~ ^(cli|agent)$ ]] || source_kind=cli
+  fi
+
+  mkdir -p "$work/content"
+  bar_version="$(build_bar "$work/dumps-bar.js")"
+  if [[ "$kind" == "dir" ]]; then
+    rsync -aL --exclude='.DS_Store' --exclude='.git/' "$real/" "$work/content/"
+  else
+    cp "$real" "$work/content/index.html"
+  fi
+  bytes="$(total_bytes "$work/content")"
+  local thumb=false
+  if make_thumb "$work/content" "$work/thumb.jpg"; then
+    thumb=true
+  else
+    echo "aviso: miniatura não gerada, a home usa um placeholder" >&2
+  fi
+  local og_image="" og_names
+  [[ "$thumb" == "false" ]] || og_image="$BASE_URL/_/thumbs/$id.jpg?v=$(date +%Y%m%d%H%M%S)"
+  og_names="$(jq -r 'map(.name) | join(", ")' <<<"$authors_doc")"
+  local spec
+  spec="$(jq -cn --arg title "$title" --arg url "$BASE_URL/$id/" --arg version "$bar_version" --arg authors "$authors_doc" \
+    --argjson bar "$bar" --argjson footer "$footer" --arg og_image "$og_image" --arg og_authors "$og_names" \
+    '{title:$title, url:$url, version:$version, authors:$authors, bar:$bar, footer:$footer, og_image:$og_image, og_authors:$og_authors}')"
+
+  remote "rm -rf 'dumps-staging/$id' 'dumps-staging/$id.bar.tmp' 'dumps-staging/$id.thumb.tmp' && mkdir -p 'dumps-staging/$id' dumps/_/thumbs dumps-meta && if [ -f dumps/_/dumps-bar.js ]; then cp -p dumps/_/dumps-bar.js 'dumps-staging/$id.bar.tmp'; fi"
+  push "$work/dumps-bar.js" "dumps-staging/$id.bar.tmp" --checksum
+  push "$work/content/" "dumps-staging/$id/" --delete
+
+  jq -n \
+    --arg id "$id" --arg title "$title" --arg kind "$kind" --arg source_name "$source_name" \
+    --argjson bytes "$bytes" --arg created "$created" --arg updated "$now" \
+    --arg url "$BASE_URL/$id/" --arg machine "$(machine_name)" --argjson bar "$bar" --argjson footer "$footer" --argjson authors "$authors_doc" --argjson thumb "$thumb" --argjson archived "$archived" --argjson title_locked "$title_locked" --arg source "$source_kind" \
+    '{v:1, id:$id, title:$title, kind:$kind, entry:"index.html", source_name:$source_name, bytes:$bytes, created:$created, updated:$updated, url:$url, machine:$machine, bar:$bar, footer:$footer, authors:$authors, thumb:$thumb, archived:$archived, title_locked:$title_locked, source:$source}' \
+    >"$work/manifest.json"
+
+  push "$work/manifest.json" "dumps-meta/.$id.json.tmp"
+  if [[ "$thumb" == "true" ]]; then
+    push "$work/thumb.jpg" "dumps-staging/$id.thumb.tmp"
+  fi
+  remote "bin/dumpsd prepare --dir 'dumps-staging/$id' --manifest 'dumps-meta/.$id.json.tmp'" <<<"$spec"
+
+  trap - ERR INT TERM HUP
+  rm -rf "$work"
+  local rc=0 ga=""
+  ! ga_enabled || ga=" --ga"
+  remote "bin/dumpsd activate --base-url '$BASE_URL'$ga '$id'" || rc=$?
+  [[ $rc -ne 255 ]] || die 4 "conexão caiu durante a ativação; estado incerto, confira com: dumps list"
+  [[ $rc -eq 0 ]] || die 4 "falha ao ativar o dump; versão anterior restaurada"
+
+  echo "$BASE_URL/$id/"
+}
+
+list_dumps() {
+  [[ $# -eq 0 ]] || die 1 "uso: dumps list"
+  preflight_ssh
+  fetch_manifests | jq -r 'sort_by(.updated) | reverse | .[] | [.id, (.updated | .[0:16] | sub("T"; " ")), (.title + (if .archived then " (arquivado)" else "" end)), .url] | @tsv' |
+    while IFS=$'\t' read -r id updated title url; do
+      printf '%-12s %-17s %s\n%-12s %-17s %s\n' "$id" "$updated" "$title" "" "" "$url"
+    done
+}
+
+dumpsd_apply() {
+  local action="$1" id="$2" done_msg="$3" stdin="${4:-}" rc=0
+  valid_id "$id" || die 1 "id inválido: $id"
+  preflight
+  remote "bin/dumpsd apply --base-url '$BASE_URL' $action '$id'" <<<"$stdin" || rc=$?
+  case "$rc" in
+    0) echo "$done_msg: $id" ;;
+    5) echo "$done_msg: $id (home e listagem não foram regeneradas; rode: dumps regen)" ;;
+    6) die 1 "dump não existe: $id" ;;
+    1) die 1 "o servidor recusou: $action $id" ;;
+    255) die 3 "conexão com o servidor caiu ($HOST); confira com: dumps list" ;;
+    *) die 4 "falha ao aplicar $action em $id; o manifest anterior foi mantido" ;;
+  esac
+}
+
+archive_dump() {
+  [[ $# -eq 1 ]] || die 1 "uso: dumps archive <id>"
+  dumpsd_apply archive "$1" "arquivado"
+}
+
+unarchive_dump() {
+  [[ $# -eq 1 ]] || die 1 "uso: dumps unarchive <id>"
+  dumpsd_apply unarchive "$1" "desarquivado"
+}
+
+edit_dump() {
+  local id="" title="" has_title=false
+  while [[ $# -gt 0 ]]; do
+    case "$1" in
+      --title) [[ $# -ge 2 ]] || die 1 "--title precisa de valor"; title="$2"; has_title=true; shift 2 ;;
+      -*) die 1 "opção desconhecida: $1" ;;
+      *) [[ -z "$id" ]] || die 1 "uso: dumps edit <id> --title <texto>"; id="$1"; shift ;;
+    esac
+  done
+  [[ -n "$id" && "$has_title" == "true" ]] || die 1 "uso: dumps edit <id> --title <texto>"
+  [[ -n "${title//[[:space:]]/}" ]] || die 1 "título vazio"
+  dumpsd_apply title "$id" "título alterado" "$title"
+}
+
+regen_dump_pages() {
+  [[ $# -eq 0 ]] || die 1 "uso: dumps regen"
+  preflight
+  local rc=0
+  remote "$(dumpsd_render_cmd)" || rc=$?
+  [[ $rc -ne 255 ]] || die 3 "conexão com o servidor caiu ($HOST)"
+  [[ $rc -eq 0 ]] || die 4 "falha ao regenerar home e listagem; as anteriores continuam no ar"
+  echo "home e listagem regeneradas"
+}
+
+remove_dump() {
+  [[ $# -eq 1 ]] || die 1 "uso: dumps rm <id>"
+  dumpsd_apply delete "$1" "removido"
+}
+
+main() {
+  [[ $# -ge 1 ]] || { usage; exit 1; }
+  local cmd="$1"
+  shift
+  case "$cmd" in
+    publish) publish "$@" ;;
+    list) list_dumps "$@" ;;
+    archive) archive_dump "$@" ;;
+    unarchive) unarchive_dump "$@" ;;
+    edit) edit_dump "$@" ;;
+    rm) remove_dump "$@" ;;
+    regen) regen_dump_pages "$@" ;;
+    install-dumpsd) install_dumpsd "$@" ;;
+    serve-local) serve_local "$@" ;;
+    config) show_config "$@" ;;
+    install-agent) install_agent "$@" ;;
+    -h|--help|help) usage ;;
+    *) usage; exit 1 ;;
+  esac
+}
+
+main "$@"

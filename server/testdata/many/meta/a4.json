@@ -1,0 +1,11 @@
+{
+  "v": 1,
+  "id": "a4",
+  "title": "Arquivado %(base)s e %(baseurl)s",
+  "bytes": 4096,
+  "updated": "2026-11-18T08:00:00-0300",
+  "url": "https://dumps.example.com/a4/",
+  "machine": "laptop",
+  "thumb": true,
+  "archived": true
+}

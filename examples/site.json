@@ -1,0 +1,11 @@
+{
+  "title": "dumps.example.com",
+  "description": "Projects, artifacts and documents published by Ada Lovelace.",
+  "tagline_html": "Projects, artifacts and documents published by <a href=\"https://example.com\" target=\"_blank\" rel=\"noopener\">Ada Lovelace</a>.",
+  "footer_html": "<span>by <a href=\"https://example.com\" target=\"_blank\" rel=\"noopener\">Ada Lovelace</a></span>",
+  "host_card_html": "<section class=\"host\" aria-labelledby=\"host-t\"><div><h3 id=\"host-t\">Served from a box under the desk</h3><p class=\"lead\">This site runs on a small machine at home and reaches the internet through a tunnel.</p></div></section>\n",
+  "featured": [
+    { "id": "story", "label": "Start here", "note": "How this site was built" }
+  ],
+  "listing_dir": "admin"
+}

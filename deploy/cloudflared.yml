@@ -1,0 +1,13 @@
+# ~/.cloudflared/config.yml on the server. Create the tunnel with:
+#   cloudflared tunnel create dumps
+# and route the two hostnames with `cloudflared tunnel route dns dumps <hostname>`
+# (or through the API). Protect admin.example.com with a Cloudflare Access app
+# BEFORE creating its DNS record. dumps.example.com stays public.
+tunnel: <TUNNEL-UUID>
+credentials-file: /home/you/.cloudflared/<TUNNEL-UUID>.json
+ingress:
+  - hostname: dumps.example.com
+    service: http://127.0.0.1:8081
+  - hostname: admin.example.com
+    service: http://127.0.0.1:8080
+  - service: http_status:404

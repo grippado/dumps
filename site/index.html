@@ -1,0 +1,322 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>dumps: publish any HTML artifact to your own domain</title>
+<meta name="description" content="Self-hosted publishing for HTML artifacts. One command (or your AI agent) turns a page into a link on dumps.YOURDOMAIN, served from a phone, a Raspberry Pi, a VPS or your laptop.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="dumps: publish any HTML artifact to your own domain">
+<meta property="og:description" content="One command, or your AI agent, turns a page into a link on dumps.YOURDOMAIN. Open source, self-hosted, runs even on an old phone.">
+<meta property="og:url" content="https://grippado.github.io/dumps/">
+<meta property="og:image" content="https://grippado.github.io/dumps/img/home.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 2 3 6.5 12 11l9-4.5L12 2Z' fill='%235b3fd1'/%3E%3Cpath d='m3 11.5 9 4.5 9-4.5M3 16.5l9 4.5 9-4.5' fill='none' stroke='%235b3fd1' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+<style>
+:root{color-scheme:light dark;--bg:#fafafa;--fg:#1c1c1e;--mut:#6e6e73;--line:rgba(0,0,0,.09);--card:#fff;--acc:#5b3fd1;--acc2:#7c5cff;--soft:#efeafe;--code:#f3f1fa;--shadow:0 1px 2px rgba(0,0,0,.04),0 8px 24px rgba(20,10,60,.06)}
+@media (prefers-color-scheme:dark){:root{--bg:#0f0f13;--fg:#f2f2f7;--mut:#9a9aa3;--line:rgba(255,255,255,.09);--card:#18181e;--acc:#a593ff;--acc2:#c4b8ff;--soft:#211d38;--code:#15141c;--shadow:0 1px 2px rgba(0,0,0,.3),0 12px 32px rgba(0,0,0,.35)}}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.6 ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;-webkit-font-smoothing:antialiased}
+a{color:var(--acc);text-decoration:none}a:hover{text-decoration:underline}
+.wrap{max-width:1120px;margin:0 auto;padding:0 max(20px,env(safe-area-inset-left))}
+nav.top{position:sticky;top:0;z-index:10;backdrop-filter:saturate(1.6) blur(14px);-webkit-backdrop-filter:saturate(1.6) blur(14px);background:color-mix(in srgb,var(--bg) 78%,transparent);border-bottom:1px solid var(--line)}
+nav.top .wrap{display:flex;align-items:center;gap:18px;height:60px}
+.logo{display:flex;align-items:center;gap:9px;color:var(--fg);font-weight:800;font-size:19px;letter-spacing:-.02em}
+.logo svg{width:24px;height:24px;color:var(--acc)}
+.logo:hover{text-decoration:none}
+nav.top .links{display:flex;gap:18px;margin-left:auto;font-size:14px}
+nav.top .links a{color:var(--mut)}nav.top .links a:hover{color:var(--fg);text-decoration:none}
+.lang{display:inline-flex;border:1px solid var(--line);border-radius:999px;padding:2px;background:var(--card)}
+.lang button{font:inherit;font-size:12px;font-weight:600;border:0;background:transparent;color:var(--mut);padding:4px 10px;border-radius:999px;cursor:pointer}
+.lang button[aria-pressed="true"]{background:var(--soft);color:var(--acc)}
+@media (max-width:720px){nav.top .links{display:none}.lang{margin-left:auto}}
+header.hero{padding:clamp(56px,10vw,120px) 0 clamp(40px,6vw,72px);position:relative;overflow:hidden}
+header.hero:before{content:"";position:absolute;inset:-40% -10% auto auto;width:760px;height:760px;background:radial-gradient(closest-side,color-mix(in srgb,var(--acc) 22%,transparent),transparent);pointer-events:none}
+.eyebrow{display:inline-flex;align-items:center;gap:8px;font-size:13px;font-weight:600;color:var(--acc);background:var(--soft);padding:5px 12px;border-radius:999px}
+h1{font-size:clamp(38px,6.4vw,72px);line-height:1.04;letter-spacing:-.035em;margin:20px 0 18px;max-width:14ch}
+h1 em{font-style:normal;background:linear-gradient(90deg,var(--acc),var(--acc2));-webkit-background-clip:text;background-clip:text;color:transparent}
+.lead{font-size:clamp(17px,2vw,20px);color:var(--mut);max-width:60ch;margin:0 0 30px}
+.ctas{display:flex;flex-wrap:wrap;gap:12px}
+.btn{display:inline-flex;align-items:center;gap:8px;font-weight:600;font-size:15px;padding:12px 20px;border-radius:12px;border:1px solid var(--line);background:var(--card);color:var(--fg);box-shadow:var(--shadow);transition:transform .15s ease}
+.btn:hover{text-decoration:none;transform:translateY(-1px)}
+.btn.primary{background:var(--acc);border-color:var(--acc);color:#fff}
+@media (prefers-color-scheme:dark){.btn.primary{color:#120c2c}}
+.btn svg{width:18px;height:18px}
+.term{margin-top:40px;max-width:720px;background:var(--code);border:1px solid var(--line);border-radius:14px;padding:18px 20px;font:14px/1.7 ui-monospace,SFMono-Regular,Menlo,monospace;overflow-x:auto;box-shadow:var(--shadow)}
+.term .c{color:var(--mut)}.term .p{color:var(--acc);user-select:none}.term .o{color:#2f9e6a}
+@media (prefers-color-scheme:dark){.term .o{color:#6fd3a3}}
+section{padding:clamp(56px,8vw,96px) 0;border-top:1px solid var(--line)}
+h2{font-size:clamp(28px,3.6vw,40px);letter-spacing:-.025em;line-height:1.15;margin:0 0 12px}
+.sub{color:var(--mut);max-width:62ch;margin:0 0 36px;font-size:17px}
+.live{display:grid;grid-template-columns:1.3fr 1fr;gap:28px;align-items:center}
+.shot{border-radius:16px;overflow:hidden;border:1px solid var(--line);box-shadow:var(--shadow);background:var(--card)}
+.shot img{display:block;width:100%;height:auto}
+.shot .chrome{display:flex;align-items:center;gap:6px;padding:10px 14px;border-bottom:1px solid var(--line);font:12px ui-monospace,Menlo,monospace;color:var(--mut)}
+.shot .chrome i{width:10px;height:10px;border-radius:50%;background:var(--line);display:inline-block}
+.shot .chrome span{margin-left:8px}
+.facts{display:grid;gap:12px}
+.fact{padding:16px 18px;border:1px solid var(--line);border-radius:14px;background:var(--card)}
+.fact b{display:block;font-size:15px}.fact span{color:var(--mut);font-size:14px}
+@media (max-width:860px){.live{grid-template-columns:1fr}}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:16px}
+.card{padding:22px;border:1px solid var(--line);border-radius:16px;background:var(--card);box-shadow:var(--shadow)}
+.card h3{margin:10px 0 6px;font-size:17px;letter-spacing:-.01em}
+.card p{margin:0;color:var(--mut);font-size:15px}
+.ico{width:36px;height:36px;border-radius:10px;background:var(--soft);color:var(--acc);display:grid;place-items:center;font-size:18px}
+.agent{display:grid;grid-template-columns:1fr 1fr;gap:28px;align-items:start}
+@media (max-width:860px){.agent{grid-template-columns:1fr}}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:18px 0 0}
+.chip{font-size:13px;font-weight:600;padding:6px 12px;border-radius:999px;border:1px solid var(--line);background:var(--card)}
+.chat{border:1px solid var(--line);border-radius:16px;background:var(--card);padding:18px;box-shadow:var(--shadow);font-size:15px}
+.msg{padding:12px 14px;border-radius:12px;margin:0 0 10px}
+.msg.u{background:var(--soft);margin-left:18%}
+.msg.a{border:1px solid var(--line)}
+.msg code{font:13px ui-monospace,Menlo,monospace}
+.msg .url{color:var(--acc);font-weight:600}
+.recipes .card{display:flex;flex-direction:column}
+.recipes .card .tag{font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--acc)}
+.recipes .card p{flex:1}
+.recipes .card a.more{margin-top:14px;font-weight:600;font-size:14px}
+pre{background:var(--code);border:1px solid var(--line);border-radius:12px;padding:14px 16px;overflow-x:auto;font:13.5px/1.7 ui-monospace,SFMono-Regular,Menlo,monospace;margin:0 0 12px}
+.steps{counter-reset:s;display:grid;gap:14px;max-width:760px}
+.steps li{list-style:none;position:relative;padding-left:42px}
+.steps li:before{counter-increment:s;content:counter(s);position:absolute;left:0;top:2px;width:28px;height:28px;border-radius:50%;background:var(--soft);color:var(--acc);font-weight:700;display:grid;place-items:center;font-size:14px}
+.steps{padding:0;margin:0}
+.oss{display:grid;grid-template-columns:1.2fr 1fr;gap:28px;align-items:start}
+@media (max-width:860px){.oss{grid-template-columns:1fr}}
+.oss ul{margin:0;padding-left:20px;color:var(--mut)}.oss li{margin:6px 0}
+.projects{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px}
+.proj{display:flex;gap:16px;align-items:flex-start;padding:22px;border:1px solid var(--line);border-radius:16px;background:var(--card);color:inherit;box-shadow:var(--shadow);transition:transform .15s ease,border-color .15s}
+.proj:hover{text-decoration:none;transform:translateY(-2px);border-color:var(--acc)}
+.proj .mark{flex:none;width:44px;height:44px;border-radius:12px;display:grid;place-items:center;font-weight:800;color:#fff;font-size:18px}
+.proj h3{margin:0 0 4px;font-size:17px}.proj p{margin:0;color:var(--mut);font-size:15px}
+footer{border-top:1px solid var(--line);padding:32px 0 48px;color:var(--mut);font-size:14px}
+footer .wrap{display:flex;flex-wrap:wrap;gap:12px 24px;justify-content:space-between}
+.live>*,.agent>*,.oss>*,.grid>*,.projects>*,.steps>li{min-width:0}
+pre,.term{max-width:100%}
+[data-lang-show]{display:none}
+html[lang="en"] [data-lang-show="en"],html[lang="pt-BR"] [data-lang-show="pt-BR"]{display:revert}
+</style>
+</head>
+<body>
+<nav class="top" aria-label="Main">
+  <div class="wrap">
+    <a class="logo" href="#"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2 3 6.5 12 11l9-4.5L12 2Z" fill="currentColor" opacity=".95"/><path d="m3 11.5 9 4.5 9-4.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" opacity=".7"/><path d="m3 16.5 9 4.5 9-4.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" opacity=".45"/></svg>dumps</a>
+    <div class="links">
+      <a href="#live" data-i18n="nav_live">Live</a>
+      <a href="#agent" data-i18n="nav_agent">Agent</a>
+      <a href="#recipes" data-i18n="nav_recipes">Recipes</a>
+      <a href="#oss" data-i18n="nav_oss">Contribute</a>
+      <a href="https://github.com/grippado/dumps">GitHub</a>
+    </div>
+    <div class="lang" role="group" aria-label="Language">
+      <button type="button" data-set-lang="en" aria-pressed="true">EN</button>
+      <button type="button" data-set-lang="pt-BR" aria-pressed="false">PT</button>
+    </div>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="wrap">
+    <span class="eyebrow" data-i18n="eyebrow">Open source · self-hosted · MIT</span>
+    <h1 data-i18n-html="h1">Publish any HTML artifact to <em>dumps.YOURDOMAIN</em></h1>
+    <p class="lead" data-i18n="lead">One command, or your AI agent, turns a report, a story, a deck or a dashboard into a link on your own domain. It runs on an old phone, a Raspberry Pi, a VPS or just your laptop.</p>
+    <div class="ctas">
+      <a class="btn primary" href="https://github.com/grippado/dumps"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 2a10 10 0 0 0-3.16 19.49c.5.09.68-.22.68-.48v-1.7c-2.78.6-3.37-1.34-3.37-1.34-.45-1.16-1.11-1.47-1.11-1.47-.91-.62.07-.6.07-.6 1 .07 1.53 1.03 1.53 1.03.9 1.52 2.34 1.08 2.91.83.09-.65.35-1.08.63-1.33-2.22-.25-4.55-1.11-4.55-4.94 0-1.09.39-1.98 1.03-2.68-.1-.25-.45-1.27.1-2.65 0 0 .84-.27 2.75 1.02a9.6 9.6 0 0 1 5 0c1.91-1.29 2.75-1.02 2.75-1.02.55 1.38.2 2.4.1 2.65.64.7 1.03 1.59 1.03 2.68 0 3.84-2.34 4.68-4.57 4.93.36.31.68.92.68 1.85v2.74c0 .27.18.58.69.48A10 10 0 0 0 12 2Z"/></svg><span data-i18n="cta_gh">Star on GitHub</span></a>
+      <a class="btn" href="https://dumps.gripp.link/" data-i18n="cta_live">See it live</a>
+      <a class="btn" href="#recipes" data-i18n="cta_recipes">Host your own</a>
+    </div>
+<pre class="term" aria-label="Example"><span class="c" data-i18n="term_c1"># publish a page</span>
+<span class="p">$ </span>dumps publish ./report.html --title "Q3 review"
+<span class="o">https://dumps.example.com/k3v7q2xz9a/</span>
+
+<span class="c" data-i18n="term_c2"># or let your agent do it</span>
+<span class="p">&gt; </span>/dump-this slides from notes.md about the launch
+<span class="o">https://dumps.example.com/launch-deck/</span></pre>
+  </div>
+</header>
+
+<section id="live">
+  <div class="wrap">
+    <h2 data-i18n="live_h">Running for real, from a phone in a living room</h2>
+    <p class="sub" data-i18n-html="live_sub"><a href="https://dumps.gripp.link/">dumps.gripp.link</a> is served by an Android phone plugged into the wall, through a Cloudflare Tunnel. Its first featured dump is the story of how it was built, published by dumps itself.</p>
+    <div class="live">
+      <a class="shot" href="https://dumps.gripp.link/" aria-label="dumps.gripp.link home">
+        <div class="chrome"><i></i><i></i><i></i><span>dumps.gripp.link</span></div>
+        <img src="img/home.jpg" alt="Home page of dumps.gripp.link with a featured story and three dumps" width="1600" height="1075" loading="lazy">
+      </a>
+      <div class="facts">
+        <div class="fact"><b data-i18n="f1_b">Home, previews and a share bar</b><span data-i18n="f1_s">Cards with thumbnails, featured links, Open Graph previews for WhatsApp and Slack, a top bar with share and clean mode.</span></div>
+        <div class="fact"><b data-i18n="f2_b">A private admin</b><span data-i18n="f2_s">Archive, rename and delete from the browser, behind Cloudflare Access or Tailscale. The public host never sees it.</span></div>
+        <div class="fact"><b data-i18n="f3_b">One small Go binary</b><span data-i18n="f3_s">dumpsd prepares, activates with rollback, renders and serves the admin API. About 10 MB of RAM.</span></div>
+        <a class="fact" href="https://dumps.gripp.link/historia/"><b data-i18n="f4_b">Read the story →</b><span data-i18n="f4_s">From a phone forgotten in a box to a public artifact server (in Portuguese).</span></a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="features">
+  <div class="wrap">
+    <h2 data-i18n="feat_h">Small on purpose</h2>
+    <p class="sub" data-i18n="feat_sub">Static files, one binary, your domain. No database, no build step, no account anywhere.</p>
+    <div class="grid">
+      <div class="card"><div class="ico">⚡</div><h3 data-i18n="c1_h">One command to a link</h3><p data-i18n="c1_p">Publish a file or a folder, republish to update in place, hide it from the home with --hidden.</p></div>
+      <div class="card"><div class="ico">🛡️</div><h3 data-i18n="c2_h">Safe by default</h3><p data-i18n="c2_p">Atomic activation with rollback, a single writer under a lock, blocked paths for things you must never publish.</p></div>
+      <div class="card"><div class="ico">🔗</div><h3 data-i18n="c3_h">Previews that look good</h3><p data-i18n="c3_p">Open Graph and Twitter cards are injected into every page, with the thumbnail as the image.</p></div>
+      <div class="card"><div class="ico">🏠</div><h3 data-i18n="c4_h">Runs anywhere</h3><p data-i18n="c4_p">Android with Termux, Linux with systemd, macOS with launchd, or fully local with no network at all.</p></div>
+      <div class="card"><div class="ico">🔐</div><h3 data-i18n="c5_h">Your login, your rules</h3><p data-i18n="c5_p">The admin verifies Cloudflare Access JWTs or Tailscale identity. Dumps and admin live on separate origins.</p></div>
+      <div class="card"><div class="ico">📈</div><h3 data-i18n="c6_h">Optional analytics</h3><p data-i18n="c6_p">Turn on GA4 with one ID: page views, shares per channel and clean mode, without republishing anything.</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="agent">
+  <div class="wrap agent">
+    <div>
+      <h2 data-i18n="agent_h">Comes with an agent that makes the dump for you</h2>
+      <p class="sub" data-i18n="agent_sub">The dump-this skill teaches Claude Code and Codex to turn a request into a self-contained page, pick the right recipe, publish it hidden and hand you the link.</p>
+<pre><span class="c" data-i18n="agent_c">#  installs the dump-this skill and the /dump-this command (symlinks)</span>
+dumps install-agent all</pre>
+      <div class="chips">
+        <span class="chip" data-i18n="t1">report</span><span class="chip" data-i18n="t2">story timeline</span><span class="chip" data-i18n="t3">slides</span><span class="chip" data-i18n="t4">dashboard</span><span class="chip" data-i18n="t5">doc</span><span class="chip" data-i18n="t6">comparison</span><span class="chip" data-i18n="t7">changelog</span><span class="chip" data-i18n="t8">landing</span>
+      </div>
+    </div>
+    <div class="chat" aria-label="Example conversation">
+      <div class="msg u"><code>/dump-this</code> <span data-i18n="chat_u">a dashboard of this week's deploys from deploys.csv</span></div>
+      <div class="msg a"><span data-i18n="chat_a1">Built a dashboard with KPI tiles and inline charts from the 42 rows, published hidden:</span><br><span class="url">https://dumps.example.com/deploys-w47/</span><br><span data-i18n="chat_a2">Run</span> <code>dumps unarchive deploys-w47</code> <span data-i18n="chat_a3">to put it on the home page.</span></div>
+    </div>
+  </div>
+</section>
+
+<section id="recipes" class="recipes">
+  <div class="wrap">
+    <h2 data-i18n="rec_h">Recipes for your own dumps.YOURDOMAIN</h2>
+    <p class="sub" data-i18n="rec_sub">Pick the box you have and the way you want to reach it. Every recipe is a doc in the repo.</p>
+    <div class="grid">
+      <div class="card"><span class="tag" data-i18n="r1_t">Old phone</span><h3>Android + Termux + Cloudflare</h3><p data-i18n="r1_p">The original setup: runit services, Caddy, a Cloudflare Tunnel and Access in front of the admin.</p><a class="more" href="https://github.com/grippado/dumps/blob/main/docs/hosts/android-termux.md" data-i18n="more">Read the recipe →</a></div>
+      <div class="card"><span class="tag" data-i18n="r2_t">Home server</span><h3>Raspberry Pi, NAS, any Linux</h3><p data-i18n="r2_p">A user systemd service, Caddy, and the tunnel of your choice. Works the same on a VPS.</p><a class="more" href="https://github.com/grippado/dumps/blob/main/docs/hosts/linux.md" data-i18n="more">Read the recipe →</a></div>
+      <div class="card"><span class="tag" data-i18n="r3_t">Free tunnel</span><h3>Cloudflare Tunnel + Access</h3><p data-i18n="r3_p">Public host for dumps, private host for the admin, Access JWT verified by dumpsd.</p><a class="more" href="https://github.com/grippado/dumps/blob/main/docs/exposure/cloudflare.md" data-i18n="more">Read the recipe →</a></div>
+      <div class="card"><span class="tag" data-i18n="r4_t">Tailnet</span><h3>Tailscale Funnel + serve</h3><p data-i18n="r4_p">Funnel for the public dumps, tailscale serve for the admin with Tailscale identity.</p><a class="more" href="https://github.com/grippado/dumps/blob/main/docs/exposure/alternatives.md" data-i18n="more">Read the recipe →</a></div>
+      <div class="card"><span class="tag" data-i18n="r5_t">Mac</span><h3>macOS with launchd</h3><p data-i18n="r5_p">Keep it on the Mac mini in the closet: launchd service, Caddy from Homebrew.</p><a class="more" href="https://github.com/grippado/dumps/blob/main/docs/hosts/macos.md" data-i18n="more">Read the recipe →</a></div>
+      <div class="card"><span class="tag" data-i18n="r6_t">No server</span><h3 data-i18n="r6_h">Local only</h3><p data-i18n="r6_p">Publish and browse on localhost, no ssh, no tunnel. Great for trying it out.</p><a class="more" href="https://github.com/grippado/dumps/blob/main/docs/local.md" data-i18n="more">Read the recipe →</a></div>
+    </div>
+  </div>
+</section>
+
+<section id="start">
+  <div class="wrap">
+    <h2 data-i18n="start_h">Try it locally in a minute</h2>
+    <p class="sub" data-i18n="start_sub">You need Go and bash. Everything stays on your machine.</p>
+    <ol class="steps">
+      <li><pre>git clone https://github.com/grippado/dumps &amp;&amp; cd dumps</pre></li>
+      <li><pre>cli/dumps install-dumpsd</pre></li>
+      <li><pre>cli/dumps publish ./page.html</pre></li>
+      <li><pre>cli/dumps serve-local</pre><span data-i18n="start_4">Open http://localhost:8090 for the dumps and http://localhost:8091/_dumps/ for the admin.</span></li>
+    </ol>
+  </div>
+</section>
+
+<section id="oss">
+  <div class="wrap oss">
+    <div>
+      <h2 data-i18n="oss_h">Built in the open, ready for your PR</h2>
+      <p class="sub" data-i18n="oss_sub">dumps is MIT licensed. The output of every renderer is pinned by golden files, CI runs gofmt, vet, shellcheck and the race detector, and the docs exist in English and Portuguese.</p>
+      <div class="ctas">
+        <a class="btn primary" href="https://github.com/grippado/dumps/blob/main/CONTRIBUTING.md" data-i18n="oss_cta">How to contribute</a>
+        <a class="btn" href="https://github.com/grippado/dumps/issues" data-i18n="oss_issues">Open issues</a>
+      </div>
+    </div>
+    <div class="card">
+      <h3 data-i18n="wanted_h">Good first contributions</h3>
+      <ul>
+        <li data-i18n="w1">Translate the UI strings (today in Portuguese) and add an i18n table</li>
+        <li data-i18n="w2">New recipes: Fly.io, a NAS, frp, a plain VPS with automatic HTTPS</li>
+        <li data-i18n="w3">More dump recipes for the agent skill</li>
+        <li data-i18n="w4">An MCP server and an API to publish from anywhere (on the roadmap)</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section id="more">
+  <div class="wrap">
+    <h2 data-i18n="more_h">More from the same workshop</h2>
+    <p class="sub" data-i18n="more_sub">dumps lives next to other open tools for working with AI agents.</p>
+    <div class="projects">
+      <a class="proj" href="https://grippado.github.io/flux/"><span class="mark" style="background:linear-gradient(135deg,#0ea5e9,#6366f1)">f</span><span><h3>flux</h3><p data-i18n="flux_p">A family of commands for AI agents (review, iterate, refine, build) as a plugin for Claude Code, Cursor and Codex.</p></span></a>
+      <a class="proj" href="https://grippado.github.io/violeet/"><span class="mark" style="background:linear-gradient(135deg,#7c3aed,#c026d3)">v</span><span><h3>violeet</h3><p data-i18n="violeet_p">A local board for running and watching many agent sessions side by side.</p></span></a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <span data-i18n-html="foot_l">dumps is MIT licensed. Made by <a href="https://github.com/grippado">Gabriel Gripp</a>.</span>
+    <span><a href="https://github.com/grippado/dumps">GitHub</a> · <a href="https://dumps.gripp.link/">dumps.gripp.link</a></span>
+  </div>
+</footer>
+
+<script>
+(function(){
+var pt={
+nav_live:"Ao vivo",nav_agent:"Agente",nav_recipes:"Receitas",nav_oss:"Contribuir",
+eyebrow:"Open source · auto-hospedado · MIT",
+h1:"Publique qualquer artefato HTML em <em>dumps.SEUDOMINIO</em>",
+lead:"Um comando, ou o seu agente de IA, transforma um relatório, uma história, uns slides ou um dashboard num link no seu próprio domínio. Roda num celular velho, num Raspberry Pi, num VPS ou só no seu notebook.",
+cta_gh:"Estrela no GitHub",cta_live:"Ver ao vivo",cta_recipes:"Hospede o seu",
+term_c1:"# publicar uma página",term_c2:"# ou deixar o agente fazer",
+live_h:"Rodando de verdade, num celular na sala",
+live_sub:'O <a href="https://dumps.gripp.link/">dumps.gripp.link</a> é servido por um celular Android ligado na tomada, através de um Cloudflare Tunnel. O primeiro dump em destaque é a história de como ele foi feito, publicada pelo próprio dumps.',
+f1_b:"Home, prévias e barra de compartilhar",f1_s:"Cards com miniatura, links em destaque, prévia Open Graph para WhatsApp e Slack, barra no topo com compartilhar e modo limpo.",
+f2_b:"Um admin privado",f2_s:"Arquivar, renomear e apagar pelo browser, atrás do Cloudflare Access ou do Tailscale. O host público nunca vê o admin.",
+f3_b:"Um binário Go pequeno",f3_s:"O dumpsd prepara, ativa com rollback, monta as páginas e serve a API do admin. Cerca de 10 MB de RAM.",
+f4_b:"Ler a história →",f4_s:"De um celular esquecido numa caixa a um servidor público de artefatos.",
+feat_h:"Pequeno de propósito",feat_sub:"Arquivos estáticos, um binário, o seu domínio. Sem banco, sem build, sem conta em lugar nenhum.",
+c1_h:"Um comando até o link",c1_p:"Publique um arquivo ou uma pasta, republique para atualizar no lugar, esconda da home com --hidden.",
+c2_h:"Seguro por padrão",c2_p:"Ativação atômica com rollback, escritor único sob lock, caminhos bloqueados para o que nunca pode ser publicado.",
+c3_h:"Prévias bonitas",c3_p:"Open Graph e Twitter Card injetados em toda página, com a miniatura como imagem.",
+c4_h:"Roda em qualquer lugar",c4_p:"Android com Termux, Linux com systemd, macOS com launchd, ou totalmente local, sem rede nenhuma.",
+c5_h:"Seu login, suas regras",c5_p:"O admin valida o JWT do Cloudflare Access ou a identidade do Tailscale. Dumps e admin ficam em origens separadas.",
+c6_h:"Métricas opcionais",c6_p:"Ligue o GA4 com um ID: visitas, compartilhamentos por canal e modo limpo, sem republicar nada.",
+agent_h:"Vem com um agente que faz o dump por você",agent_sub:"A skill dump-this ensina o Claude Code e o Codex a transformar um pedido numa página autocontida, escolher a receita certa, publicar escondido e devolver o link.",
+agent_c:"#  instala a skill dump-this e o comando /dump-this (symlinks)",
+t1:"relatório",t2:"história com linha do tempo",t3:"slides",t4:"dashboard",t5:"documento",t6:"comparação",t7:"changelog",t8:"landing",
+chat_u:"um dashboard dos deploys da semana a partir do deploys.csv",chat_a1:"Montei um dashboard com KPIs e gráficos inline a partir das 42 linhas e publiquei escondido:",chat_a2:"Rode",chat_a3:"para levar à home.",
+rec_h:"Receitas para o seu dumps.SEUDOMINIO",rec_sub:"Escolha a máquina que você tem e o jeito de chegar nela. Cada receita é um doc no repo.",
+r1_t:"Celular velho",r1_p:"O setup original: serviços runit, Caddy, Cloudflare Tunnel e Access na frente do admin.",
+r2_t:"Servidor em casa",r2_p:"Um serviço systemd de usuário, Caddy e o túnel que você preferir. Funciona igual num VPS.",
+r3_t:"Túnel grátis",r3_p:"Host público para os dumps, host privado para o admin, JWT do Access validado pelo dumpsd.",
+r4_t:"Tailnet",r4_p:"Funnel para os dumps públicos, tailscale serve para o admin com a identidade do Tailscale.",
+r5_t:"Mac",r5_p:"Deixe no Mac mini do armário: serviço launchd e Caddy pelo Homebrew.",
+r6_t:"Sem servidor",r6_h:"Só local",r6_p:"Publique e navegue no localhost, sem ssh e sem túnel. Ótimo para experimentar.",
+more:"Ler a receita →",
+start_h:"Experimente local em um minuto",start_sub:"Você precisa de Go e bash. Tudo fica na sua máquina.",
+start_4:"Abra http://localhost:8090 para os dumps e http://localhost:8091/_dumps/ para o admin.",
+oss_h:"Feito em aberto, pronto para o seu PR",oss_sub:"O dumps é MIT. A saída de cada renderizador é fixada por arquivos golden, o CI roda gofmt, vet, shellcheck e o race detector, e a documentação existe em inglês e português.",
+oss_cta:"Como contribuir",oss_issues:"Issues abertas",
+wanted_h:"Boas primeiras contribuições",w1:"Traduzir os textos da interface (hoje em português) e criar uma tabela de i18n",w2:"Novas receitas: Fly.io, um NAS, frp, um VPS simples com HTTPS automático",w3:"Mais receitas de dump para a skill do agente",w4:"Um servidor MCP e uma API para publicar de qualquer lugar (no roadmap)",
+more_h:"Mais da mesma oficina",more_sub:"O dumps mora ao lado de outras ferramentas abertas para trabalhar com agentes de IA.",
+flux_p:"Uma família de comandos para agentes de IA (review, iterate, refine, build) como plugin para Claude Code, Cursor e Codex.",
+violeet_p:"Um quadro local para rodar e acompanhar várias sessões de agente lado a lado.",
+foot_l:'O dumps é MIT. Feito por <a href="https://github.com/grippado">Gabriel Gripp</a>.'
+};
+var en={};
+document.querySelectorAll("[data-i18n]").forEach(function(el){en[el.getAttribute("data-i18n")]=el.textContent});
+document.querySelectorAll("[data-i18n-html]").forEach(function(el){en[el.getAttribute("data-i18n-html")]=el.innerHTML});
+function apply(lang){
+var dict=lang==="pt-BR"?pt:en;
+document.documentElement.lang=lang;
+document.querySelectorAll("[data-i18n]").forEach(function(el){var k=el.getAttribute("data-i18n");if(dict[k]!=null)el.textContent=dict[k]});
+document.querySelectorAll("[data-i18n-html]").forEach(function(el){var k=el.getAttribute("data-i18n-html");if(dict[k]!=null)el.innerHTML=dict[k]});
+document.querySelectorAll("[data-set-lang]").forEach(function(b){b.setAttribute("aria-pressed",String(b.getAttribute("data-set-lang")===lang))});
+try{localStorage.setItem("dumps-lang",lang)}catch(e){}
+}
+document.querySelectorAll("[data-set-lang]").forEach(function(b){b.addEventListener("click",function(){apply(b.getAttribute("data-set-lang"))})});
+var saved=null;try{saved=localStorage.getItem("dumps-lang")}catch(e){}
+var lang=saved||((navigator.language||"").toLowerCase().indexOf("pt")===0?"pt-BR":"en");
+if(lang!=="en")apply(lang);
+})();
+</script>
+</body>
+</html>
