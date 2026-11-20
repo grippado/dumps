@@ -53,6 +53,34 @@ a{color:inherit}
 .bill nav a:hover{border-color:currentColor}
 .brand{font-family:var(--disp);font-weight:900;font-size:1.35rem;letter-spacing:.02em;text-transform:uppercase}
 
+/* four stop style ruler */
+.style-ruler{border-bottom:3px double var(--rule);background:var(--paper2)}
+.style-ruler .wrap{padding-top:15px;padding-bottom:16px}
+.ruler-head{display:flex;justify-content:space-between;align-items:end;gap:10px 24px;flex-wrap:wrap}
+.ruler-head .mono{margin:0 0 3px;color:var(--mut)}
+.ruler-head h2{margin:0;font-family:var(--disp);font-weight:900;text-transform:uppercase;font-size:clamp(1.55rem,3.8vw,2.6rem);line-height:.95}
+.ruler-current{font-family:var(--disp);font-weight:900;font-size:1.5rem;text-transform:uppercase;color:var(--red);white-space:nowrap}
+.ruler-stops{position:relative;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin:15px 0 12px}
+.ruler-stops::before{content:"";position:absolute;left:12.5%;right:12.5%;top:8px;height:3px;background:var(--rule);z-index:0}
+.ruler-stops button{position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;gap:5px;padding:0 2px;background:transparent;border:0;color:var(--ink);font:inherit;cursor:pointer;min-width:0}
+.ruler-stops button::before{content:"";display:block;width:19px;height:19px;border:2px solid var(--rule);border-radius:50%;background:var(--paper2);transition:background .2s,transform .2s}
+.ruler-stops button[aria-pressed="true"]::before{background:var(--redbig);transform:scale(1.18)}
+.ruler-stops button[aria-pressed="true"]{color:var(--red);font-weight:700}
+.ruler-stops button:focus-visible{outline-offset:4px}
+.ruler-stops button .ruler-no{font:600 14px/1.2 var(--mono);color:var(--mut)}
+.ruler-stops button .ruler-name{font-family:var(--disp);font-weight:700;text-transform:uppercase;font-size:clamp(.9rem,2vw,1.15rem);line-height:1.05;text-align:center}
+.ruler-foot{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr) auto;gap:8px 18px;align-items:center;border-top:1px solid var(--rule);padding-top:8px}
+.ruler-foot p{margin:0}
+.ruler-foot .ruler-say{color:var(--mut);font-style:italic}
+.ruler-foot a{font-family:var(--mono);font-size:14px;text-decoration-thickness:1px;text-underline-offset:3px}
+.ruler-sample[data-l="1"]{font-family:var(--serif);font-size:1.05rem;font-weight:400;border-bottom:1px solid var(--rule);padding-bottom:2px}
+.ruler-sample[data-l="2"]{font-family:ui-sans-serif,system-ui,sans-serif;font-size:1.08rem;font-weight:600;letter-spacing:-.025em}
+.ruler-sample[data-l="3"]{font-family:var(--disp);font-weight:900;text-transform:uppercase;font-size:1.18rem;letter-spacing:.01em;color:var(--red)}
+.ruler-sample[data-l="4"]{font-family:var(--disp);font-weight:900;text-transform:uppercase;font-size:1.28rem;line-height:.9;letter-spacing:-.02em;color:transparent;-webkit-text-stroke:1px var(--ink);transform:rotate(-1deg)}
+.ruler-sample[data-l="4"] em{color:var(--redbig);-webkit-text-stroke:0;font-style:normal}
+@media (max-width:760px){.ruler-foot{grid-template-columns:1fr 1fr}.ruler-foot>p:first-child{grid-column:1/-1}}
+@media (max-width:420px){.ruler-stops{gap:2px}.ruler-stops button .ruler-name{font-size:.9rem}.ruler-foot{grid-template-columns:1fr}.ruler-foot>p:first-child{grid-column:auto}}
+
 /* hero playbill */
 .hero{padding:clamp(28px,5vw,64px) 0 0}
 .presents{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;border-bottom:1px solid var(--rule);padding-bottom:10px}
@@ -255,6 +283,7 @@ code{font-family:var(--mono);font-size:.88em;background:var(--paper2);padding:1p
     <a class="brand" href="../">dumps</a>
     <nav aria-label="Page">
       <a class="mono" href="#cast">The cast</a>
+      <a class="mono" href="#style-ruler">Style levels</a>
       <a class="mono" href="#dial">The dial</a>
       <a class="mono" href="#lines">Lines</a>
       <a class="mono" href="#install">Box office</a>
@@ -264,6 +293,27 @@ code{font-family:var(--mono);font-size:.88em;background:var(--paper2);padding:1p
 </header>
 
 <main id="top">
+<section class="style-ruler" id="style-ruler" aria-labelledby="ruler-title">
+  <div class="wrap">
+    <div class="ruler-head">
+      <div><p class="mono">The style ruler · four levels</p><h2 id="ruler-title">One brief. Four directions.</h2></div>
+      <output class="ruler-current" id="ruler-current" aria-label="Selected style level" aria-live="polite">3 · Bold</output>
+    </div>
+    <div class="ruler-stops" role="group" aria-label="Choose a visual style level" aria-describedby="ruler-help">
+      <button type="button" data-ruler-level="1" aria-pressed="false" aria-label="Level 1, classic"><span class="ruler-no">01</span><span class="ruler-name">Classic</span></button>
+      <button type="button" data-ruler-level="2" aria-pressed="false" aria-label="Level 2, refined"><span class="ruler-no">02</span><span class="ruler-name">Refined</span></button>
+      <button type="button" data-ruler-level="3" aria-pressed="true" aria-label="Level 3, bold, the default"><span class="ruler-no">03</span><span class="ruler-name">Bold</span></button>
+      <button type="button" data-ruler-level="4" aria-pressed="false" aria-label="Level 4, avant-garde"><span class="ruler-no">04</span><span class="ruler-name">Avant-garde</span></button>
+    </div>
+    <div class="ruler-foot" id="ruler-preview">
+      <p><span id="ruler-summary">Editorial type, confident color, and a grid broken on purpose.</span> <span class="ruler-say">Try: “<span id="ruler-say">make it nice, or nothing at all</span>”</span></p>
+      <p class="ruler-sample" id="ruler-sample" data-l="3">Make the page a specialist <em>would make.</em></p>
+      <a id="ruler-example" href="../examples/landing/">See a bold example</a>
+    </div>
+    <p class="sr" id="ruler-help">Choose one of four levels. The selection also updates the dial and specialist examples below.</p>
+  </div>
+</section>
+
 <section class="hero" aria-labelledby="title">
   <div class="wrap">
     <div class="presents mono"><span>The dumps company presents</span><span>An agent skill in eight parts</span><span>MIT · open source</span></div>
@@ -466,7 +516,7 @@ code{font-family:var(--mono);font-size:.88em;background:var(--paper2);padding:1p
           <button type="button" data-l="1" aria-pressed="false">1 Classic</button>
           <button type="button" data-l="2" aria-pressed="false">2 Refined</button>
           <button type="button" data-l="3" aria-pressed="true">3 Bold</button>
-          <button type="button" data-l="4" aria-pressed="false">4 Wild</button>
+          <button type="button" data-l="4" aria-pressed="false">4 Avant-garde</button>
         </div>
         <p class="mono" style="margin:0;color:var(--stagemut);text-align:center">Focus the knob, use arrow keys</p>
       </div>
@@ -625,28 +675,38 @@ code{font-family:var(--mono);font-size:.88em;background:var(--paper2);padding:1p
        type:'One sans or a classic serif, two or three sizes, generous line height.',
        color:'Near black on white, one restrained accent like navy or oxblood, no gradients.',
        layout:'A strict column or a 12 column grid, left aligned, thin rules.',
-       sig:'Impeccable tables and alignment. A top consultancy could have printed it.'},
+       sig:'Impeccable tables and alignment. A top consultancy could have printed it.',
+       summary:'A strict grid, calm type, and one restrained accent.',exampleHref:'../examples/report/',exampleLabel:'See the classic report'},
     2:{name:'Refined',say:'clean, minimal, elegante',
        type:'A modern grotesk, tight spacing on large headings, tabular numbers.',
        color:'A warm neutral scale, one accent used sparingly, hairlines instead of shadows.',
        layout:'Generous whitespace, asymmetric two column moments, around 720px of text.',
-       sig:'One precise detail done perfectly, like a beautiful KPI.'},
+       sig:'One precise detail done perfectly, like a beautiful KPI.',
+       summary:'Warm neutrals, generous space, and one precise detail.',exampleHref:'../examples/doc/',exampleLabel:'See the refined document'},
     3:{name:'Bold',say:'make it nice, or nothing at all',
        type:'A display face with character for oversized headings, paired with a quiet text face.',
        color:'Two or three confident colors with one surprising accent, full-bleed blocks.',
        layout:'Editorial and asymmetric, the grid broken on purpose.',
-       sig:'One memorable element made from the content itself.'},
+       sig:'One memorable element made from the content itself.',
+       summary:'Editorial type, confident color, and a grid broken on purpose.',exampleHref:'../examples/landing/',exampleLabel:'See a bold landing page'},
     4:{name:'Avant-garde',say:'go wild, master innovation, inovação máxima',
        type:'Kinetic, variable, display only or monospace on purpose.',
        color:'Whatever the concept demands, with contrast still passing AA.',
        layout:'Swiss poster, brutalist, scroll driven or keyboard first navigation.',
-       sig:'The page itself is the idea, described in one sentence after closing it.'}
+       sig:'The page itself is the idea, described in one sentence after closing it.',
+       summary:'A strong concept, kinetic type, and unexpected navigation.',exampleHref:'../examples/dashboard/',exampleLabel:'See an avant-garde dashboard'}
   };
   var ANG = {1:-120, 2:-40, 3:40, 4:120};
   var cur = 3;
   var knob = document.getElementById('knob');
   var needle = document.getElementById('needle');
   var spec = document.getElementById('specimen');
+  var rulerBtns = document.querySelectorAll('[data-ruler-level]');
+  var rulerCurrent = document.getElementById('ruler-current');
+  var rulerSummary = document.getElementById('ruler-summary');
+  var rulerSay = document.getElementById('ruler-say');
+  var rulerSample = document.getElementById('ruler-sample');
+  var rulerExample = document.getElementById('ruler-example');
   var ticks = document.getElementById('ticks');
   var NS = 'http://www.w3.org/2000/svg';
   for (var a = -135; a <= 135; a += 9){
@@ -681,7 +741,14 @@ code{font-family:var(--mono);font-size:.88em;background:var(--paper2);padding:1p
     document.getElementById('r-layout').textContent = l.layout;
     document.getElementById('r-sig').textContent = l.sig;
     spec.setAttribute('data-l', n);
+    rulerCurrent.textContent = n + ' · ' + l.name;
+    rulerSummary.textContent = l.summary;
+    rulerSay.textContent = l.say;
+    rulerSample.setAttribute('data-l', n);
+    rulerExample.href = l.exampleHref;
+    rulerExample.textContent = l.exampleLabel;
     btns.forEach(function(b){ b.setAttribute('aria-pressed', String(+b.dataset.l === n)); });
+    rulerBtns.forEach(function(b){ b.setAttribute('aria-pressed', String(+b.dataset.rulerLevel === n)); });
     roles.forEach(function(r){ r.classList.toggle('lit', +r.dataset.level === n); });
   }
   knob.addEventListener('keydown', function(e){
@@ -707,8 +774,8 @@ code{font-family:var(--mono);font-size:.88em;background:var(--paper2);padding:1p
   knob.addEventListener('pointerup', function(){ drag = false; });
   knob.addEventListener('pointercancel', function(){ drag = false; });
   btns.forEach(function(b){ b.addEventListener('click', function(){ set(+b.dataset.l); }); });
+  rulerBtns.forEach(function(b){ b.addEventListener('click', function(){ set(+b.dataset.rulerLevel); }); });
   set(3);
-  roles.forEach(function(r){ r.classList.remove('lit'); });
 
   function copyText(t, btn){
     function ok(){ var o = btn.textContent; btn.textContent = 'Copied'; btn.classList.add('done'); setTimeout(function(){ btn.textContent = o; btn.classList.remove('done'); }, 1600); }
