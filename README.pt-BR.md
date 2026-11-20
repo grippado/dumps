@@ -15,7 +15,9 @@ para relatórios, um editor para histórias, um coach de apresentação para sli
 em visualização de dados para dashboards, e mais). Funciona no seu harness favorito, com ou sem
 um servidor dumps:
 
-- **Claude Code e Codex:** `cli/dumps install-agent all`, depois `/dump-this <o que você quer>`.
+- **Claude Code:** descompacte o [dump-this.zip](https://grippado.github.io/dumps/dump-this.zip)
+  em `~/.claude/skills` (sem clonar nada) e digite `/dump-this <o que você quer>`. Codex: o mesmo
+  zip em `~/.codex/skills`. Comandos em [docs/pt-BR/agent.md](docs/pt-BR/agent.md).
 - **claude.ai:** suba o [dump-this.zip](https://grippado.github.io/dumps/dump-this.zip) em
   Configurações, Capacidades, Skills, e receba a página como artefato.
 - **ChatGPT:** cole o [dump-this-chatgpt.txt](https://grippado.github.io/dumps/dump-this-chatgpt.txt)
@@ -107,7 +109,7 @@ Abra duas URLs:
 
 Use `localhost`, não `127.0.0.1`: a API do admin só aceita a origem exata `http://localhost:8091`.
 
-Opcional: instale a skill de agente e o comando `/dump-this` para o Claude Code e o Codex.
+Opcional, ainda dentro da pasta do repo: instale a skill de agente e o comando `/dump-this` para o Claude Code e o Codex.
 
 ```bash
 cli/dumps install-agent all

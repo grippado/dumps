@@ -54,21 +54,22 @@ Veja um exemplo de cada tipo e nível em
 
 ## Claude Code
 
-Com o repo clonado:
+**Só a skill (sem clonar nada).** Rode num terminal qualquer; isso baixa a skill e descompacta na
+pasta de skills do Claude Code:
 
 ```bash
-cli/dumps install-agent claude
+mkdir -p ~/.claude/skills
 ```
-
-Isso liga a skill em `~/.claude/skills/dump-this` e o comando em
-`~/.claude/commands/dump-this.md` (symlinks, então um `git pull` atualiza; `CLAUDE_CONFIG_DIR` é
-respeitado). Sem o CLI, copie a pasta:
 
 ```bash
-cp -R agents/skills/dump-this ~/.claude/skills/
+curl -fsSL https://grippado.github.io/dumps/dump-this.zip -o /tmp/dump-this.zip
 ```
 
-Depois, em qualquer sessão:
+```bash
+unzip -oq /tmp/dump-this.zip -d ~/.claude/skills
+```
+
+Abra uma sessão nova do Claude Code e digite:
 
 ```text
 /dump-this um relatório do que mudou nesta PR
@@ -76,15 +77,47 @@ Depois, em qualquer sessão:
 
 Também dá para só pedir ("faz um dump disso em slides"): a skill se ativa sozinha.
 
-## Codex
+**Com o CLI do dumps (para também publicar no seu domínio).** Clone o repo uma vez e rode o
+instalador de dentro da pasta do repo (`cli/dumps` é o script do CLI dentro do repo):
 
 ```bash
-cli/dumps install-agent codex
+git clone https://github.com/grippado/dumps
 ```
 
-Isso liga a skill em `~/.codex/skills/dump-this` e o prompt em `~/.codex/prompts/dump-this.md`
-(`CODEX_HOME` é respeitado). Use com `/prompts:dump-this` seguido do que você quer, ou peça em
-palavras.
+```bash
+cd dumps
+```
+
+```bash
+cli/dumps install-agent claude
+```
+
+Isso cria symlinks de `agents/skills/dump-this` para `~/.claude/skills/dump-this` e do comando
+para `~/.claude/commands/dump-this.md`, então um `git pull` no repo atualiza tudo
+(`CLAUDE_CONFIG_DIR` é respeitado). Coloque o CLI no PATH para a skill conseguir publicar:
+`ln -s "$PWD/cli/dumps" ~/.local/bin/dumps`.
+
+## Codex
+
+**Só a skill (sem clonar nada):**
+
+```bash
+mkdir -p ~/.codex/skills
+```
+
+```bash
+curl -fsSL https://grippado.github.io/dumps/dump-this.zip -o /tmp/dump-this.zip
+```
+
+```bash
+unzip -oq /tmp/dump-this.zip -d ~/.codex/skills
+```
+
+Abra uma sessão nova do Codex e peça um dump em palavras ("faz um dump disso como dashboard").
+
+**Com o CLI do dumps:** de dentro da pasta do repo clonado (veja Claude Code acima), rode
+`cli/dumps install-agent codex`. Ele cria o symlink da skill em `~/.codex/skills/dump-this` e o
+prompt `/prompts:dump-this` em `~/.codex/prompts/dump-this.md` (`CODEX_HOME` é respeitado).
 
 ## claude.ai (Skills)
 
