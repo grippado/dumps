@@ -125,6 +125,38 @@
 :root[data-style="3"] .role.lit{background:color-mix(in srgb,var(--redbig) 18%,transparent)}
 :root[data-style="3"] .thumb{border-width:3px}
 
+/* Level 4: experimental, a staggered theatre bill */
+:root[data-style="4"] .wood{font-size:clamp(7rem,30vw,23rem);line-height:.68;letter-spacing:-.07em;transform:rotate(-3deg) skew(-2deg);transform-origin:left center}
+:root[data-style="4"] .wood .l1{color:transparent;-webkit-text-stroke:2px var(--ink)}
+:root[data-style="4"] .wood .l2{padding-left:clamp(30px,19vw,280px);transform:rotate(2deg) translateY(-.08em)}
+:root[data-style="4"] .presents{transform:skew(-2deg);border-bottom-style:dashed}
+:root[data-style="4"] .billing{border:3px dashed var(--rule);text-align:left;transform:rotate(1.5deg);max-width:560px;margin-left:auto}
+:root[data-style="4"] .act-no{font-size:clamp(5rem,16vw,13rem);transform:rotate(-8deg);transform-origin:left center}
+:root[data-style="4"] .role .num{font-size:clamp(3rem,7vw,7rem);color:var(--redbig);transform:rotate(-8deg)}
+:root[data-style="4"] .role:nth-child(odd) .type{color:var(--redbig)}
+:root[data-style="4"] .role:nth-child(even) .type{transform:rotate(1.2deg)}
+:root[data-style="4"] .role.lit{background:linear-gradient(105deg,color-mix(in srgb,var(--redbig) 18%,transparent),transparent 72%)}
+:root[data-style="4"] .role:nth-child(odd) .thumb{transform:rotate(-3deg) translateY(6px)}
+:root[data-style="4"] .role:nth-child(even) .thumb{transform:rotate(3deg) translateY(-6px)}
+:root[data-style="4"] .stage{position:relative;overflow:hidden}
+:root[data-style="4"] .stage::after{content:"IV";position:absolute;right:-.04em;bottom:-.28em;font:900 clamp(12rem,36vw,32rem)/.8 var(--disp);color:color-mix(in srgb,var(--stagered) 10%,transparent);pointer-events:none}
+:root[data-style="4"] .stage>.act{position:relative;z-index:1}
+@media (min-width:900px){:root[data-style="4"] .hero-grid{grid-template-columns:minmax(0,1.1fr) minmax(280px,.9fr);margin-top:-8px;align-items:start}}
+@media (min-width:860px){
+  :root[data-style="4"] .role{grid-template-columns:64px minmax(0,1.25fr) minmax(0,1fr) 300px;align-items:center;gap:14px 28px;padding-block:34px;border-bottom:2px dashed var(--rule)}
+  :root[data-style="4"] .role>.num{grid-column:1;grid-row:1}
+  :root[data-style="4"] .role>h3{grid-column:2;grid-row:1}
+  :root[data-style="4"] .role>div{grid-column:3;grid-row:1}
+  :root[data-style="4"] .role>.thumb{grid-column:4;grid-row:1}
+  :root[data-style="4"] .role>.playing{grid-column:2/4;grid-row:2}
+  :root[data-style="4"] .role:nth-child(even){grid-template-columns:280px minmax(0,1fr) minmax(0,1.25fr) 64px}
+  :root[data-style="4"] .role:nth-child(even)>.thumb{grid-column:1;grid-row:1}
+  :root[data-style="4"] .role:nth-child(even)>div{grid-column:2;grid-row:1}
+  :root[data-style="4"] .role:nth-child(even)>h3{grid-column:3;grid-row:1}
+  :root[data-style="4"] .role:nth-child(even)>.num{grid-column:4;grid-row:1}
+  :root[data-style="4"] .role:nth-child(even)>.playing{grid-column:2/4;grid-row:2}
+}
+
 *{box-sizing:border-box}
 html{scroll-behavior:smooth}
 body{margin:0;background:var(--paper);color:var(--ink);font:17px/1.6 var(--serif);-webkit-font-smoothing:antialiased;overflow-x:clip}
@@ -145,6 +177,9 @@ a{color:inherit}
 .bill nav a{padding:4px 0;border-bottom:1px solid transparent}
 .bill nav a:hover{border-color:currentColor}
 .brand{font-family:var(--disp);font-weight:900;font-size:1.35rem;letter-spacing:.02em;text-transform:uppercase}
+.language{display:inline-flex;align-items:center;gap:2px;border:1px solid var(--rule);padding:2px}
+.language button{padding:3px 7px;border:0;background:transparent;color:var(--ink);font:600 14px/1.2 var(--mono);cursor:pointer}
+.language button[aria-pressed="true"]{background:var(--ink);color:var(--paper)}
 
 /* four stop style ruler */
 .style-ruler{border-bottom:3px double var(--rule);background:var(--paper2)}
@@ -216,6 +251,7 @@ a{color:inherit}
 @media (min-width:900px){.act-head{grid-template-columns:auto 1fr}}
 .act-no{font-family:var(--disp);font-weight:900;font-size:clamp(4rem,12vw,9rem);line-height:.8;color:var(--redbig)}
 .act-no::before{content:"Act";display:block;font-family:var(--mono);font-weight:400;font-size:.75rem;letter-spacing:.12em;text-transform:uppercase;line-height:1;margin-bottom:8px;color:inherit}
+:root[lang="pt-BR"] .act-no::before{content:"Ato"}
 .act-head h2{margin:0;font-family:var(--disp);font-weight:900;text-transform:uppercase;font-size:clamp(2.3rem,6.4vw,5rem);line-height:.92;letter-spacing:-.005em}
 .act-head p{margin:10px 0 0;max-width:60ch;color:var(--mut)}
 
@@ -376,6 +412,11 @@ code{font-family:var(--mono);font-size:.88em;background:var(--paper2);padding:1p
       <a class="mono" href="#lines">Lines</a>
       <a class="mono" href="#install">Box office</a>
       <a class="mono" href="https://github.com/grippado/dumps">GitHub</a>
+      <div class="language" role="group" aria-label="Language">
+        <span class="sr" id="language-label">Language</span>
+        <button type="button" data-set-lang="en" aria-pressed="true">EN</button>
+        <button type="button" data-set-lang="pt-BR" aria-pressed="false">PT-BR</button>
+      </div>
     </nav>
   </div>
 </header>
@@ -757,31 +798,158 @@ code{font-family:var(--mono);font-size:.88em;background:var(--paper2);padding:1p
     rev.forEach(function(e){ io.observe(e); });
   }
 
+  var currentLanguage = 'en';
   var L = {
-    1:{name:'Classic',say:'conservative, for the board, sóbrio',
+    1:{name:'Classic',namePt:'Clássico',say:'conservative, for the board, understated',sayPt:'conservador, para o conselho, sóbrio',
        type:'One sans or a classic serif, two or three sizes, generous line height.',
+       typePt:'Uma fonte sem serifa ou uma serifada clássica, dois ou três tamanhos e entrelinha generosa.',
        color:'Near black on white, one restrained accent like navy or oxblood, no gradients.',
+       colorPt:'Preto quase no branco, com um único acento contido, como azul-marinho ou vinho, sem gradientes.',
        layout:'A strict column or a 12 column grid, left aligned, thin rules.',
+       layoutPt:'Coluna única ou grade de 12 colunas, alinhada à esquerda, com divisórias finas.',
        sig:'Impeccable tables and alignment. A top consultancy could have printed it.',
-       summary:'Classic: a strict grid, calm type, and one restrained accent.'},
-    2:{name:'Refined',say:'clean, minimal, elegante',
+       sigPt:'Tabelas e alinhamento impecáveis. Poderia ter sido impresso por uma consultoria de primeira.',
+       summary:'Classic: a strict grid, calm type, and one restrained accent.',summaryPt:'Clássico: grade rígida, tipografia serena e um único acento contido.'},
+    2:{name:'Refined',namePt:'Refinado',say:'clean, minimal, elegant',sayPt:'limpo, minimalista, elegante',
        type:'A modern grotesk, tight spacing on large headings, tabular numbers.',
+       typePt:'Uma fonte sem serifa moderna, títulos grandes com espaçamento preciso e números tabulares.',
        color:'A warm neutral scale, one accent used sparingly, hairlines instead of shadows.',
+       colorPt:'Tons neutros quentes, um acento usado com cuidado e linhas finas no lugar de sombras.',
        layout:'Generous whitespace, asymmetric two column moments, around 720px of text.',
+       layoutPt:'Bastante espaço em branco, momentos assimétricos em duas colunas e texto com largura de cerca de 720 px.',
        sig:'One precise detail done perfectly, like a beautiful KPI.',
-       summary:'Refined: warm neutrals, generous space, and one precise detail.'},
-    3:{name:'Bold',say:'make it nice, or nothing at all',
+       sigPt:'Um detalhe preciso, como um KPI bem trabalhado.',
+       summary:'Refined: warm neutrals, generous space, and one precise detail.',summaryPt:'Refinado: tons neutros quentes, espaço generoso e um detalhe preciso.'},
+    3:{name:'Bold',namePt:'Ousado',say:'make it nice, or nothing at all',sayPt:'deixa bonito, ou não precisa dizer mais nada',
        type:'A display face with character for oversized headings, paired with a quiet text face.',
+       typePt:'Uma fonte de destaque com personalidade para títulos grandes, combinada com uma fonte de texto discreta.',
        color:'Two or three confident colors with one surprising accent, full-bleed blocks.',
+       colorPt:'Duas ou três cores confiantes com um acento inesperado e blocos de cor ampla.',
        layout:'Editorial and asymmetric, the grid broken on purpose.',
+       layoutPt:'Editorial e assimétrico, com a grade quebrada de propósito.',
        sig:'One memorable element made from the content itself.',
-       summary:'Bold: editorial type, confident color, and a grid broken on purpose.'},
-    4:{name:'Avant-garde',say:'go wild, master innovation, inovação máxima',
+       sigPt:'Um elemento marcante criado a partir do próprio conteúdo.',
+       summary:'Bold: editorial type, confident color, and a grid broken on purpose.',summaryPt:'Ousado: tipografia editorial, cores confiantes e uma grade quebrada de propósito.'},
+    4:{name:'Avant-garde',namePt:'Experimental',say:'go wild, master innovation',sayPt:'pode chutar o balde, inovação máxima',
        type:'Kinetic, variable, display only or monospace on purpose.',
+       typePt:'Tipografia cinética, variável, só de exibição ou monoespaçada por escolha.',
        color:'Whatever the concept demands, with contrast still passing AA.',
+       colorPt:'A paleta que o conceito pedir, sempre com contraste AA.',
        layout:'Swiss poster, brutalist, scroll driven or keyboard first navigation.',
+       layoutPt:'Cartaz suíço, brutalismo, narrativa guiada por rolagem ou navegação feita para teclado.',
        sig:'The page itself is the idea, described in one sentence after closing it.',
-       summary:'Experimental: a strong concept, kinetic type, and unexpected navigation.'}
+       sigPt:'A própria página é a ideia, descrita em uma frase que fica na memória.',
+       summary:'Experimental: a strong concept, kinetic type, and unexpected navigation.',summaryPt:'Experimental: conceito forte, tipografia cinética e navegação inesperada.'}
+  };
+  var TEXT_PT = {
+    'Skip to the cast':'Pular para o elenco','The cast':'O elenco','Style levels':'Estilos','The dial':'O dial','Lines':'Pedidos','Box office':'Instalação','Language':'Idioma',
+    'The style ruler · four levels':'Régua de estilo · quatro níveis','This skill page. Four directions.':'A página da skill. Quatro estilos.',
+    'Classic':'Clássico','Refined':'Refinado','Bold':'Ousado','Avant-garde':'Experimental',
+    'Bold: editorial type, confident color, and a grid broken on purpose.':'Ousado: tipografia editorial, cores confiantes e uma grade quebrada de propósito.',
+    'Try: “':'Diga: “','make it nice, or nothing at all':'deixa bonito, ou não precisa dizer mais nada','This same page is shown in bold style.':'Esta mesma página está no estilo ousado.',
+    "Choose one of four levels. The selection changes this page's art direction and highlights matching specialists below.":'Escolha um dos quatro níveis. A seleção muda a direção visual desta página e destaca os especialistas correspondentes abaixo.',
+    'The dumps company presents':'A companhia dumps apresenta','An agent skill in eight parts':'Uma skill de agente em oito partes','MIT · open source':'MIT · código aberto',
+    'dump-this:':'dump-this:','Any request, file or chat, turned into one page a specialist would have made.':'Um pedido, arquivo ou conversa vira uma página que um especialista faria.',
+    'dump-this is a skill for your AI agent. Ask for a page and it casts the right specialist, sets how bold the art direction should be, and hands back one self-contained HTML file: inline CSS and JS, light and dark, readable on a phone. Not the gradient-and-three-cards look every generated artifact has.':'dump-this é uma skill para seu agente de IA. Peça uma página e ela escolhe o especialista certo, define a força da direção visual e entrega um único arquivo HTML completo: CSS e JS embutidos, temas claro e escuro, legível no celular. Sem o visual de gradiente e três cartões que todo artefato gerado parece ter.',
+    'Get the skill':'Instale a skill','See all examples':'Veja todos os exemplos','Starring':'No elenco','The senior analyst':'Analista sênior','The magazine editor':'Editor de revista',
+    'The data viz specialist':'Especialista em visualização de dados','The data visualization specialist':'Especialista em visualização de dados','The presentation coach':'Consultor de apresentações','The decision advisor':'Consultor de decisão',
+    'with':'com','The technical writer':'Redator técnico','the release manager':'Gerente de release','and introducing':'e com a participação de','The product marketer':'Especialista de marketing de produto',
+    'Each one follows its own recipe. You only say what you want.':'Cada um segue a própria receita. Você só diz o que quer.',
+    'No server needed':'Não precisa de servidor','An artifact in claude.ai, a canvas in ChatGPT, or a plain file anywhere.':'Um artifact no claude.ai, um canvas no ChatGPT ou um arquivo comum em qualquer lugar.',
+    'Any harness':'Qualquer agente','Claude Code, Codex, claude.ai and ChatGPT, from the same skill.':'Claude Code, Codex, claude.ai e ChatGPT, com a mesma skill.',
+    'Your own domain':'Seu próprio domínio','With dumps installed it publishes the page hidden. You review it and press Publicar in the admin.':'Com o dumps instalado, a página é publicada como oculta. Você revisa e clica em Publicar no admin.',
+    'conservative':'conservador','for the board':'para o conselho','sóbrio':'sóbrio','clean':'limpo','minimal':'minimalista','make it nice':'deixa bonito','go wild':'pode chutar o balde',
+    'master innovation':'inovação máxima','inovação máxima':'inovação máxima','like a Swiss poster':'como um cartaz suíço','newspaper front page':'primeira página de jornal','museum catalogue':'catálogo de museu',
+    'Eight specialists, each with a recipe they never skip':'Oito especialistas, cada um com uma receita que segue sempre',
+    'Name a type, or let the skill pick one from what you ask. Every specialist below made a real example page; open it and judge the work. Billed in order of how far each example turned the dial.':'Diga o tipo de página ou deixe a skill escolher pelo seu pedido. Cada especialista abaixo criou um exemplo real. Abra e veja o resultado. A ordem acompanha o nível de estilo usado em cada exemplo.',
+    'Report':'Relatório','Always':'Sempre','Answers first: a TL;DR a reader can stop at and still have the gist.':'Começa pela resposta: um resumo que já conta o essencial.',
+    'One section per finding, ordered by impact, each with its evidence and confidence.':'Uma seção por descoberta, ordenada pelo impacto, com evidências e grau de confiança.',
+    'Numbers right aligned with units in the header, and the row that matters highlighted.':'Números alinhados à direita, unidades no cabeçalho e destaque para a linha principal.',
+    'Example at level 1 classic':'Exemplo no nível 1, clássico','See the report':'Ver relatório','Now playing':'Em destaque',
+    'Doc':'Documento','A table of contents built from the headings, sticky on wide screens.':'Sumário criado a partir dos títulos, fixo em telas largas.',
+    'Tasks as numbered steps: one command per block, each with a copy button, and what success looks like.':'Tarefas em etapas numeradas: um comando por bloco, botão para copiar e indicação do resultado esperado.',
+    'Options and flags as a table: name, default, meaning.':'Opções e flags em uma tabela: nome, padrão e significado.','Example at level 2 refined':'Exemplo no nível 2, refinado','See the doc':'Ver documento',
+    'Changelog':'Changelog','The release manager':'Gerente de release','Newest first, every version with its own anchor.':'Versões da mais recente para a mais antiga, cada uma com sua própria âncora.',
+    'Grouped by Added, Changed, Fixed and Removed, in user facing words.':'Agrupado em Adicionado, Alterado, Corrigido e Removido, com termos voltados a quem usa.',
+    'Breaking changes in a warning box with the migration step.':'Mudanças incompatíveis em um alerta com as etapas de migração.','See the changelog':'Ver changelog',
+    'Slides':'Slides','The presentation coach':'Consultor de apresentações','One idea per slide, titled as the takeaway sentence, not the topic.':'Uma ideia por slide, com um título que resume a conclusão, não o assunto.',
+    'Arrow keys, space and swipe, with a counter, a progress bar and the slide in the URL.':'Setas, espaço e gestos para navegar, com contador, barra de progresso e slide identificado na URL.',
+    'Speaker notes behind the N key, and one slide per page when printed.':'Notas do apresentador na tecla N e um slide por página na impressão.','Example at level 3 bold':'Exemplo no nível 3, ousado','See the slides':'Ver slides',
+    'Comparison':'Comparação','The decision advisor':'Consultor de decisão','Verdict first: which option, for whom, and the one reason that decided it.':'Começa pela conclusão: qual opção, para quem e qual motivo decidiu a escolha.',
+    'Criteria weighted or marked must have before anything gets scored.':'Critérios com pesos ou requisitos obrigatórios definidos antes das notas.',
+    'The best cell marked per row, with a sticky first column on phones.':'Melhor opção destacada em cada linha e primeira coluna fixa no celular.','See the comparison':'Ver comparação',
+    'Landing':'Landing page','The product marketer':'Especialista de marketing de produto','A headline that states the benefit, one primary action and one secondary.':'Um título que apresenta o benefício, uma ação principal e uma secundária.',
+    'Proof up front: a screenshot, a live demo, numbers or a quote.':'Evidências logo no início: captura de tela, demonstração, números ou depoimento.',
+    'How it works in three numbered steps, then the call to action again.':'Como funciona em três etapas numeradas, seguido de outro convite à ação.','See the landing':'Ver landing page',
+    'Dashboard':'Painel','The data visualization specialist':'Especialista em visualização de dados','A KPI row first, with direction shown by sign or arrow, never by color alone.':'Começa com uma linha de indicadores, com direção mostrada por sinal ou seta, nunca só pela cor.',
+    'The chart chosen by the question. Never 3D, never dual axes.':'O gráfico é escolhido pela pergunta. Sem 3D nem eixos duplos.',
+    'Inline SVG drawn from the data, with the full sortable table and the source below.':'SVG desenhado a partir dos dados, com tabela completa e ordenável e a fonte logo abaixo.',
+    'Example at level 4 avant-garde':'Exemplo no nível 4, experimental','See the dashboard':'Ver painel',
+    'Story':'História','A title with a point of view, and three or four numbers that frame the story.':'Um título com ponto de vista e três ou quatro números que enquadram a história.',
+    'A cast, then a timeline with real dates and times. Never estimated ones.':'Um elenco e depois uma linha do tempo com datas e horários reais, nunca estimados.',
+    'Two or three turning points pulled out, each with the lesson learned.':'Dois ou três momentos decisivos em destaque, cada um com a lição aprendida.','See the story':'Ver história',
+    'You set the volume in plain words':'Você escolhe a intensidade com palavras simples',
+    'Choose a level to preview this same page in that art direction. The copy and accessibility stay the same. Say nothing and the skill chooses bold. The matching specialists light up in the cast.':'Escolha um nível para ver esta mesma página naquela direção visual. O texto e a acessibilidade permanecem iguais. Sem indicação, a skill escolhe o estilo ousado. Os especialistas correspondentes se destacam no elenco.',
+    '1 Classic':'1 Clássico','2 Refined':'2 Refinado','3 Bold':'3 Ousado','4 Avant-garde':'4 Experimental','Focus the knob, use arrow keys':'Foque no dial e use as setas do teclado',
+    'Say':'Diga','Type':'Tipografia','Color':'Cor','Layout':'Composição','Signature':'Marca registrada',
+    'A display face with character for oversized headings, paired with a quiet text face.':'Uma fonte de destaque com personalidade para títulos grandes, combinada com uma fonte de texto discreta.',
+    'Two or three confident colors with one surprising accent, full-bleed blocks.':'Duas ou três cores confiantes com um acento inesperado e blocos de cor ampla.',
+    'Editorial and asymmetric, the grid broken on purpose.':'Editorial e assimétrica, com a grade quebrada de propósito.',
+    'One memorable element made from the content itself.':'Um elemento marcante criado a partir do próprio conteúdo.','Same headline, this level':'O mesmo título, neste nível',
+    'Make the page a specialist ':'Faça uma página que um especialista ','would make.':'teria feito.','Refused at every level':'Rejeitado em todos os níveis',
+    'a centered gradient hero with three cards':'hero centralizado com gradiente e três cartões','emoji as icons':'emoji como ícones','shadows on everything':'sombras em tudo',
+    'gray text on gray':'texto cinza sobre cinza','titles that only name a topic':'títulos que só nomeiam o assunto','charts that only decorate':'gráficos que só decoram',
+    'That is the default artifact look. The skill exists to beat it. Every page ends with a one-line colophon naming its level and concept, so the reader learns the dial exists.':'Esse é o visual padrão de artefato. A skill existe para ir além dele. Cada página termina com um colofão que identifica o nível e o conceito, para que a pessoa conheça o dial.',
+    'One line from you, three moves from the skill':'Uma frase sua, três passos da skill','Casts the specialist':'Escolhe o especialista',
+    'From your words, or the type you name. If nothing fits, the technical writer takes the part.':'Pelas suas palavras ou pelo tipo que você indicar. Se nada se encaixar, o redator técnico assume.',
+    'Sets the dial and builds':'Ajusta o dial e cria','Reads the style rules, the base rules and the specialist\'s recipe, then writes one page from your request, your file or the conversation. Real data only; a missing fact gets one question, not an invention.':'Lê as regras de estilo, as regras base e a receita do especialista. Depois cria uma página a partir do seu pedido, arquivo ou conversa. Usa dados reais; se faltar um fato, pergunta em vez de inventar.',
+    'Delivers where you are':'Entrega onde você está','With dumps installed:':'Com o dumps instalado:',', hidden, until you press Publicar. Otherwise an artifact or canvas, or an':', oculto, até você clicar em Publicar. Sem o dumps, entrega um artifact, um canvas ou um arquivo','file.':'arquivo.','Lines to steal':'Pedidos para copiar','Type, topic and, if you want, a level or an art direction. That is the whole script.':'Informe o tipo, o assunto e, se quiser, um nível ou uma direção visual. Só isso.',
+    '/dump-this conservative report for the board about Q3 costs':'/dump-this faça um relatório conservador para o conselho sobre os custos do 3º trimestre',
+    'report · level 1':'relatório · nível 1','Copy':'Copiar',
+    '/dump-this clean changelog of what shipped this week':'/dump-this changelog simples do que foi entregue nesta semana','changelog · level 2':'changelog · nível 2',
+    '/dump-this slides from notes.md about the launch':'/dump-this crie slides a partir de notes.md sobre o lançamento','slides · level 3, default':'slides · nível 3, padrão',
+    '/dump-this compare these three vendors, like a Swiss poster':'/dump-this compare estes três fornecedores como um cartaz suíço','comparison · art direction':'comparação · direção visual',
+    '/dump-this go wild: a dashboard of our usage, as an instrument panel':'/dump-this pode chutar o balde: um painel de uso como painel de instrumentos','dashboard · level 4':'painel · nível 4',
+    '/dump-this the story of this incident as a newspaper front page':'/dump-this conte a história deste incidente como a primeira página de um jornal','story · art direction':'história · direção visual',
+    'Box office: pick your harness':'Instalação: escolha seu agente','Same skill everywhere. Free, MIT licensed, no account.':'A mesma skill em todos. Grátis, licença MIT, sem conta.',
+    '2 commands':'2 comandos','Then type':'Depois digite','in a new session.':'em uma nova sessão.','Then ask for a dump in plain words.':'Depois, peça uma página com suas próprias palavras.',
+    'upload':'enviar arquivo','paste':'colar','Download the zip':'Baixe o arquivo zip','and upload it in Settings, Capabilities, Skills.':'e envie em Configurações, Recursos, Skills.','Paste':'Cole','the instructions':'as instruções','into a custom GPT or a Project.':'em um GPT personalizado ou Projeto.',
+    'With the dumps CLI':'Com o CLI do dumps','every harness at once':'para qualquer agente','This also gives the skill a place to publish: your own dumps server, where new pages arrive hidden and wait for your Publicar.':'Isso também dá à skill um lugar para publicar: seu próprio servidor dumps, onde as páginas chegam ocultas para você revisar e publicar.',
+    'Curtain up on':'Abrem-se as cortinas para','your next page.':'sua próxima página.','The main landing: publish HTML to your own domain':'Página principal: publique HTML no seu domínio',
+    'Examples':'Exemplos','All eight specialists at work':'Os oito especialistas em ação','GitHub':'GitHub','Source, MIT license, issues':'Código, licença MIT e issues',
+    'Built with flux':'Feito com flux','The agent workflow behind this project':'O fluxo de agentes por trás deste projeto',
+    'Level 4 avant-garde · concept: the skill as a theatre playbill, its eight specialists billed as the cast, the style dial as the house volume knob · Big Shoulders Display + system serif + system mono.':'Nível 4 experimental · conceito: a skill como cartaz de teatro, seus oito especialistas no elenco e o dial de estilo como controle de intensidade · Big Shoulders Display + serif do sistema + mono do sistema.'
+  };
+  var TEXT_EN = {
+    'sóbrio':'understated','inovação máxima':'master innovation','Publicar':'Publish',
+    'With dumps installed it publishes the page hidden. You review it and press Publicar in the admin.':'With dumps installed, the page is published hidden. You review it and press Publish in the admin.',
+    ', hidden, until you press Publicar. Otherwise an artifact or canvas, or an':', hidden, until you press Publish. Otherwise an artifact or canvas, or an',
+    'This also gives the skill a place to publish: your own dumps server, where new pages arrive hidden and wait for your Publicar.':'This also gives the skill a place to publish: your own dumps server, where new pages arrive hidden and wait for your Publish.'
+  };
+  var ATTR_PT = {
+    'Page':'Página','Language':'Idioma','Selected style level':'Nível de estilo selecionado',
+    'Choose a visual style level':'Escolha um nível de estilo visual','Level 1, classic':'Nível 1, clássico',
+    'Level 2, refined':'Nível 2, refinado','Level 3, bold, the default':'Nível 3, ousado, padrão',
+    'Level 4, avant-garde':'Nível 4, experimental','Billing':'Elenco','Style dial':'Dial de estilo',
+    'Pick a level':'Escolha um nível','More':'Mais','Copy prompt':'Copiar pedido','Copy command':'Copiar comando'
+  };
+  var ALT_PT = {
+    'Screenshot of the report example page':'Captura de tela do exemplo de relatório',
+    'Screenshot of the doc example page':'Captura de tela do exemplo de documentação',
+    'Screenshot of the changelog example page':'Captura de tela do exemplo de changelog',
+    'Screenshot of the slides example page':'Captura de tela do exemplo de slides',
+    'Screenshot of the comparison example page':'Captura de tela do exemplo de comparação',
+    'Screenshot of the landing example page':'Captura de tela do exemplo de landing page',
+    'Screenshot of the dashboard example page':'Captura de tela do exemplo de painel',
+    'Screenshot of the story example page':'Captura de tela do exemplo de história'
+  };
+  var PROMPTS_PT = {
+    '/dump-this conservative report for the board about Q3 costs':'/dump-this faça um relatório conservador para o conselho sobre os custos do 3º trimestre',
+    '/dump-this clean changelog of what shipped this week':'/dump-this changelog simples do que foi entregue nesta semana',
+    '/dump-this slides from notes.md about the launch':'/dump-this crie slides a partir de notes.md sobre o lançamento',
+    '/dump-this compare these three vendors, like a Swiss poster':'/dump-this compare estes três fornecedores como um cartaz suíço',
+    '/dump-this go wild: a dashboard of our usage, as an instrument panel':'/dump-this pode chutar o balde: um painel de uso como painel de instrumentos',
+    '/dump-this the story of this incident as a newspaper front page':'/dump-this conte a história deste incidente como a primeira página de um jornal'
   };
   var ANG = {1:-120, 2:-40, 3:40, 4:120};
   var cur = 3;
@@ -816,22 +984,24 @@ code{font-family:var(--mono);font-size:.88em;background:var(--paper2);padding:1p
   var btns = document.querySelectorAll('.stops button');
   function set(n){
     n = Math.max(1, Math.min(4, n)); cur = n; var l = L[n];
+    var pt = currentLanguage === 'pt-BR';
+    var name = pt ? l.namePt : l.name;
     document.documentElement.setAttribute('data-style', n);
     needle.style.transform = 'rotate(' + ANG[n] + 'deg)';
     knob.setAttribute('aria-valuenow', n);
-    knob.setAttribute('aria-valuetext', 'Level ' + n + ', ' + l.name);
+    knob.setAttribute('aria-valuetext', (pt ? 'Nível ' : 'Level ') + n + ', ' + name.toLowerCase());
     document.getElementById('r-no').textContent = n;
-    document.getElementById('r-name').textContent = l.name;
-    document.getElementById('r-say').textContent = l.say;
-    document.getElementById('r-type').textContent = l.type;
-    document.getElementById('r-color').textContent = l.color;
-    document.getElementById('r-layout').textContent = l.layout;
-    document.getElementById('r-sig').textContent = l.sig;
+    document.getElementById('r-name').textContent = name;
+    document.getElementById('r-say').textContent = pt ? l.sayPt : l.say;
+    document.getElementById('r-type').textContent = pt ? l.typePt : l.type;
+    document.getElementById('r-color').textContent = pt ? l.colorPt : l.color;
+    document.getElementById('r-layout').textContent = pt ? l.layoutPt : l.layout;
+    document.getElementById('r-sig').textContent = pt ? l.sigPt : l.sig;
     spec.setAttribute('data-l', n);
-    rulerCurrent.textContent = n + ' · ' + l.name;
-    rulerSummary.textContent = l.summary;
-    rulerSay.textContent = l.say;
-    rulerView.textContent = 'This same page is shown in ' + l.name.toLowerCase() + ' style.';
+    rulerCurrent.textContent = n + ' · ' + name;
+    rulerSummary.textContent = pt ? l.summaryPt : l.summary;
+    rulerSay.textContent = pt ? l.sayPt : l.say;
+    rulerView.textContent = pt ? 'Esta mesma página está no estilo ' + name.toLowerCase() + '.' : 'This same page is shown in ' + name.toLowerCase() + ' style.';
     btns.forEach(function(b){ b.setAttribute('aria-pressed', String(+b.dataset.l === n)); });
     rulerBtns.forEach(function(b){ b.setAttribute('aria-pressed', String(+b.dataset.rulerLevel === n)); });
     roles.forEach(function(r){ r.classList.toggle('lit', +r.dataset.level === n); });
@@ -863,7 +1033,7 @@ code{font-family:var(--mono);font-size:.88em;background:var(--paper2);padding:1p
   set(3);
 
   function copyText(t, btn){
-    function ok(){ var o = btn.textContent; btn.textContent = 'Copied'; btn.classList.add('done'); setTimeout(function(){ btn.textContent = o; btn.classList.remove('done'); }, 1600); }
+    function ok(){ var o = btn.textContent; btn.textContent = currentLanguage === 'pt-BR' ? 'Copiado' : 'Copied'; btn.classList.add('done'); setTimeout(function(){ btn.textContent = o; btn.classList.remove('done'); }, 1600); }
     if (navigator.clipboard && window.isSecureContext){ navigator.clipboard.writeText(t).then(ok, fallback); } else fallback();
     function fallback(){
       var ta = document.createElement('textarea'); ta.value = t; ta.setAttribute('readonly',''); ta.style.position='fixed'; ta.style.opacity='0';
@@ -877,6 +1047,76 @@ code{font-family:var(--mono);font-size:.88em;background:var(--paper2);padding:1p
       copyText(t, b);
     });
   });
+
+  var originalTextNodes = [];
+  var walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
+  while (walker.nextNode()) {
+    var node = walker.currentNode;
+    if (!node.nodeValue.trim() || node.parentElement.closest('script,style')) continue;
+    originalTextNodes.push({node:node, value:node.nodeValue});
+  }
+  var originalAttributes = [];
+  document.querySelectorAll('[aria-label],img[alt]').forEach(function(el){
+    if (el.hasAttribute('aria-label')) originalAttributes.push({el:el, name:'aria-label', value:el.getAttribute('aria-label')});
+    if (el.hasAttribute('alt')) originalAttributes.push({el:el, name:'alt', value:el.getAttribute('alt')});
+  });
+  var originalPrompts = Array.from(document.querySelectorAll('[data-copy]')).map(function(el){
+    return {el:el, value:el.getAttribute('data-copy')};
+  });
+  var languageButtons = document.querySelectorAll('[data-set-lang]');
+  var pageTitle = 'dump-this: a company of eight specialists that make your pages';
+  var pageDescription = 'dump-this is an open source agent skill that turns a request, a file or a conversation into one self-contained HTML page made the way a specialist would make it, in Claude Code, Codex, claude.ai or ChatGPT.';
+  var socialTitle = 'dump-this: eight specialists make your pages';
+  var socialDescription = 'An agent skill that turns a request, a file or a chat into one self-contained HTML page made the way a specialist would make it.';
+  var localizedMeta = {
+    'pt-BR': {
+      title:'dump-this: uma companhia de oito especialistas que cria suas páginas',
+      description:'dump-this é uma skill de código aberto para agentes de IA. Ela transforma um pedido, arquivo ou conversa em uma página HTML completa, criada como um especialista faria, no Claude Code, Codex, claude.ai ou ChatGPT.',
+      socialTitle:'dump-this: oito especialistas criam suas páginas',
+      socialDescription:'Uma skill de agente que transforma um pedido, arquivo ou conversa em uma página HTML completa, criada como um especialista faria.'
+    }
+  };
+  function withOriginalSpacing(original, translated){
+    var before = (original.match(/^\s*/) || [''])[0];
+    var after = (original.match(/\s*$/) || [''])[0];
+    return before + translated + after;
+  }
+  function setLanguage(lang){
+    currentLanguage = lang === 'pt-BR' ? 'pt-BR' : 'en';
+    var pt = currentLanguage === 'pt-BR';
+    document.documentElement.lang = currentLanguage;
+    languageButtons.forEach(function(b){ b.setAttribute('aria-pressed', String(b.dataset.setLang === currentLanguage)); });
+    originalTextNodes.forEach(function(item){
+      var source = item.value.trim();
+      var translated = pt ? TEXT_PT[source] : TEXT_EN[source];
+      item.node.nodeValue = translated ? withOriginalSpacing(item.value, translated) : item.value;
+    });
+    originalAttributes.forEach(function(item){
+      var table = item.name === 'alt' ? ALT_PT : ATTR_PT;
+      var translated = pt ? table[item.value] : null;
+      item.el.setAttribute(item.name, translated || item.value);
+    });
+    originalPrompts.forEach(function(item){
+      item.el.setAttribute('data-copy', pt ? (PROMPTS_PT[item.value] || item.value) : item.value);
+    });
+    var description = document.querySelector('meta[name="description"]');
+    var ogTitle = document.querySelector('meta[property="og:title"]');
+    var ogDescription = document.querySelector('meta[property="og:description"]');
+    var meta = pt ? localizedMeta['pt-BR'] : null;
+    document.title = meta ? meta.title : pageTitle;
+    if (description) description.content = meta ? meta.description : pageDescription;
+    if (ogTitle) ogTitle.content = meta ? meta.socialTitle : socialTitle;
+    if (ogDescription) ogDescription.content = meta ? meta.socialDescription : socialDescription;
+    try { localStorage.setItem('dumps-lang', currentLanguage); } catch(err) {}
+    set(cur);
+  }
+  languageButtons.forEach(function(b){ b.addEventListener('click', function(){ setLanguage(b.dataset.setLang); }); });
+  var savedLanguage = '';
+  try { savedLanguage = localStorage.getItem('dumps-lang') || ''; } catch(err) {}
+  var initialLanguage = savedLanguage === 'pt-BR' || savedLanguage === 'en'
+    ? savedLanguage
+    : (navigator.language && navigator.language.toLowerCase().indexOf('pt') === 0 ? 'pt-BR' : 'en');
+  setLanguage(initialLanguage);
 })();
 </script>
 </body>
