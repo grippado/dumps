@@ -52,7 +52,11 @@ Create the Access application for `admin.example.com` before its DNS record exis
 2. Set the application domain to `admin.example.com`.
 3. Add a policy with action Allow and an include rule for yourself (for example your email address, or an identity provider group). Everyone else is denied by default.
 
-Do not create an Access app for `dumps.example.com`. It stays public.
+For this public setup, do not create an Access app for `dumps.example.com`; it stays public. For an
+internal enterprise setup, create a separate Access app and policy for the artifact hostname too,
+before its DNS record exists, or keep that hostname on a private network with VPN-only routing.
+The `DUMPS_ACCESS_AUD` setting below still identifies the admin app whose JWT `dumpsd` verifies.
+See [enterprise publishing](../enterprise.md).
 
 ## 4. Find the team domain and the AUD tag
 

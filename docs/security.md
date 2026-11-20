@@ -1,10 +1,10 @@
 # Security
 
-dumps is built for a person or a small group publishing their own HTML. This page describes what it defends, what it does not, and what you must do yourself. To report a problem, see [../SECURITY.md](../SECURITY.md).
+dumps is a self-hosted publisher for static HTML. Its artifact listener has no built-in login, so you decide whether to serve it publicly or restrict it at an upstream SSO/VPN layer. This page describes what it defends, what it does not, and what you must do yourself. To report a problem, see [../SECURITY.md](../SECURITY.md).
 
 ## Model
 
-- **The public host serves only `dumps/`.** Manifests (`dumps-meta/`), staging, `bin/` and the listing live outside the public docroot. The Caddy example hides dotfiles and redirects `index.html` and `.html` URLs to clean ones. In local mode, `dumpsd --static` applies the same rules: dotfile segments return 404, `/_dumps` returns 404 on the dumps origin, and only `dumps/` is served there.
+- **The artifact host serves only static `dumps/` files, with no built-in login.** Manifests (`dumps-meta/`), staging, `bin/` and the listing live outside the docroot. The Caddy example hides dotfiles and redirects `index.html` and `.html` URLs to clean ones. In local mode, `dumpsd --static` applies the same rules: dotfile segments return 404, `/_dumps` returns 404 on the dumps origin, and only `dumps/` is served there. The artifact origin is public unless an upstream SSO or VPN policy gates the whole host.
 - **The admin host is behind a login.** The listing page and `/_dumps/api/*` should only be reachable through Cloudflare Access or Tailscale. `dumpsd` also verifies the identity itself (JWT or Tailscale header), the `Origin` and the request shape. See [auth.md](auth.md).
 - **`dumpsd serve` listens on loopback only.** It refuses any other `--listen` or `--admin-listen` address. Nothing opens an inbound port on the internet; a tunnel does the exposure.
 - **One writer.** Home, listing and manifests are written only by `dumpsd`, under a file lock, using write-then-rename. Publishing uploads to staging and swaps in atomically with rollback.
@@ -22,7 +22,7 @@ dumps is built for a person or a small group publishing their own HTML. This pag
 
 | Attacker | Can | Cannot |
 |----------|-----|--------|
-| Anyone on the internet | Read published dumps and the home. Guess ids (random 10-character ids are not guessable in practice, but a link is not a secret once shared) | Read manifests, staging or the listing, call the admin API, write files |
+| Anyone who can reach an unprotected artifact host | Read published dumps and the home. Guess ids (random 10-character ids are not guessable in practice, but a link is not a secret once shared) | Read manifests, staging or the listing, call the admin API, write files |
 | A page visited by an admin (CSRF) | Send a cross-site request to the admin host | Pass the `Origin` check or carry a valid Access token |
 | Someone who reaches the admin API without a login | Nothing: `403` | Archive, rename or delete |
 | Someone who forges a JWT | Nothing | Sign with the Cloudflare key. `alg: none` and `HS256` are rejected |
@@ -32,7 +32,7 @@ dumps is built for a person or a small group publishing their own HTML. This pag
 | JavaScript inside a dump, in local mode | Read the other dumps on the dumps origin | Call the admin API (its `Origin` is not the admin origin, and the dumps listener has no API) |
 | An ssh user with your key | Everything | |
 
-Archived dumps are hidden from the home but still public to anyone with the link. Use it for tidiness, not for privacy. Do not publish anything you would not want read. The same applies to dumps published hidden by the agent skill: the link is live as soon as the publish ends. To take a dump offline, use `dumps rm`.
+Archived dumps are hidden from the home but are readable by anyone who can reach the artifact host and has the link. `--hidden` is for review, not privacy; the link is live as soon as the publish ends. Use an upstream SSO or VPN gate for internal material, and use `dumps rm` to take a dump offline.
 
 ## Third-party HTML shares your origin
 

@@ -30,7 +30,10 @@ often on a phone, with no context. It has to work offline once loaded and look f
 - Lead with the answer: a TL;DR, a verdict or the key number at the top.
 - Real data only. Never invent numbers, dates, names or quotes. Write "estimated" or "not
   measured" when that is the truth.
-- Remove secrets, tokens, private emails, internal hostnames and customer data before writing.
+- Never include secrets, credentials, tokens or session cookies. Outside enterprise mode, leave out
+  private emails, internal hostnames and customer data. In enterprise mode, include internal or
+  customer information only when it is necessary, the audience is authorized, and the
+  organization's policy allows it.
 - Write in the user's language, with correct accents and punctuation.
 
 ## Finish

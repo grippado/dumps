@@ -1,6 +1,6 @@
 ---
 name: dump-this
-description: "Turn a request or the current conversation into a polished, self-contained HTML page made the way a specialist would make it (report, story timeline, slides, dashboard, doc, comparison, changelog, landing). Works in any harness: returns the HTML or an artifact, and publishes it with the dumps CLI when that is installed. Use when the user says dump this, dump-this, asks for a shareable page, an artifact, a report page, slides, a dashboard, or wants to publish or share content as a page."
+description: "Turn a request or the current conversation into a polished, self-contained HTML page made the way a specialist would make it (report, story timeline, slides, dashboard, doc, comparison, changelog, landing). Works in any harness: returns the HTML or an artifact, and publishes it with the dumps CLI when that is installed. Supports an enterprise delivery mode for an organization's configured internal dumps service. Use when the user says dump this, dump-this, asks for a shareable page, an artifact, a report page, slides, a dashboard, wants to publish or share content as a page, or asks for internal company artifacts."
 ---
 
 # dump-this
@@ -27,6 +27,13 @@ set by the **style dial** (classic, refined, bold, avant-garde), read from the u
 
 If nothing fits, use `doc`. If the user names a type, use it.
 
+## Enterprise mode (delivery overlay)
+
+Enterprise is a delivery and access mode, not a page type or style level. Combine it with the
+specialist and style the request calls for. When the user asks for an organization, company,
+enterprise or internal dump, also read `recipes/enterprise.md`. It overrides the generic delivery
+rules whenever the page contains company material or must stay inside the organization's boundary.
+
 ## 2. Set the style dial
 
 Read `recipes/style.md` and pick the level from the request: classic ("conservative", "for the
@@ -37,14 +44,21 @@ honored too. Content and accessibility never change with the dial, only art dire
 
 ## 3. Read the rules, then the recipe
 
-Read `recipes/base.md` and then `recipes/<type>.md` from this skill's folder. Follow all three
-(style, base, recipe). If the files are not available (for example when these instructions were
-pasted into a chat), apply the summary below.
+Read `recipes/base.md` and then `recipes/<type>.md` from this skill's folder. Follow style, base
+and type recipe. In enterprise mode, also read `recipes/enterprise.md` and follow its delivery
+and access rules. If the files are not available (for example when these instructions were pasted
+into a chat), apply the summary below.
 
 Summary when the recipe files are missing: one `index.html` with inline CSS and JS; light and
 dark themes through `prefers-color-scheme`; readable at 360px wide with no horizontal scroll;
-answer or key number first; real data only, never invented; no secrets or private data; a real
-`<title>` and `<meta name="description">`; semantic headings and keyboard accessible controls.
+answer or key number first; real data only, never invented; no secrets, credentials or session
+cookies; a real `<title>` and `<meta name="description">`; semantic headings and keyboard
+accessible controls. Internal company data is allowed only in enterprise mode when the audience
+and destination are approved.
+In enterprise mode, publish only to a verified organization-owned `DUMPS_URL` using its approved
+CLI configuration. `--hidden` is not access control. Never fall back to a personal or third-party
+host for internal material; if the internal destination is not configured, keep the HTML local
+and ask where the organization approves delivery.
 Never the default-artifact look (centered gradient hero plus three cards, emoji icons, shadows on
 everything, topic-only titles). At the default bold level: a display font with character,
 oversized type, asymmetric editorial layout, a confident palette and one signature element made
@@ -57,6 +71,9 @@ if a fact the page depends on is missing; otherwise make the page and state the 
 a small note at the bottom.
 
 ## 5. Deliver it
+
+In enterprise mode, follow `recipes/enterprise.md` before choosing a delivery option. Never send
+internal material to an unverified personal dumps host or to a third-party artifact service.
 
 Choose the first option that applies:
 

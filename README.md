@@ -28,6 +28,7 @@ to "master innovation", and it refuses the default artifact look. See one exampl
 [grippado.github.io/dumps/examples](https://grippado.github.io/dumps/examples/).
 
 Full guide: [docs/agent.md](docs/agent.md).
+For organization-owned internal hosts, see the [enterprise publishing guide](docs/enterprise.md).
 
 ## Features
 
@@ -41,6 +42,7 @@ Full guide: [docs/agent.md](docs/agent.md).
 - Atomic publish with rollback: a failed publish leaves the previous version online.
 - Thumbnails rendered locally with headless Chrome or Chromium.
 - An agent skill, `dump-this`, that lets Claude Code and Codex turn a request into a page and publish it hidden for your review.
+- An enterprise delivery recipe for organization-managed CLI profiles and internal `dumps.<org-domain>` hosts protected by corporate SSO or VPN.
 - Local mode with no server, no tunnel and no login, with the dumps and the admin on separate origins.
 - One small Go binary on the server (`dumpsd`, no CGO), one bash CLI on your machine.
 
@@ -123,6 +125,7 @@ The agent runs the `dumps` command, so put `cli/dumps` on your `PATH`. More in [
 - [Configuration](docs/configuration.md): every `DUMPS_*` key, `site.json`, `dumpsd` subcommands
 - [Run it locally](docs/local.md)
 - [Agent skill](docs/agent.md): `dump-this`, its recipes and the review flow
+- [Enterprise publishing](docs/enterprise.md): internal domains, access boundaries and skill distribution
 - Hosts: [Linux](docs/hosts/linux.md), [macOS](docs/hosts/macos.md), [Android (Termux)](docs/hosts/android-termux.md)
 - Exposure: [Cloudflare Tunnel and Access](docs/exposure/cloudflare.md), [alternatives](docs/exposure/alternatives.md)
 - [Admin authentication](docs/auth.md)

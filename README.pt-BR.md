@@ -29,6 +29,7 @@ Ela é opinativa de propósito: um dial de estilo lido das suas próprias palavr
 [grippado.github.io/dumps/examples](https://grippado.github.io/dumps/examples/).
 
 Guia completo: [docs/pt-BR/agent.md](docs/pt-BR/agent.md).
+Para hosts internos da organização, veja o [guia de publicação Enterprise](docs/pt-BR/enterprise.md).
 
 ## Recursos
 
@@ -42,6 +43,7 @@ Guia completo: [docs/pt-BR/agent.md](docs/pt-BR/agent.md).
 - Publicação atômica com rollback: uma publicação que falha deixa a versão anterior no ar.
 - Miniaturas geradas localmente com Chrome ou Chromium headless.
 - Uma skill de agente, a `dump-this`, que deixa o Claude Code e o Codex transformarem um pedido numa página e publicá-la escondida para você revisar.
+- Uma receita de entrega Enterprise para perfis do CLI gerenciados pela organização e hosts internos `dumps.<domínio-da-org>` protegidos por SSO corporativo ou VPN.
 - Modo local sem servidor, sem túnel e sem login, com os dumps e o admin em origens separadas.
 - Um binário Go pequeno no servidor (`dumpsd`, sem CGO) e um CLI em bash na sua máquina.
 
@@ -124,6 +126,7 @@ O agente executa o comando `dumps`, então ponha `cli/dumps` no seu `PATH`. Mais
 - [Configuração](docs/pt-BR/configuration.md): todas as chaves `DUMPS_*`, o `site.json` e os subcomandos do `dumpsd`
 - [Modo local](docs/pt-BR/local.md)
 - [Skill de agente](docs/pt-BR/agent.md): `dump-this`, as receitas e o fluxo de revisão
+- [Publicação Enterprise](docs/pt-BR/enterprise.md): domínios internos, acesso e distribuição da skill
 - Hosts: [Linux](docs/pt-BR/hosts/linux.md), [macOS](docs/pt-BR/hosts/macos.md), [Android (Termux)](docs/pt-BR/hosts/android-termux.md)
 - Exposição: [Cloudflare Tunnel e Access](docs/pt-BR/exposure/cloudflare.md), [alternativas](docs/pt-BR/exposure/alternatives.md)
 - [Autenticação do admin](docs/pt-BR/auth.md)

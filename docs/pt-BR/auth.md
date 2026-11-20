@@ -1,6 +1,6 @@
 # Autenticação do admin
 
-Só a API do admin precisa de login. Os dumps publicados são públicos. O `dumpsd serve` confere toda requisição sob `/_dumps/api/` com um de três modos, escolhido com `--auth` (ou `DUMPS_AUTH` na configuração do CLI). O padrão é `access`.
+Os dumps publicados são estáticos e não têm login próprio. Uma instalação pode servi-los publicamente ou restringir todo o host de artefatos com uma policy externa de SSO ou VPN. `DUMPS_AUTH` vale só para a API do admin: o `dumpsd serve` confere toda requisição sob `/_dumps/api/` com um de três modos, escolhido com `--auth` (ou `DUMPS_AUTH` na configuração do CLI). O padrão é `access`.
 
 A página da listagem é HTML estático. Quem a protege é o login na frente do host do admin (Access, Tailscale), não o `dumpsd`. O host público não tem API. O `dumpsd serve` só escuta em loopback e recusa iniciar em outro endereço.
 

@@ -32,6 +32,11 @@ DUMPS_TAILSCALE_ALLOW="ada@example.com"
 - `DUMPS_ADMIN_ORIGIN` must be the exact origin the browser sends, port included.
 - Use `DUMPS_TAILSCALE_ALLOW` if the tailnet has other people.
 
+For internal artifacts, do not use Funnel for the dumps listener. Route it through `tailscale serve`
+or a private reverse proxy reachable only from the tailnet, and set `DUMPS_URL` to that private
+origin. `DUMPS_AUTH=tailscale` protects the admin API; the private route must separately protect
+the static artifact host.
+
 ## ngrok
 
 ngrok can publish `8081` on a public URL (custom domains depend on your plan). Its login features (OAuth, basic auth) sit in front of the admin host, but `dumpsd` has no mode that reads an ngrok identity, so the admin API would only be guarded by the upstream login and the Origin check. That is not supported natively, see "Fronting with something else" in [../auth.md](../auth.md). For admin work, prefer `dumps archive`, `edit` and `rm` over ssh, and expose only the public listener.

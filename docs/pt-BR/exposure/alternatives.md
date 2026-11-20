@@ -32,6 +32,11 @@ O `tailscale serve` adiciona o header `Tailscale-User-Login` em que o `dumpsd` c
 - `DUMPS_ADMIN_ORIGIN` precisa ser a origem exata que o navegador envia, com a porta.
 - Use `DUMPS_TAILSCALE_ALLOW` se o tailnet tiver outras pessoas.
 
+Para artefatos internos, não use Funnel no listener dos dumps. Passe-o pelo `tailscale serve` ou
+por um proxy reverso privado, alcançável só pelo tailnet, e defina `DUMPS_URL` para essa origem
+privada. `DUMPS_AUTH=tailscale` protege a API do admin; a rota privada precisa proteger o host de
+artefatos estáticos separadamente.
+
 ## ngrok
 
 O ngrok pode publicar o `8081` numa URL pública (domínio próprio depende do plano). Os recursos de login dele (OAuth, basic auth) ficam na frente do host do admin, mas o `dumpsd` não tem modo que leia a identidade do ngrok, então a API do admin ficaria protegida só pelo login de fora e pela checagem de Origin. Isso não tem suporte nativo, veja "Pôr outro login na frente" em [../auth.md](../auth.md). Para o trabalho de admin, prefira `dumps archive`, `edit` e `rm` por ssh, e exponha só o listener público.
