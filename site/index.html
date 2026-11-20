@@ -78,6 +78,17 @@ h2{font-size:clamp(28px,3.6vw,40px);letter-spacing:-.025em;line-height:1.15;marg
 .recipes .card .tag{font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--acc)}
 .recipes .card p{flex:1}
 .recipes .card a.more{margin-top:14px;font-weight:600;font-size:14px}
+.org-banner{position:relative;display:grid;grid-template-columns:minmax(0,1.1fr) minmax(250px,.9fr);gap:28px;align-items:center;padding:clamp(24px,5vw,42px);overflow:hidden;border:1px solid var(--line);border-radius:20px;background:linear-gradient(120deg,var(--fg),color-mix(in srgb,var(--fg) 82%,var(--acc)));color:var(--bg);box-shadow:var(--shadow);transition:transform .15s ease,border-color .15s ease}
+.org-banner:hover{transform:translateY(-2px);border-color:var(--acc);text-decoration:none}
+.org-banner h2{max-width:18ch;margin:13px 0 10px;color:var(--bg)}
+.org-banner p{max-width:58ch;margin:0;color:color-mix(in srgb,var(--bg) 76%,var(--fg));font-size:16px}
+.org-banner .tag{display:inline-flex;padding:4px 10px;border:1px solid color-mix(in srgb,var(--bg) 24%,transparent);border-radius:999px;color:var(--bg);font-size:12px;font-weight:700;letter-spacing:.07em;text-transform:uppercase}
+.org-banner .more{display:inline-block;margin-top:18px;color:var(--bg);font-weight:700;text-decoration:underline;text-decoration-color:var(--acc2);text-underline-offset:4px}
+.org-profile{padding:18px;border:1px solid color-mix(in srgb,var(--bg) 20%,transparent);border-radius:15px;background:color-mix(in srgb,var(--bg) 8%,transparent);font:13px/1.65 ui-monospace,SFMono-Regular,Menlo,monospace;overflow-wrap:anywhere}
+.org-profile .dots{display:flex;gap:6px;margin-bottom:15px}.org-profile .dots i{width:9px;height:9px;border-radius:50%;background:color-mix(in srgb,var(--bg) 40%,transparent)}
+.org-profile small{display:block;margin-bottom:3px;color:color-mix(in srgb,var(--bg) 66%,var(--fg));font:600 11px/1.4 ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:.08em;text-transform:uppercase}
+.org-profile code{color:var(--bg);font:inherit}.org-profile .policy{display:flex;flex-wrap:wrap;gap:7px;margin-top:14px}.org-profile .policy span{padding:3px 8px;border:1px solid color-mix(in srgb,var(--bg) 25%,transparent);border-radius:999px;font-size:11px}
+@media(max-width:760px){.org-banner{grid-template-columns:1fr}}
 pre{background:var(--code);border:1px solid var(--line);border-radius:12px;padding:14px 16px;overflow-x:auto;font:13.5px/1.7 ui-monospace,SFMono-Regular,Menlo,monospace;margin:0 0 12px}
 .steps{counter-reset:s;display:grid;gap:14px;max-width:760px}
 .steps li{list-style:none;position:relative;padding-left:42px}
@@ -138,6 +149,7 @@ html[lang="en"] [data-lang-show="en"],html[lang="pt-BR"] [data-lang-show="pt-BR"
       <a href="#live" data-i18n="nav_live">Live</a>
       <a href="skill/" data-i18n="nav_agent">Skill</a>
       <a href="examples/" data-i18n="nav_examples">Examples</a>
+      <a href="enterprise/" data-i18n="nav_enterprise">Enterprise</a>
       <a href="#recipes" data-i18n="nav_recipes">Recipes</a>
       <a href="#oss" data-i18n="nav_oss">Contribute</a>
       <a href="https://github.com/grippado/dumps">GitHub</a>
@@ -249,6 +261,25 @@ unzip -oq /tmp/dump-this.zip -d ~/.codex/skills</pre><p data-i18n="h2_p">Same zi
   </div>
 </section>
 
+<section id="enterprise">
+  <div class="wrap">
+    <a class="org-banner" href="enterprise/">
+      <div>
+        <span class="tag" data-i18n="org_tag">For organizations</span>
+        <h2 data-i18n="org_h">A private publishing path for company artifacts</h2>
+        <p data-i18n="org_p">Pair dump-this with a managed CLI profile and an internal dumps host. Generate pages with your agent, then publish and read them under your organization's SSO or VPN policy. Explore Google Workspace access and the proposed S3 roadmap.</p>
+        <span class="more" data-i18n="org_cta">Explore Enterprise publishing</span>
+      </div>
+      <div class="org-profile" aria-hidden="true">
+        <div class="dots"><i></i><i></i><i></i></div>
+        <small>organization profile</small>
+        <code>DUMPS_URL=https://dumps.example.org</code>
+        <div class="policy"><span>managed CLI</span><span>SSO</span><span>VPN</span></div>
+      </div>
+    </a>
+  </div>
+</section>
+
 <section id="recipes" class="recipes">
   <div class="wrap">
     <h2 data-i18n="rec_h">Recipes for your own dumps.YOURDOMAIN</h2>
@@ -320,7 +351,7 @@ unzip -oq /tmp/dump-this.zip -d ~/.codex/skills</pre><p data-i18n="h2_p">Same zi
 <script>
 (function(){
 var pt={
-nav_live:"Ao vivo",nav_agent:"Skill",nav_recipes:"Receitas",nav_oss:"Contribuir",
+nav_live:"Ao vivo",nav_agent:"Skill",nav_examples:"Exemplos",nav_enterprise:"Enterprise",nav_recipes:"Receitas",nav_oss:"Contribuir",
 eyebrow:"Open source · auto-hospedado · MIT",
 h1:"Publique qualquer artefato HTML em <em>dumps.SEUDOMINIO</em>",
 lead:"Um comando, ou o seu agente de IA, transforma um relatório, uma história, uns slides ou um dashboard num link no seu próprio domínio. Roda num celular velho, num Raspberry Pi, num VPS ou só no seu notebook.",
@@ -332,6 +363,7 @@ f1_b:"Home, prévias e barra de compartilhar",f1_s:"Cards com miniatura, links e
 f2_b:"Um admin privado",f2_s:"Arquivar, renomear e apagar pelo browser, atrás do Cloudflare Access ou do Tailscale. O host público nunca vê o admin.",
 f3_b:"Um binário Go pequeno",f3_s:"O dumpsd prepara, ativa com rollback, monta as páginas e serve a API do admin. Cerca de 10 MB de RAM.",
 f4_b:"Ler a história →",f4_s:"De um celular esquecido numa caixa a um servidor público de artefatos.",
+org_tag:"Para organizações",org_h:"Um caminho privado para publicar artefatos da empresa",org_p:"Combine o dump-this com um perfil gerenciado do CLI e um host dumps interno. Gere páginas com seu agente e publique e leia sob a política de SSO ou VPN da organização. Veja o acesso Google Workspace e a proposta de roadmap S3.",org_cta:"Conheça a publicação Enterprise",
 feat_h:"Pequeno de propósito",feat_sub:"Arquivos estáticos, um binário, o seu domínio. Sem banco, sem build, sem conta em lugar nenhum.",
 c1_h:"Um comando até o link",c1_p:"Publique um arquivo ou uma pasta, republique para atualizar no lugar, esconda da home com --hidden.",
 c2_h:"Seguro por padrão",c2_p:"Ativação atômica com rollback, escritor único sob lock, caminhos bloqueados para o que nunca pode ser publicado.",
@@ -345,7 +377,7 @@ h1_p:"Rode num terminal qualquer, sem clonar nada. Depois digite /dump-this numa
 d1_b:"Clássico",d1_s:"\"sóbrio, para a diretoria\"",d2_b:"Refinado",d2_s:"\"limpo, minimalista\"",d3_b:"Ousado",d3_s:"o padrão",d4_b:"Experimental",d4_s:"\"inovação máxima\"",
 dial_note:"Escolha o estilo em palavras, do conservador à inovação máxima. Ela nunca cai no visual padrão de artefato: nada de abertura centralizada com gradiente, três cards iguais ou emoji como ícone.",
 flow_cli:'Para publicar a partir do agente, clone o repo e rode o instalador de dentro da pasta dele: <code>git clone https://github.com/grippado/dumps &amp;&amp; cd dumps &amp;&amp; cli/dumps install-agent all</code>',
-flow_h:"Com o seu dumps, o agente rascunha e você publica",flow_sub:"Dumps feitos pelo agente nascem escondidos. O link funciona na hora, e o admin mostra um botão Publicar para você revisar antes de ir para a home.",agent_doc:"Ler o guia da skill",agent_examples:"Ver os exemplos",agent_meet:"Conheça os especialistas",new_b:"Novo",new_s:"dump-this: oito especialistas fazem os seus artefatos, em qualquer harness",nav_examples:"Exemplos",
+flow_h:"Com o seu dumps, o agente rascunha e você publica",flow_sub:"Dumps feitos pelo agente nascem escondidos. O link funciona na hora, e o admin mostra um botão Publicar para você revisar antes de ir para a home.",agent_doc:"Ler o guia da skill",agent_examples:"Ver os exemplos",agent_meet:"Conheça os especialistas",new_b:"Novo",new_s:"dump-this: oito especialistas fazem os seus artefatos, em qualquer harness",
 chat_u:"um dashboard dos deploys da semana a partir do deploys.csv",chat_a1:"Montei um dashboard com KPIs e gráficos inline a partir das 42 linhas e publiquei escondido:",chat_a2:"Revise e clique em Publicar no admin, ou rode",
 built_with:"Feito de ponta a ponta com",
 rec_h:"Receitas para o seu dumps.SEUDOMINIO",rec_sub:"Escolha a máquina que você tem e o jeito de chegar nela. Cada receita é um doc no repo.",

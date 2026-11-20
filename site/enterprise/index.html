@@ -1,0 +1,192 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Enterprise artifact publishing | dumps</title>
+<meta name="description" content="Give your organization a private dumps host. Use dump-this with a managed CLI profile to create and publish HTML artifacts inside your network.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Enterprise artifact publishing | dumps">
+<meta property="og:description" content="A self-hosted, organization-controlled route from an AI agent to internal HTML artifacts.">
+<meta property="og:url" content="https://grippado.github.io/dumps/enterprise/">
+<meta property="og:image" content="https://grippado.github.io/dumps/img/home.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 2 3 6.5 12 11l9-4.5L12 2Z' fill='%235b3fd1'/%3E%3Cpath d='m3 11.5 9 4.5 9-4.5M3 16.5l9 4.5 9-4.5' fill='none' stroke='%235b3fd1' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+<style>
+:root{color-scheme:light dark;--bg:#fafafa;--fg:#1c1c1e;--mut:#6e6e73;--line:rgba(0,0,0,.1);--card:#fff;--acc:#5b3fd1;--acc2:#7c5cff;--soft:#efeafe;--code:#f3f1fa;--green:#237653;--green-soft:#e8f5ed;--shadow:0 1px 2px rgba(0,0,0,.04),0 12px 32px rgba(20,10,60,.07)}
+@media(prefers-color-scheme:dark){:root{--bg:#0f0f13;--fg:#f2f2f7;--mut:#a4a4ad;--line:rgba(255,255,255,.1);--card:#18181e;--acc:#a593ff;--acc2:#c4b8ff;--soft:#211d38;--code:#15141c;--green:#8ddbb2;--green-soft:#142b21;--shadow:0 1px 2px rgba(0,0,0,.3),0 12px 32px rgba(0,0,0,.35)}}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.6 ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;-webkit-font-smoothing:antialiased}a{color:var(--acc);text-decoration:none}a:hover{text-decoration:underline}a:focus-visible,button:focus-visible{outline:3px solid var(--acc2);outline-offset:3px;border-radius:5px}
+.shell{width:min(1120px,100%);margin:0 auto;padding:0 max(22px,env(safe-area-inset-left))}nav{position:sticky;top:0;z-index:10;background:color-mix(in srgb,var(--bg) 84%,transparent);backdrop-filter:saturate(1.5) blur(14px);border-bottom:1px solid var(--line)}.nav-in{height:62px;display:flex;align-items:center;gap:24px}.logo{display:flex;align-items:center;gap:9px;color:var(--fg);font-size:19px;font-weight:800;letter-spacing:-.02em}.logo:hover{text-decoration:none}.logo svg{width:24px;height:24px;color:var(--acc)}.nav-links{display:flex;align-items:center;gap:18px;margin-left:auto;font-size:14px}.nav-links a{color:var(--mut)}.nav-links a:hover{color:var(--fg);text-decoration:none}.lang{display:inline-flex;align-items:center;gap:2px;padding:3px;border:1px solid var(--line);border-radius:999px;background:var(--card)}.lang button{border:0;border-radius:999px;padding:4px 9px;background:transparent;color:var(--mut);font:inherit;font-size:12px;font-weight:600;cursor:pointer}.lang button[aria-pressed="true"]{background:var(--soft);color:var(--acc)}
+.hero{padding:clamp(54px,9vw,104px) 0 70px;overflow:hidden;background:radial-gradient(ellipse at 85% 10%,color-mix(in srgb,var(--acc) 14%,transparent),transparent 43%)}.hero-grid{display:grid;grid-template-columns:minmax(0,1.08fr) minmax(320px,.92fr);align-items:center;gap:clamp(28px,6vw,76px)}.eyebrow{display:inline-flex;align-items:center;gap:8px;padding:5px 12px;border-radius:999px;background:var(--soft);color:var(--acc);font-size:13px;font-weight:700}.eyebrow i{width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:0 0 0 4px var(--green-soft)}h1{max-width:12ch;margin:20px 0 18px;font-size:clamp(42px,6.5vw,76px);line-height:.99;letter-spacing:-.055em}h1 em{font-style:normal;color:var(--acc)}.lead{max-width:58ch;margin:0;color:var(--mut);font-size:clamp(17px,2vw,20px)}.actions{display:flex;flex-wrap:wrap;gap:11px;margin:28px 0 0}.btn{display:inline-flex;align-items:center;justify-content:center;min-height:48px;padding:11px 17px;border:1px solid var(--line);border-radius:12px;background:var(--card);color:var(--fg);font-size:14px;font-weight:700;box-shadow:var(--shadow);transition:transform .15s ease,border-color .15s ease}.btn:hover{transform:translateY(-1px);border-color:var(--acc);text-decoration:none}.btn.primary{background:var(--acc);border-color:var(--acc);color:#fff}.tiny-note{margin:14px 0 0;color:var(--mut);font-size:13px}
+.route{position:relative;padding:22px;border:1px solid var(--line);border-radius:22px;background:var(--card);box-shadow:var(--shadow);overflow:hidden}.route:before{content:"";position:absolute;inset:0 0 auto;height:4px;background:linear-gradient(90deg,var(--acc),var(--green))}.route-head{display:flex;justify-content:space-between;gap:14px;align-items:center;margin:2px 0 20px;font:600 11px ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:.09em;text-transform:uppercase;color:var(--mut)}.route-head strong{color:var(--green);letter-spacing:.02em}.route-nodes{display:grid;gap:9px}.node{display:grid;grid-template-columns:42px minmax(0,1fr) auto;align-items:center;gap:12px;padding:13px 14px;border:1px solid var(--line);border-radius:13px;background:var(--bg)}.node .symbol{display:grid;place-items:center;width:38px;height:38px;border-radius:11px;background:var(--soft);color:var(--acc);font:700 14px ui-monospace,SFMono-Regular,Menlo,monospace}.node strong{display:block;font-size:14px;line-height:1.25}.node small{display:block;margin-top:3px;color:var(--mut);font-size:12px;line-height:1.35}.node .badge{max-width:120px;color:var(--green);font-size:11px;font-weight:700;text-align:right}.connector{height:12px;margin-left:32px;border-left:1px dashed var(--mut)}.route-foot{display:flex;gap:8px;align-items:center;margin:16px 0 0;color:var(--mut);font-size:12px}.route-foot span{color:var(--green);font-weight:700}
+section{padding:clamp(58px,8vw,94px) 0;border-top:1px solid var(--line)}h2{max-width:18ch;margin:0 0 12px;font-size:clamp(30px,4vw,46px);line-height:1.08;letter-spacing:-.04em}.intro{max-width:66ch;margin:0 0 34px;color:var(--mut);font-size:17px}.three{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}.step{min-height:238px;padding:22px;border:1px solid var(--line);border-radius:17px;background:var(--card)}.step-top{display:flex;align-items:center;gap:10px;margin-bottom:24px;color:var(--acc);font:700 12px ui-monospace,SFMono-Regular,Menlo,monospace;text-transform:uppercase;letter-spacing:.07em}.step-top b{display:grid;place-items:center;width:30px;height:30px;border-radius:50%;background:var(--soft);font-size:13px}.step h3{margin:0 0 8px;font-size:19px;letter-spacing:-.02em}.step p{margin:0;color:var(--mut);font-size:15px}.step code,.safe code{padding:2px 5px;border-radius:5px;background:var(--code);font:13px ui-monospace,SFMono-Regular,Menlo,monospace;overflow-wrap:anywhere}.prompt{display:grid;grid-template-columns:auto 1fr;gap:16px;align-items:start;margin-top:18px;padding:20px 22px;border-left:4px solid var(--acc);border-radius:0 14px 14px 0;background:var(--soft)}.prompt b{color:var(--acc);font:700 12px ui-monospace,SFMono-Regular,Menlo,monospace;text-transform:uppercase;letter-spacing:.05em}.prompt code{font:14px/1.6 ui-monospace,SFMono-Regular,Menlo,monospace;overflow-wrap:anywhere}
+.secure{display:grid;grid-template-columns:minmax(0,1fr) minmax(280px,.78fr);gap:32px;align-items:start}.checks{display:grid;gap:12px}.check{display:grid;grid-template-columns:28px 1fr;gap:12px;padding:17px 18px;border:1px solid var(--line);border-radius:14px;background:var(--card)}.check i{display:grid;place-items:center;width:26px;height:26px;border-radius:8px;background:var(--green-soft);color:var(--green);font-style:normal;font-weight:800}.check h3{margin:0 0 3px;font-size:15px}.check p{margin:0;color:var(--mut);font-size:14px}.safe{padding:24px;border-radius:18px;background:var(--fg);color:var(--bg)}.safe h3{margin:0 0 12px;font-size:21px;letter-spacing:-.02em}.safe p{margin:0 0 12px;color:color-mix(in srgb,var(--bg) 77%,var(--fg));font-size:14px}.safe p:last-child{margin:0}.safe code{color:var(--bg);background:color-mix(in srgb,var(--bg) 13%,var(--fg))}.guide{display:grid;grid-template-columns:1fr auto;gap:26px;align-items:center;padding:clamp(24px,5vw,42px);border:1px solid var(--line);border-radius:21px;background:linear-gradient(125deg,var(--soft),var(--card) 68%)}.guide h2{font-size:clamp(28px,3.6vw,38px)}.guide p{max-width:60ch;margin:0;color:var(--mut)}.guide .actions{margin:0;justify-content:flex-end}.footer{display:flex;flex-wrap:wrap;justify-content:space-between;gap:10px 22px;padding:28px 0 44px;color:var(--mut);font-size:14px}.footer a{font-weight:600}.lang-copy{display:none}html[lang="en"] [data-lang-show="en"],html[lang="pt-BR"] [data-lang-show="pt-BR"]{display:revert}
+[data-lang-show]{display:none}
+.identity-panel{padding:23px;border:1px solid var(--line);border-radius:17px;background:var(--card);box-shadow:var(--shadow)}.identity-panel p{max-width:78ch;margin:0;color:var(--mut)}.identity-panel .actions{margin-top:18px}.roadmap-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}.roadmap-card{padding:22px;border:1px solid var(--line);border-radius:17px;background:var(--card)}.roadmap-card .status{display:inline-flex;padding:3px 9px;border:1px solid var(--line);border-radius:999px;color:var(--mut);font:700 12px ui-monospace,SFMono-Regular,Menlo,monospace;text-transform:uppercase;letter-spacing:.05em}.roadmap-card h3{margin:15px 0 8px;font-size:21px;letter-spacing:-.02em}.roadmap-card p{margin:0;color:var(--mut);font-size:15px}.roadmap-card ul{margin:12px 0 0;padding-left:19px;color:var(--mut);font-size:14px}.roadmap-card li{margin:5px 0}.roadmap-link{margin:20px 0 0}
+.route-head,.node .badge,.org-profile small,.org-profile .policy span{font-size:12px}.step p,.roadmap-card p{font-size:16px}
+@media(max-width:820px){.hero-grid,.secure{grid-template-columns:1fr}.route{max-width:620px}.three{grid-template-columns:1fr}.step{min-height:0}.step-top{margin-bottom:14px}.guide{grid-template-columns:1fr}.guide .actions{justify-content:flex-start}}
+@media(max-width:820px){.roadmap-grid{grid-template-columns:1fr}}
+@media(max-width:560px){.shell{padding-inline:max(18px,env(safe-area-inset-left))}.nav-in{height:58px;gap:12px}.nav-links{gap:8px;font-size:12px}.nav-links a:first-child{display:none}.logo{font-size:17px}.lang button{padding:4px 7px}.hero{padding-top:48px}.route{padding:16px;border-radius:17px}.route-head{font-size:9px}.node{grid-template-columns:36px minmax(0,1fr);gap:10px;padding:11px}.node .symbol{width:34px;height:34px}.node .badge{grid-column:2;text-align:left;max-width:none}.prompt{grid-template-columns:1fr;gap:6px}.safe,.guide{padding:20px}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.btn{transition:none}}
+@media(max-width:560px){.nav-links{display:none}.route-head{font-size:12px}.node .badge{font-size:12px}}
+</style>
+<script src="../ga.js" defer></script>
+</head>
+<body>
+<nav aria-label="Main navigation">
+  <div class="shell nav-in">
+    <a class="logo" href="../"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2 3 6.5 12 11l9-4.5L12 2Z" fill="currentColor" opacity=".95"/><path d="m3 11.5 9 4.5 9-4.5m-18 9 9 4.5 9-4.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" opacity=".7"/></svg>dumps</a>
+    <div class="nav-links"><a href="../" data-lang-show="en">Home</a><a href="../" data-lang-show="pt-BR">Início</a><a href="../skill/">dump-this</a><a href="https://github.com/grippado/dumps">GitHub</a></div>
+    <div class="lang" role="group" aria-label="Language"><button type="button" data-set-lang="en" aria-pressed="true">EN</button><button type="button" data-set-lang="pt-BR" aria-pressed="false">PT</button></div>
+  </div>
+</nav>
+
+<main>
+  <div data-lang-show="en">
+    <header class="hero">
+      <div class="shell hero-grid">
+        <div>
+          <span class="eyebrow"><i aria-hidden="true"></i>Enterprise · self-hosted · organization controlled</span>
+          <h1>Give company artifacts a home <em>inside your network.</em></h1>
+          <p class="lead">Pair the <code>/dump-this</code> skill with a managed dumps CLI and an internal host. Your agent creates the page; your organization controls where it is published and who can read it.</p>
+          <div class="actions"><a class="btn primary" href="https://github.com/grippado/dumps/blob/main/docs/enterprise.md">Read the setup guide</a><a class="btn" href="../dump-this.zip" download>Get the skill</a></div>
+          <p class="tiny-note">A self-hosted deployment recipe for teams that already operate their own service and access policies.</p>
+        </div>
+        <div class="route" role="img" aria-label="Example route: employee asks dump-this, an organization-managed workstation publishes over SSH and rsync, and coworkers read from the internal dumps host behind SSO or VPN.">
+          <div class="route-head"><span>Example internal route</span><strong>Private by policy</strong></div>
+          <div class="route-nodes">
+            <div class="node"><span class="symbol">AI</span><span><strong>Employee + /dump-this</strong><small>Choose a specialist and create an HTML artifact</small></span><span class="badge">skill recipe</span></div>
+            <div class="connector"></div>
+            <div class="node"><span class="symbol">CLI</span><span><strong>Managed workstation</strong><small>Approved DUMPS_CONFIG · SSH + rsync</small></span><span class="badge">publisher access</span></div>
+            <div class="connector"></div>
+            <div class="node"><span class="symbol">↗</span><span><strong>dumps.example.org</strong><small>Internal artifact origin</small></span><span class="badge">SSO and/or VPN</span></div>
+          </div>
+          <p class="route-foot"><span>Readers</span> reach the same protected origin through company policy.</p>
+        </div>
+      </div>
+    </header>
+
+    <section id="flow-en"><div class="shell">
+      <h2>One company destination, from prompt to page.</h2>
+      <p class="intro">The Enterprise recipe tells the skill to use the organization’s configured destination when the request involves company material. The team owns the server, CLI profile, identity policy and distribution of the skill.</p>
+      <div class="three">
+        <article class="step"><div class="step-top"><b>01</b> Provision</div><h3>Run a dumps host</h3><p>Choose an internal name such as <code>dumps.example.org</code>. Configure the artifact origin, admin origin and SSH publishing route under your organization’s network and access policies.</p></article>
+        <article class="step"><div class="step-top"><b>02</b> Configure</div><h3>Manage the publishing profile</h3><p>Install the CLI and skill on an approved workstation. Provide a managed profile with the exact host and URL, and select it with <code>DUMPS_CONFIG</code> when people have multiple destinations.</p></article>
+        <article class="step"><div class="step-top"><b>03</b> Create</div><h3>Ask the skill to publish internally</h3><p>The skill follows the requested specialist and style, prepares the HTML, then uses the local CLI to publish over SSH and rsync. A hosted agent needs an organization-approved connector to reach a private service.</p></article>
+      </div>
+      <div class="prompt"><b>Example request</b><code>/dump-this enterprise incident report for the security team, publish on our internal dumps host</code></div>
+    </div></section>
+
+    <section><div class="shell secure">
+      <div><h2>Protect the full path, including every artifact.</h2><p class="intro">dumps serves static HTML. Your organization supplies the network boundary for confidential pages and the rules for who may publish them.</p>
+        <div class="checks">
+          <article class="check"><i aria-hidden="true">✓</i><div><h3>Gate the artifact origin</h3><p>Put SSO, VPN or private routing in front of all of <code>DUMPS_URL</code>, including the home page and each artifact.</p></div></article>
+          <article class="check"><i aria-hidden="true">✓</i><div><h3>Limit publishing rights</h3><p>Restrict the SSH route and publishing identity to approved people or managed agents. Keep org domains and credentials in private configuration.</p></div></article>
+          <article class="check"><i aria-hidden="true">✓</i><div><h3>Choose a trust boundary</h3><p>HTML pages share a browser origin. Use separate instances and origins for groups that must not trust each other’s artifacts.</p></div></article>
+          <article class="check"><i aria-hidden="true">✓</i><div><h3>Keep external requests under policy</h3><p>Leave analytics off and review fonts, scripts and other third-party requests before publishing internal material.</p></div></article>
+        </div>
+      </div>
+      <aside class="safe"><h3>Two access boundaries</h3><p>The admin listing and API are separate from the artifact host. <code>DUMPS_AUTH</code> configures supported admin identity checks; it does not protect static artifacts.</p><p><code>--hidden</code> removes a dump from the home page. It does not require a login or make a public URL private.</p><p>Apply your SSO or VPN policy before requests reach the complete artifact origin.</p></aside>
+    </div></section>
+
+    <section id="google-access-en"><div class="shell">
+      <h2>Use Google Workspace with an access layer you already run.</h2>
+      <div class="identity-panel"><p>Cloudflare Access can use Google Workspace as its identity provider today. Put separate Access applications in front of the complete artifact origin and the admin origin, then apply the organization's Workspace domain or group policy. For the admin API, configure <code>DUMPS_AUTH=access</code> so dumpsd verifies the Access token. For artifacts, Access protects every page at <code>DUMPS_URL</code>. Google sign-in is handled by Cloudflare Access in this setup; dumps does not validate Google tokens directly.</p><div class="actions"><a class="btn primary" href="https://github.com/grippado/dumps/blob/main/docs/enterprise.md">Current Enterprise setup</a><a class="btn" href="https://developers.cloudflare.com/cloudflare-one/integrations/identity-providers/google-workspace/">Cloudflare Google Workspace guide</a></div></div>
+    </div></section>
+
+    <section id="roadmap-en"><div class="shell">
+      <h2>Proposed roadmap for deeper Enterprise support.</h2>
+      <p class="intro">These are proposals, not shipped capabilities. The goal is to make artifact storage and identity fit into an organization's existing infrastructure while keeping the service self-hosted.</p>
+      <div class="roadmap-grid">
+        <article class="roadmap-card"><span class="status">Proposed</span><h3>S3-compatible artifact storage</h3><p>Store published artifacts in a private object bucket and serve them through the organization's protected <code>DUMPS_URL</code>.</p><ul><li>Preserve home, listing, archive, delete and rollback behavior.</li><li>Keep the bucket private behind an origin access layer and SSO or VPN.</li><li>Design writer coordination and recovery for object storage; do not assume filesystem rename or flock semantics.</li><li>Use scoped, short-lived cloud credentials instead of static access keys.</li></ul></article>
+        <article class="roadmap-card"><span class="status">Proposed</span><h3>Native Google Workspace access</h3><p>Offer Google sign-in and organization policy as a first-class option for readers, publishers and admins, with separate permission boundaries.</p><ul><li>Allow organization-controlled Workspace domains and, if feasible, groups.</li><li>Keep read access to artifacts separate from admin and publish permissions.</li><li>Validate identity and sessions server-side with explicit expiry and revocation behavior.</li><li>Keep Cloudflare Access with Google Workspace available as a current deployment option.</li></ul></article>
+      </div>
+      <div class="actions roadmap-link"><a class="btn primary" href="https://github.com/grippado/dumps/blob/main/docs/enterprise-roadmap.md">Read the roadmap proposal</a></div>
+    </div></section>
+
+    <section><div class="shell guide"><div><h2>Bring the recipe to your team.</h2><p>Start with the detailed config and security guide, then distribute the skill through your approved channel. The public package contains generic instructions; keep your organization’s hostnames, access values and policy in managed local configuration.</p></div><div class="actions"><a class="btn primary" href="https://github.com/grippado/dumps/blob/main/docs/enterprise.md">Enterprise guide</a><a class="btn" href="../skill/">Meet dump-this</a></div></div></section>
+  </div>
+
+  <div data-lang-show="pt-BR">
+    <header class="hero">
+      <div class="shell hero-grid">
+        <div>
+          <span class="eyebrow"><i aria-hidden="true"></i>Enterprise · auto-hospedado · sob controle da organização</span>
+          <h1>Dê aos artefatos da empresa um lugar <em>dentro da sua rede.</em></h1>
+          <p class="lead">Combine a skill <code>/dump-this</code> com o CLI dumps e um host interno configurados pela organização. O agente cria a página; a empresa controla onde ela é publicada e quem pode acessá-la.</p>
+          <div class="actions"><a class="btn primary" href="https://github.com/grippado/dumps/blob/main/docs/pt-BR/enterprise.md">Ler o guia de configuração</a><a class="btn" href="../dump-this.zip" download>Baixar a skill</a></div>
+          <p class="tiny-note">Uma receita de auto-hospedagem para equipes que já operam o próprio serviço e suas políticas de acesso.</p>
+        </div>
+        <div class="route" role="img" aria-label="Fluxo de exemplo: alguém pede à skill dump-this, uma máquina configurada pela organização publica por SSH e rsync, e a equipe lê no host interno de dumps atrás do SSO ou da VPN.">
+          <div class="route-head"><span>Fluxo interno de exemplo</span><strong>Privado por política</strong></div>
+          <div class="route-nodes">
+            <div class="node"><span class="symbol">IA</span><span><strong>Pessoa + /dump-this</strong><small>Escolhe um especialista e cria um artefato HTML</small></span><span class="badge">receita da skill</span></div>
+            <div class="connector"></div>
+            <div class="node"><span class="symbol">CLI</span><span><strong>Máquina gerenciada</strong><small>DUMPS_CONFIG aprovado · SSH + rsync</small></span><span class="badge">acesso de publicação</span></div>
+            <div class="connector"></div>
+            <div class="node"><span class="symbol">↗</span><span><strong>dumps.example.org</strong><small>Origem interna de artefatos</small></span><span class="badge">SSO e/ou VPN</span></div>
+          </div>
+          <p class="route-foot"><span>Leitores</span> chegam à mesma origem protegida pelas políticas da empresa.</p>
+        </div>
+      </div>
+    </header>
+
+    <section id="flow-pt"><div class="shell">
+      <h2>Um destino da empresa, do pedido à página.</h2>
+      <p class="intro">A receita Enterprise instrui a skill a usar o destino configurado pela organização quando o pedido envolve material da empresa. O time administra o servidor, o perfil do CLI, a política de identidade e a distribuição da skill.</p>
+      <div class="three">
+        <article class="step"><div class="step-top"><b>01</b> Hospede</div><h3>Coloque um dumps no ar</h3><p>Escolha um endereço interno como <code>dumps.example.org</code>. Configure a origem dos artefatos, a origem do admin e a rota SSH de publicação conforme a rede e as políticas de acesso da organização.</p></article>
+        <article class="step"><div class="step-top"><b>02</b> Configure</div><h3>Gerencie o perfil de publicação</h3><p>Instale o CLI e a skill numa máquina aprovada. Forneça um perfil gerenciado com o host e a URL exatos e selecione-o com <code>DUMPS_CONFIG</code> quando houver mais de um destino.</p></article>
+        <article class="step"><div class="step-top"><b>03</b> Crie</div><h3>Peça à skill para publicar dentro da empresa</h3><p>A skill segue o especialista e o estilo pedidos, prepara o HTML e usa o CLI local para publicar por SSH e rsync. Um agente hospedado precisa de um conector aprovado pela organização para acessar um serviço privado.</p></article>
+      </div>
+      <div class="prompt"><b>Exemplo de pedido</b><code>/dump-this enterprise relatório do incidente para o time de segurança, publicar no dumps interno</code></div>
+    </div></section>
+
+    <section><div class="shell secure">
+      <div><h2>Proteja o caminho inteiro, inclusive cada artefato.</h2><p class="intro">O dumps serve HTML estático. A organização fornece a fronteira de rede para páginas confidenciais e as regras de quem pode publicá-las.</p>
+        <div class="checks">
+          <article class="check"><i aria-hidden="true">✓</i><div><h3>Proteja a origem dos artefatos</h3><p>Aplique SSO, VPN ou rota privada em toda a <code>DUMPS_URL</code>, incluindo a home e cada artefato.</p></div></article>
+          <article class="check"><i aria-hidden="true">✓</i><div><h3>Limite quem pode publicar</h3><p>Restrinja a rota SSH e a identidade de publicação às pessoas ou agentes gerenciados. Mantenha domínios e credenciais da org em configuração privada.</p></div></article>
+          <article class="check"><i aria-hidden="true">✓</i><div><h3>Defina a fronteira de confiança</h3><p>As páginas HTML compartilham a mesma origem no browser. Use instâncias e origens separadas para grupos que não devem confiar nos artefatos uns dos outros.</p></div></article>
+          <article class="check"><i aria-hidden="true">✓</i><div><h3>Controle pedidos externos</h3><p>Deixe analytics desligado e revise fontes, scripts e outros pedidos a terceiros antes de publicar material interno.</p></div></article>
+        </div>
+      </div>
+      <aside class="safe"><h3>Duas fronteiras de acesso</h3><p>A listagem e a API do admin ficam separadas do host de artefatos. <code>DUMPS_AUTH</code> configura verificações de identidade compatíveis para o admin; não protege os artefatos estáticos.</p><p><code>--hidden</code> tira um dump da home. Não exige login nem torna privado um endereço público.</p><p>Aplique a política de SSO ou VPN antes que os pedidos cheguem à origem inteira dos artefatos.</p></aside>
+    </div></section>
+
+    <section id="google-access-pt"><div class="shell">
+      <h2>Use Google Workspace com uma camada de acesso que sua equipe já opera.</h2>
+      <div class="identity-panel"><p>O Cloudflare Access pode usar Google Workspace como provedor de identidade hoje. Coloque aplicações Access separadas diante da origem completa dos artefatos e da origem do admin, depois aplique a política de domínio ou grupos do Workspace. Para a API do admin, configure <code>DUMPS_AUTH=access</code> para o dumpsd validar o token do Access. Para os artefatos, o Access protege cada página em <code>DUMPS_URL</code>. Nesse setup, o login Google é tratado pelo Cloudflare Access; o dumps não valida tokens Google diretamente.</p><div class="actions"><a class="btn primary" href="https://github.com/grippado/dumps/blob/main/docs/pt-BR/enterprise.md">Configuração Enterprise atual</a><a class="btn" href="https://developers.cloudflare.com/cloudflare-one/integrations/identity-providers/google-workspace/">Guia Google Workspace da Cloudflare</a></div></div>
+    </div></section>
+
+    <section id="roadmap-pt"><div class="shell">
+      <h2>Proposta de roadmap para ampliar o Enterprise.</h2>
+      <p class="intro">Estas são propostas, ainda não recursos disponíveis. A meta é integrar armazenamento de artefatos e identidade à infraestrutura que a organização já opera, mantendo o serviço auto-hospedado.</p>
+      <div class="roadmap-grid">
+        <article class="roadmap-card"><span class="status">Proposta</span><h3>Armazenamento S3-compatible</h3><p>Guardar os artefatos publicados num bucket privado e servi-los pela <code>DUMPS_URL</code> protegida pela organização.</p><ul><li>Preservar home, listagem, arquivamento, remoção e rollback.</li><li>Manter o bucket privado atrás de uma camada de acesso à origem e de SSO ou VPN.</li><li>Projetar coordenação entre escritores e recuperação para object storage, sem pressupor rename de filesystem ou flock.</li><li>Usar credenciais de nuvem restritas e temporárias em vez de chaves estáticas.</li></ul></article>
+        <article class="roadmap-card"><span class="status">Proposta</span><h3>Acesso nativo com Google Workspace</h3><p>Oferecer login Google e política da organização como opção de primeira classe para leitores, publicadores e admins, com permissões separadas.</p><ul><li>Permitir domínios Workspace controlados pela organização e, se viável, grupos.</li><li>Separar leitura de artefatos das permissões de admin e publicação.</li><li>Validar identidade e sessões no servidor, com expiração e revogação explícitas.</li><li>Manter Cloudflare Access com Google Workspace como opção de deploy disponível hoje.</li></ul></article>
+      </div>
+      <div class="actions roadmap-link"><a class="btn primary" href="https://github.com/grippado/dumps/blob/main/docs/pt-BR/enterprise-roadmap.md">Ler a proposta de roadmap</a></div>
+    </div></section>
+
+    <section><div class="shell guide"><div><h2>Leve a receita para a sua equipe.</h2><p>Comece pelo guia detalhado de configuração e segurança e distribua a skill pelo canal aprovado da empresa. O pacote público tem instruções genéricas; mantenha hostnames, valores de acesso e políticas da organização na configuração local gerenciada.</p></div><div class="actions"><a class="btn primary" href="https://github.com/grippado/dumps/blob/main/docs/pt-BR/enterprise.md">Guia Enterprise</a><a class="btn" href="../skill/">Conheça o dump-this</a></div></div></section>
+  </div>
+</main>
+
+<footer class="shell footer"><span data-lang-show="en">dumps is MIT licensed. Made by <a href="https://github.com/grippado">Gabriel Gripp</a>.</span><span data-lang-show="pt-BR">O dumps é MIT. Feito por <a href="https://github.com/grippado">Gabriel Gripp</a>.</span><span><a href="https://github.com/grippado/dumps">GitHub</a> · <a href="../">dumps home</a></span></footer>
+
+<script>
+(function(){
+  function apply(lang){
+    document.documentElement.lang=lang;
+    document.querySelectorAll("[data-set-lang]").forEach(function(button){button.setAttribute("aria-pressed",String(button.getAttribute("data-set-lang")===lang))});
+    try{localStorage.setItem("dumps-lang",lang)}catch(e){}
+  }
+  document.querySelectorAll("[data-set-lang]").forEach(function(button){button.addEventListener("click",function(){apply(button.getAttribute("data-set-lang"))})});
+  var saved=null;try{saved=localStorage.getItem("dumps-lang")}catch(e){}
+  var lang=saved||((navigator.language||"").toLowerCase().indexOf("pt")===0?"pt-BR":"en");
+  apply(lang==="pt-BR"?"pt-BR":"en");
+})();
+</script>
+</body>
+</html>

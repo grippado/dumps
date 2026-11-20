@@ -61,6 +61,12 @@ proxies com identidade; nesse caso, mantenha a origem do admin sem exposição e
 Veja o guia de [autenticação](auth.md), o guia de [Cloudflare](exposure/cloudflare.md) e as
 [alternativas de exposição](exposure/alternatives.md).
 
+Se a organização usa Google Workspace, o Cloudflare Access pode usá-lo como provedor de identidade.
+Crie aplicações Access e policies separadas para toda a origem dos artefatos e para a origem do
+admin. Mantenha `DUMPS_AUTH=access` no admin para o `dumpsd` validar o JWT do Access. Nesse fluxo,
+o Cloudflare faz o login Google; o `dumpsd` não valida tokens Google diretamente. Veja o
+[guia Google Workspace da Cloudflare](https://developers.cloudflare.com/cloudflare-one/integrations/identity-providers/google-workspace/).
+
 Cada dump roda na mesma origem de navegador que os outros. O JavaScript de uma página consegue ler
 os outros dumps daquele host, então SSO ou VPN não separa as equipes. Publique só HTML confiável,
 restrinja quem pode publicar e use instâncias e origens de artefatos separadas para grupos que não
@@ -74,6 +80,9 @@ estiverem claros, não publique material interno. Mantenha o HTML no workspace a
 responsável pelo serviço a configuração gerenciada.
 
 ## Distribua a skill
+
+Um backend de armazenamento S3-compatible e acesso Google Workspace nativo são propostas de
+roadmap, ainda não recursos do dumps. Veja a [proposta de roadmap Enterprise](enterprise-roadmap.md).
 
 No Claude Code e no Codex, instale `dump-this` junto do CLI com
 [`cli/dumps install-agent`](agent.md). O pacote da skill inclui a receita Enterprise. A organização
