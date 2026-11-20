@@ -62,6 +62,7 @@ Faça commit só de `examples/`, com hostnames `example.com`.
 ## Notas de privacidade
 
 - Com `DUMPS_GA_ID` definido, cada dump e a home carregam `googletagmanager.com` e reportam visualizações de página e os eventos `share` e `dumps_clean_mode`. Deixe vazio para desligar. O ID do GA4 (`G-...`) aparece em claro no HTML servido.
+- O analytics começa com o Consent Mode do Google em negado: nenhum cookie de analytics é gravado até o visitante clicar em Aceitar num banner pequeno (em inglês ou português, seguindo o idioma da página). A escolha fica no `localStorage` (`dumps-consent`) e o banner não volta naquele navegador. Recusar mantém os cookies desligados; o Google ainda pode receber pings sem cookie para modelagem.
 - As tags Open Graph incluem a URL do dump e, quando existirem, os nomes dos autores.
 - Os botões de compartilhar abrem links de compartilhamento do WhatsApp e do Telegram ao clicar. Nada é enviado antes disso.
 

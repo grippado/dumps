@@ -48,7 +48,7 @@ cli/dumps config
 | `DUMPS_ACCESS_TEAM` | vazio | Domínio do time no Cloudflare (por exemplo `seutime.cloudflareaccess.com`). Obrigatório com `access` |
 | `DUMPS_ACCESS_AUD` | vazio | Tag Application Audience (AUD) do app do admin no Access. Obrigatória com `access` |
 | `DUMPS_TAILSCALE_ALLOW` | vazio | Logins permitidos com `tailscale`, separados por espaço. Vazio aceita qualquer login do tailnet |
-| `DUMPS_GA_ID` | vazio | ID de medição do GA4 (`G-XXXXXXX`). Vazio desliga. Qualquer outro valor é recusado |
+| `DUMPS_GA_ID` | vazio | ID de medição do GA4 (`G-XXXXXXX`). Vazio desliga. Qualquer outro valor é recusado. Começa com consentimento negado e mostra um banner de aceite (ver security.md) |
 | `DUMPS_MACHINE` | `hostname -s` | Nome gravado no manifest e mostrado na listagem |
 | `DUMPS_CHROME` | detecção automática | Caminho do Chrome ou Chromium usado nas miniaturas |
 

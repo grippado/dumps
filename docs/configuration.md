@@ -48,7 +48,7 @@ cli/dumps config
 | `DUMPS_ACCESS_TEAM` | empty | Cloudflare team domain (for example `yourteam.cloudflareaccess.com`). Required for `access` |
 | `DUMPS_ACCESS_AUD` | empty | Application Audience (AUD) tag of the admin Access app. Required for `access` |
 | `DUMPS_TAILSCALE_ALLOW` | empty | Space-separated logins allowed in `tailscale` mode. Empty allows any tailnet login |
-| `DUMPS_GA_ID` | empty | GA4 measurement ID (`G-XXXXXXX`). Empty disables analytics. Anything else is rejected |
+| `DUMPS_GA_ID` | empty | GA4 measurement ID (`G-XXXXXXX`). Empty disables analytics. Anything else is rejected. Starts with consent denied and shows an accept banner (see security.md) |
 | `DUMPS_MACHINE` | `hostname -s` | Name recorded in the manifest and shown in the listing |
 | `DUMPS_CHROME` | auto-detect | Path to the Chrome or Chromium binary used for thumbnails |
 
