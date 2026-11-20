@@ -26,7 +26,11 @@ DUMPS_AUTH=tailscale
 DUMPS_TAILSCALE_ALLOW="ada@example.com"
 ```
 
-`tailscale serve` adds the `Tailscale-User-Login` header that `dumpsd` trusts. Read the trust rules in [../auth.md](../auth.md) before using this mode. Funnel serves your `ts.net` name.
+`tailscale serve` adds the `Tailscale-User-Login` header that `dumpsd` trusts, and `dumpsd` accepts it only from loopback. Funnel serves your `ts.net` name. Limits of the `tailscale` mode ([../auth.md](../auth.md)):
+
+- `dumpsd` trusts the header from any loopback connection, so nothing except `tailscale serve` may be able to reach the admin listener. Never reach it through Funnel, a public hostname or another proxy or tunnel.
+- `DUMPS_ADMIN_ORIGIN` must be the exact origin the browser sends, port included.
+- Use `DUMPS_TAILSCALE_ALLOW` if the tailnet has other people.
 
 ## ngrok
 
@@ -34,7 +38,7 @@ ngrok can publish `8081` on a public URL (custom domains depend on your plan). I
 
 ## frp
 
-Run `frps` on a VPS with a public IP and `frpc` on the home box, forwarding `8081` to the VPS. The same caveat as ngrok applies to the admin host: expose only the public listener unless you add your own authenticated layer.
+Run `frps` on a VPS with a public IP and `frpc` on the home box, forwarding `8081` to the VPS. The same caveat as ngrok applies to the admin host: `dumpsd` does not understand the frp login, so expose only the public listener unless you add your own authenticated layer.
 
 ## Caddy on a VPS, with a tunnel to home
 
@@ -44,7 +48,11 @@ Run Caddy on a VPS for automatic HTTPS and a custom domain, and reach the home b
 ssh -N -R 127.0.0.1:18081:127.0.0.1:8081 vps.example.com
 ```
 
-On the VPS, Caddy reverse-proxies `dumps.example.com` to `127.0.0.1:18081`. Keep the admin listener off the VPS, or protect it with a mechanism `dumpsd` supports.
+On the VPS, Caddy reverse-proxies `dumps.example.com` to `127.0.0.1:18081`. Keep the admin listener off the VPS, or protect it with a mechanism `dumpsd` supports. You use any domain you like, with no third party in the traffic path. It gives the most control and the most work.
+
+## Admin from the CLI over ssh
+
+If you do not want an admin host at all, do not expose the admin listener. `dumps archive`, `unarchive`, `edit` and `rm` run `dumpsd apply` on the server over ssh, so anyone who already has ssh needs no login layer. Expose only the public listener. Do not use `DUMPS_AUTH=none` for this: the CLI refuses it for a service.
 
 ## Tradeoffs
 
@@ -57,3 +65,7 @@ On the VPS, Caddy reverse-proxies `dumps.example.com` to `127.0.0.1:18081`. Keep
 | Caddy on a VPS and WireGuard or ssh tunnel | A VPS | Yes, automatic HTTPS | None native | Higher: VPS, tunnel, keep-alive |
 
 For a public site with no admin UI, any option works. For the browser admin, use Cloudflare Access or Tailscale, or manage dumps from the CLI.
+
+## Another login provider in front
+
+There is no native support for oauth2-proxy and similar. See [../auth.md](../auth.md) for what that means and the risk.

@@ -4,6 +4,24 @@ Self-hosted place to publish static HTML artifacts. Publish a single `.html` fil
 
 It was born on an Android phone in a living room (Termux, Caddy and a Cloudflare Tunnel), but it runs on any Linux, macOS or Android box, or fully locally on your laptop.
 
+English | [Português](README.pt-BR.md)
+
+Project page: https://grippado.github.io/dumps/
+
+## Just want better artifacts? Use the skill
+
+`dump-this` is a skill that makes a page the way a specialist would (an analyst for reports, an
+editor for stories, a presentation coach for slides, a data visualization specialist for
+dashboards, and more). It works in your favorite harness, with or without a dumps server:
+
+- **Claude Code and Codex:** `cli/dumps install-agent all`, then `/dump-this <what you want>`.
+- **claude.ai:** upload [dump-this.zip](https://grippado.github.io/dumps/dump-this.zip) in
+  Settings, Capabilities, Skills, and get the page as an artifact.
+- **ChatGPT:** paste [dump-this-chatgpt.txt](https://grippado.github.io/dumps/dump-this-chatgpt.txt)
+  into a custom GPT or a Project, and get the page in canvas.
+
+Full guide: [docs/agent.md](docs/agent.md).
+
 ## Features
 
 - Publish a `.html` file or a folder with `index.html`; each dump gets a short random id (or one you choose with `--id`).
@@ -12,9 +30,11 @@ It was born on an Android phone in a living room (Termux, Caddy and a Cloudflare
 - Footer with the dump URL and authors.
 - Open Graph and Twitter card tags injected into every published HTML file, with a thumbnail as preview image.
 - Optional GA4 (`DUMPS_GA_ID`).
-- Private admin listing behind a login: archive, unarchive, rename and delete.
+- Private admin listing behind a login (Cloudflare Access or Tailscale): archive, unarchive, rename and delete.
 - Atomic publish with rollback: a failed publish leaves the previous version online.
 - Thumbnails rendered locally with headless Chrome or Chromium.
+- An agent skill, `dump-this`, that lets Claude Code and Codex turn a request into a page and publish it hidden for your review.
+- Local mode with no server, no tunnel and no login, with the dumps and the admin on separate origins.
 - One small Go binary on the server (`dumpsd`, no CGO), one bash CLI on your machine.
 
 The UI strings (home, bar, footer, admin and CLI messages) are currently in Portuguese. i18n is planned.
@@ -41,7 +61,7 @@ cli/dumps  --- ssh/rsync --->  DUMPS_ROOT/
                                  admin host:  admin.example.com (behind login)
 ```
 
-In local mode (`DUMPS_HOST=local`) there is no ssh, no Caddy and no tunnel: `dumps serve-local` makes `dumpsd` serve everything on loopback. Details in [docs/architecture.md](docs/architecture.md).
+In local mode (`DUMPS_HOST=local`) there is no ssh, no Caddy and no tunnel: `dumps serve-local` makes `dumpsd` serve the dumps on `127.0.0.1:8090` and the admin on `127.0.0.1:8091`, two origins on loopback. Details in [docs/architecture.md](docs/architecture.md).
 
 ## Quick start (local mode)
 
@@ -75,22 +95,46 @@ Start the local server:
 cli/dumps serve-local
 ```
 
-Open http://localhost:8090 for the home page and http://localhost:8090/_dumps/ for the admin listing.
+Open two URLs:
 
-More in [docs/local.md](docs/local.md).
+- http://localhost:8090 for the home and the dumps
+- http://localhost:8091/_dumps/ for the admin listing (archive, rename, delete)
+
+Use `localhost`, not `127.0.0.1`: the admin API accepts only the exact origin `http://localhost:8091`.
+
+Optional: install the agent skill and the `/dump-this` command for Claude Code and Codex.
+
+```bash
+cli/dumps install-agent all
+```
+
+The agent runs the `dumps` command, so put `cli/dumps` on your `PATH`. More in [docs/local.md](docs/local.md) and [docs/agent.md](docs/agent.md).
 
 ## Documentation
 
 - [Architecture](docs/architecture.md): components, directory layout, publish flow, exit codes
 - [Configuration](docs/configuration.md): every `DUMPS_*` key, `site.json`, `dumpsd` subcommands
 - [Run it locally](docs/local.md)
+- [Agent skill](docs/agent.md): `dump-this`, its recipes and the review flow
 - Hosts: [Linux](docs/hosts/linux.md), [macOS](docs/hosts/macos.md), [Android (Termux)](docs/hosts/android-termux.md)
 - Exposure: [Cloudflare Tunnel and Access](docs/exposure/cloudflare.md), [alternatives](docs/exposure/alternatives.md)
 - [Admin authentication](docs/auth.md)
 - [Security model](docs/security.md)
 - [Contributing](CONTRIBUTING.md) and [security policy](SECURITY.md)
 
-Portuguese version: [README.pt-BR.md](README.pt-BR.md).
+## Development
+
+```bash
+make check
+```
+
+`make check` runs gofmt, `go vet`, shellcheck and the Go tests, the same as CI.
+
+## Built with flux
+
+dumps was built end to end with [flux](https://grippado.github.io/flux/), a family of commands
+for AI agents: every slice was refined, built, reviewed and iterated with it, and the story of
+the build is itself a dump at [dumps.gripp.link/historia](https://dumps.gripp.link/historia/).
 
 ## License
 

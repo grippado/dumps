@@ -1,10 +1,12 @@
 # Android (Termux) host
 
-This is where dumps started: an Android phone on the home wifi, serving through a tunnel. The phone runs `dumpsd`, Caddy and the tunnel as runit services. The CLI runs on your laptop.
+This is where dumps started: an Android phone on the home wifi, serving through a tunnel. The phone runs `dumpsd`, Caddy and the tunnel as runit services. The CLI runs on your laptop. This guide uses the `termux-runit` service, which `dumps install-dumpsd` creates for you.
+
+The Termux steps themselves (packages, runit, boot) follow the Termux ecosystem and are not part of this repository's code, so check the Termux documentation if something changes.
 
 ## 1. Install Termux
 
-Install Termux and Termux:Boot from F-Droid, not from the Play Store (that build is outdated). Then, in Termux:
+Install Termux and Termux:Boot from F-Droid, not from the Play Store (that build is outdated). Do not mix install sources between the two. Then, in Termux:
 
 ```bash
 pkg install openssh rsync caddy cloudflared termux-services
@@ -49,9 +51,16 @@ DUMPS_ACCESS_TEAM=yourteam.cloudflareaccess.com
 DUMPS_ACCESS_AUD=<AUD tag>
 ```
 
-`DUMPS_TARGET=linux/arm64` produces a static binary (`CGO_ENABLED=0`) that runs on Termux. Inside Termux there is no `/etc/resolv.conf` and no system CA bundle, so `dumpsd` reads DNS servers from `$PREFIX/etc/resolv.conf` (falling back to 1.1.1.1 and 8.8.8.8) and CA certificates from `$PREFIX/etc/tls/cert.pem`. It needs them to fetch the Cloudflare Access keys.
+The root defaults to the Termux home, so dumps live in `~/dumps`. To pin it, set `DUMPS_ROOT=/data/data/com.termux/files/home`.
 
-The root defaults to the Termux home, so dumps live in `~/dumps`.
+For a service, `DUMPS_AUTH` is `access` or `tailscale`. `none` is refused. Values that go into the service may only contain letters, digits and `: / . _ @ -`.
+
+`DUMPS_TARGET=linux/arm64` produces a static binary (`CGO_ENABLED=0`) that runs on Termux. Inside Termux there is no `/etc/resolv.conf` and no system CA bundle in the usual places, so to fetch the Cloudflare Access keys `dumpsd` reads:
+
+- DNS: `$PREFIX/etc/resolv.conf` (or `/data/data/com.termux/files/usr/etc/resolv.conf` and `/etc/resolv.conf`). With no valid nameserver, it uses `1.1.1.1` and `8.8.8.8`.
+- CA certificates: `$PREFIX/etc/tls/cert.pem` (or `/data/data/com.termux/files/usr/etc/tls/cert.pem`).
+
+This only matters with `DUMPS_AUTH=access`.
 
 ## 4. Install dumpsd and its service
 
@@ -59,7 +68,7 @@ The root defaults to the Termux home, so dumps live in `~/dumps`.
 cli/dumps install-dumpsd
 ```
 
-With `DUMPS_SERVICE=termux-runit` this creates `$PREFIX/var/service/dumpsd/` with a `run` script and a `log/run` script (logs through `svlogd` into `$LOGDIR/sv/dumpsd`). If the service was never enabled, the CLI tells you to enable it. On the phone:
+With `DUMPS_SERVICE=termux-runit` this creates `$PREFIX/var/service/dumpsd/` with a `run` script and a `log/run` script (logs through `svlogd` into `$LOGDIR/sv/dumpsd`). If the service was never enabled, the CLI prints `serviço dumpsd criado; para ligar: sv-enable dumpsd`. On the phone:
 
 ```bash
 sv-enable dumpsd
@@ -69,7 +78,27 @@ When the service is already enabled, `install-dumpsd` restarts it for you.
 
 ## 5. Caddy and the tunnel as services
 
-Run Caddy (with `deploy/Caddyfile`, root replaced by the Termux home path) and `cloudflared` (with `deploy/cloudflared.yml`) as their own runit services, then enable them.
+Run Caddy (with `deploy/Caddyfile`, `/home/you` replaced by `/data/data/com.termux/files/home`) and `cloudflared` (with `deploy/cloudflared.yml`) as their own runit services, then enable them. Each service needs a directory under `$PREFIX/var/service/<name>/` with an executable `run` script that `exec`s the program.
+
+Example for Caddy, in `$PREFIX/var/service/caddy/run`:
+
+```text
+#!/data/data/com.termux/files/usr/bin/sh
+exec 2>&1
+exec caddy run --config /data/data/com.termux/files/home/Caddyfile
+```
+
+Example for cloudflared, in `$PREFIX/var/service/cloudflared/run`:
+
+```text
+#!/data/data/com.termux/files/usr/bin/sh
+exec 2>&1
+exec cloudflared tunnel run dumps
+```
+
+```bash
+chmod 700 $PREFIX/var/service/caddy/run $PREFIX/var/service/cloudflared/run
+```
 
 ```bash
 sv-enable caddy
@@ -79,7 +108,7 @@ sv-enable caddy
 sv-enable cloudflared
 ```
 
-Each service needs a directory under `$PREFIX/var/service/<name>/` with an executable `run` script that `exec`s the program. Tunnel setup is in [../exposure/cloudflare.md](../exposure/cloudflare.md).
+Tunnel setup is in [../exposure/cloudflare.md](../exposure/cloudflare.md).
 
 ## 6. Using sv over ssh
 
@@ -88,6 +117,8 @@ Each service needs a directory under `$PREFIX/var/service/<name>/` with an execu
 ```bash
 SVDIR=$PREFIX/var/service sv status dumpsd
 ```
+
+`dumps install-dumpsd` already sets `SVDIR` when it restarts the service.
 
 ## 7. Keep the phone alive
 

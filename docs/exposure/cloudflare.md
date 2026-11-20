@@ -11,11 +11,11 @@ You need a domain on Cloudflare and the Caddy setup from your host guide ([Linux
 | `dumps.example.com` (public) | Caddy `127.0.0.1:8081`, serves only `dumps/` | Anyone |
 | `admin.example.com` (private) | Caddy `127.0.0.1:8080`, listing and admin API | Only users allowed by Access |
 
-Never point the public hostname at the admin listener (`:8080`). The listing page is a static file with no login of its own, so anyone could read your ids and titles, including archived ones. Only the API actions are checked by `dumpsd`.
+Never point the public hostname at the admin listener (`:8080`). The listing page is a static file with no login of its own, so anyone could read your ids, titles, sizes and machine names, including archived ones. Only the API actions are checked by `dumpsd`.
 
 ## 1. Create the tunnel
 
-On the server:
+On the server, after installing `cloudflared`:
 
 ```bash
 cloudflared tunnel login
@@ -25,7 +25,7 @@ cloudflared tunnel login
 cloudflared tunnel create dumps
 ```
 
-This writes a credentials file `~/.cloudflared/<TUNNEL-UUID>.json`. Treat it as a secret.
+This prints the tunnel UUID and writes a credentials file `~/.cloudflared/<TUNNEL-UUID>.json`. Treat it as a secret ([../security.md](../security.md)).
 
 ## 2. Ingress
 
@@ -41,6 +41,8 @@ ingress:
     service: http://127.0.0.1:8080
   - service: http_status:404
 ```
+
+The last rule returns 404 for any other hostname.
 
 ## 3. Create the Access application first
 
@@ -77,7 +79,7 @@ Run the tunnel.
 cloudflared tunnel run dumps
 ```
 
-On a long-lived box, run it as a service (systemd, runit or launchd).
+On a long-lived box, run it as a service (systemd, runit or launchd; see the [host guides](../hosts/linux.md)).
 
 ## 6. Tell dumps about Access
 
@@ -104,7 +106,7 @@ Open `https://admin.example.com/_dumps/`, log in through Access, and try archivi
 
 ## Option: ssh to the server through Access
 
-If you do not want to open ssh to the internet, you can put ssh behind Access too. This is optional and not needed when the CLI runs on the same network.
+If you do not want to open ssh to the internet, you can put ssh behind Access too. This is optional and not needed when the CLI runs on the same network. It uses a third hostname, which is not part of `deploy/cloudflared.yml`.
 
 1. Add an ingress rule before the 404 rule, for example `hostname: ssh.example.com` with `service: ssh://localhost:22`, and a DNS route for it.
 2. Create an Access application for `ssh.example.com` with its own policy.
@@ -118,3 +120,11 @@ Host dumps-box
 ```
 
 Log in once with `cloudflared access login https://ssh.example.com` so that non-interactive runs work. The CLI calls ssh with `BatchMode=yes`, so it cannot answer prompts. If the login has expired, `dumps` exits with code 3 ("server unreachable").
+
+## Verify
+
+```bash
+curl -i https://admin.example.com/_dumps/
+```
+
+Without a login, the response must be a redirect to the Access login, never the listing.

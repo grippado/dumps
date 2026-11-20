@@ -1,73 +1,68 @@
 ---
 name: dump-this
-description: "Create a self-contained HTML artifact (report, story timeline, slides, dashboard, doc, comparison, changelog, landing) and publish it with the dumps CLI to the user's own dumps site, returning the URL. Use when the user says dump this, dump-this, asks to dump, publish, share as a page, or turn content into a shareable HTML page."
+description: "Turn a request or the current conversation into a polished, self-contained HTML page made the way a specialist would make it (report, story timeline, slides, dashboard, doc, comparison, changelog, landing). Works in any harness: returns the HTML or an artifact, and publishes it with the dumps CLI when that is installed. Use when the user says dump this, dump-this, asks for a shareable page, an artifact, a report page, slides, a dashboard, or wants to publish or share content as a page."
 ---
 
 # dump-this
 
-Turn what the user asked for into one self-contained HTML artifact and publish it with
-`dumps publish`. The result is a URL on the user's own dumps site.
+Make one self-contained HTML page that looks like a specialist made it, then deliver it in the
+way the current environment allows. A "dump" is that page.
 
-## 1. Check the CLI
+## 1. Pick the recipe
 
-```bash
-dumps config
-```
-
-If `dumps` is missing, tell the user to clone github.com/grippado/dumps and put `cli/dumps` on
-the PATH, then stop. Read `url` from the output: it is where the dump will live.
-
-## 2. Pick the recipe
-
-| Type | When | Shape |
+| Type | Specialist | Use when |
 |---|---|---|
-| report | analysis, investigation, review | title, TL;DR box, sections with findings, evidence tables, next steps |
-| story | how something happened over time | hero, numbered timeline with real timestamps, cast of actors, "where we are now" |
-| slides | a talk or a pitch | one idea per slide, full viewport sections, keyboard arrows and swipe to navigate |
-| dashboard | numbers that matter | KPI tiles, inline SVG charts (no chart library needed), table with the raw data |
-| doc | reference or how-to | sticky table of contents, headings with anchors, code blocks with copy buttons |
-| comparison | choosing between options | criteria table, verdict per option, recommendation box |
-| changelog | what shipped | versions newest first, grouped changes, links |
-| landing | presenting a project | hero, features, how it works, call to action |
+| report | senior analyst | analysis, investigation, review, postmortem |
+| story | magazine editor | how something happened over time |
+| slides | presentation coach | a talk, a pitch, an update |
+| dashboard | data visualization specialist | the numbers are the point |
+| doc | technical writer | reference, how-to, runbook, spec |
+| comparison | decision advisor | choosing between options |
+| changelog | release manager | what shipped |
+| landing | product marketer | presenting a project |
 
-When the request fits none, use `doc`.
+If nothing fits, use `doc`. If the user names a type, use it.
 
-## 3. Build the HTML
+## 2. Read the rules, then the recipe
 
-- One `index.html`. A folder is fine when there are images: put them next to it and use relative
-  paths. Never reference files outside the folder.
-- Inline all CSS and JS. External requests only to well known CDNs when truly needed
-  (fonts.googleapis.com, cdn.jsdelivr.net), pinned to an exact version.
-- `<html lang>` set to the language of the content. Include `<title>` and
-  `<meta name="description">`: dumps uses them for the bar and the link preview.
-- Light and dark themes through `prefers-color-scheme`, readable on a phone (no horizontal
-  scroll at 360px), accessible contrast, semantic headings.
-- Real data only. Never invent numbers, dates or quotes. Mark anything estimated as estimated.
-- Never include secrets, tokens, private emails, internal hostnames or customer data. If the
-  source has them, remove them or ask before publishing.
-- Do not add the dumps top bar or footer yourself: the publish step injects them.
+Read `recipes/base.md` and then `recipes/<type>.md` from this skill's folder. Follow both. If the
+files are not available (for example when these instructions were pasted into a chat), apply
+the summary below.
 
-Write it to a temporary folder, for example `$(mktemp -d)/index.html`.
+Summary when the recipe files are missing: one `index.html` with inline CSS and JS; light and
+dark themes through `prefers-color-scheme`; readable at 360px wide with no horizontal scroll;
+answer or key number first; real data only, never invented; no secrets or private data; a real
+`<title>` and `<meta name="description">`; semantic headings and keyboard accessible controls.
 
-## 4. Publish
+## 3. Build it
 
-Publish hidden by default: the link works, but the dump stays off the public home page. Put it on
-the home only when the user asks for it (for example "on the home", "public", "show it on the site").
+Write the page from the content the user gave or from the conversation. Ask one question only
+if a fact the page depends on is missing; otherwise make the page and state the assumptions in
+a small note at the bottom.
 
-```bash
-dumps publish <path> --title "<title>" --hidden --source agent
-```
+## 4. Deliver it
 
-`--source agent` marks the dump as made by an agent: the admin listing shows a **Publicar**
-button for it, so the user can review the page and put it on the home with one click.
-Drop `--hidden` only when the user explicitly wants it on the home page. Use `--id <slug>` when
-the user wants a stable, readable URL (lowercase letters, digits and hyphens). Republishing the
-same `--id` updates the dump in place.
+Choose the first option that applies:
+
+1. **dumps is installed** (the command `dumps config` works): save the page to a temporary
+   folder and publish it hidden, marked as made by an agent:
+
+   ```bash
+   dumps publish <folder-or-file> --title "<title>" --hidden --source agent
+   ```
+
+   The link works right away but the dump stays off the public home page; the owner reviews it
+   and clicks **Publicar** in the admin to put it on the home. Drop `--hidden` only when the
+   user explicitly asks for the home page. `--id <slug>` gives a readable, stable URL;
+   republishing the same id updates it.
+2. **The environment renders artifacts or canvases** (claude.ai, ChatGPT canvas and similar):
+   output the complete HTML as an HTML artifact or canvas so the user can preview and share it
+   with the platform's own publish button.
+3. **Otherwise:** write `index.html` to the working directory (or print it in one fenced
+   `html` block) and tell the user how to open it.
 
 ## 5. Report back
 
-Reply with the URL, the recipe used, and whether it is hidden. Mention the follow-ups:
-
-- `dumps unarchive <id>` puts it on the home page.
-- `dumps edit <id> --title "..."` renames it.
-- `dumps rm <id>` deletes it.
+One short message: what was made (type and title), where it is (URL, artifact or path), and,
+when published with dumps, the follow-ups: `dumps unarchive <id>` or the Publicar button to
+show it on the home, `dumps edit <id> --title "..."` to rename, `dumps rm <id>` to delete.

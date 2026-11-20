@@ -72,7 +72,7 @@ Uso:
   dumps rm <id>
   dumps regen                        regenera home e listagem a partir dos manifests
   dumps install-dumpsd               compila o dumpsd, instala no servidor e atualiza o serviço
-  dumps serve-local                  serve home, dumps e admin em $LISTEN (só com DUMPS_HOST=local)
+  dumps serve-local                  serve home e dumps em $LISTEN e o admin em $ADMIN_LISTEN (só com DUMPS_HOST=local)
   dumps config                       mostra a configuração efetiva
   dumps install-agent [claude|codex|all]  instala a skill e o comando /dump-this (symlink)
 

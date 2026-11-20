@@ -1,51 +1,71 @@
 # Alternativas ao Cloudflare
 
-O `dumpsd` só precisa de duas coisas: um caminho público para o listener `:8081` do Caddy e um caminho protegido para o `:8080`. Qualquer ferramenta que entregue isso serve. Esta página resume as opções e o que muda em cada uma; comandos e limites de planos pertencem à documentação de cada ferramenta, que muda com frequência.
+O dumps só precisa de duas coisas de uma camada de exposição: o host público chegar ao Caddy `127.0.0.1:8081`, e o host do admin (se você quiser um) chegar ao Caddy `127.0.0.1:8080` atrás de um login que o `dumpsd` consiga verificar. Comandos e limites dessas ferramentas de terceiros mudam, então trate os trechos como ponto de partida e confira a documentação delas.
 
 ## Tailscale
 
-- **Público**: Tailscale Funnel expõe a porta `8081` na internet, no hostname `<máquina>.<tailnet>.ts.net` (sem domínio próprio).
-- **Admin**: `tailscale serve` publica o admin só dentro do tailnet, e o `dumpsd` usa `DUMPS_AUTH=tailscale`. Ele confia no header `Tailscale-User-Login`, que o `tailscale serve` preenche, e só o aceita vindo do loopback.
+O Tailscale Funnel publica uma porta local num hostname público `*.ts.net`. O `tailscale serve` compartilha uma porta só dentro do seu tailnet.
 
-Restrições do modo `tailscale` ([auth.md](../auth.md)):
+- Público: Funnel no listener público (`8081`).
+- Admin: `tailscale serve` no listener do admin (`8080`), para que só dispositivos do tailnet o abram.
 
-- O `tailscale serve` precisa ficar **direto** na frente do `dumpsd`, sem outro proxy que repasse headers do cliente (inclusive o Caddy do admin), ou o header pode ser forjado.
-- O `dumpsd` sem `--static` só responde a API. A página da listagem é HTML estático e precisa ser servida por outro caminho; mapeie caminhos diferentes para backends diferentes no próprio `tailscale serve`. Este repositório não traz esse arranjo pronto.
-- Funnel e serve no mesmo nó usam o mesmo hostname, então cada um fica numa porta diferente. `DUMPS_ADMIN_ORIGIN` precisa ser a origem exata, com a porta, que o navegador envia.
+```bash
+tailscale funnel --bg 8081
+```
+
+```bash
+tailscale serve --bg --https=8443 8080
+```
+
+Funnel e serve usam portas diferentes no mesmo hostname, e as flags exatas variam com a versão do Tailscale. Ajuste a configuração do CLI ao que você acabou usando:
+
+```text
+DUMPS_URL=https://box.tailnet-name.ts.net
+DUMPS_ADMIN_ORIGIN=https://box.tailnet-name.ts.net:8443
+DUMPS_AUTH=tailscale
+DUMPS_TAILSCALE_ALLOW="ada@example.com"
+```
+
+O `tailscale serve` adiciona o header `Tailscale-User-Login` em que o `dumpsd` confia, e o `dumpsd` só o aceita vindo do loopback. O Funnel serve o seu nome `ts.net`. Limites do modo `tailscale` ([../auth.md](../auth.md)):
+
+- O `dumpsd` confia no header vindo de qualquer conexão em loopback, então nada além do `tailscale serve` pode conseguir alcançar o listener do admin. Nunca chegue a ele por Funnel, por um hostname público nem por outro proxy ou túnel.
+- `DUMPS_ADMIN_ORIGIN` precisa ser a origem exata que o navegador envia, com a porta.
 - Use `DUMPS_TAILSCALE_ALLOW` se o tailnet tiver outras pessoas.
 
 ## ngrok
 
-Publica o `:8081` com um domínio do ngrok (domínio próprio depende do plano). Serve para o host público. Para o admin, o `dumpsd` não lê a identidade do ngrok: proteja o admin com outro meio (Tailscale, ou ssh, abaixo).
+O ngrok pode publicar o `8081` numa URL pública (domínio próprio depende do plano). Os recursos de login dele (OAuth, basic auth) ficam na frente do host do admin, mas o `dumpsd` não tem modo que leia a identidade do ngrok, então a API do admin ficaria protegida só pelo login de fora e pela checagem de Origin. Isso não tem suporte nativo, veja "Pôr outro login na frente" em [../auth.md](../auth.md). Para o trabalho de admin, prefira `dumps archive`, `edit` e `rm` por ssh, e exponha só o listener público.
 
 ## frp
 
-Um servidor frp num VPS e um cliente em casa. Você mantém o domínio e o certificado no VPS. Mesmo caso do ngrok: o `dumpsd` não entende o login do frp, então o admin precisa de outro meio.
+Rode o `frps` num VPS com IP público e o `frpc` na máquina de casa, encaminhando o `8081` para o VPS. A mesma ressalva do ngrok vale para o host do admin: o `dumpsd` não entende o login do frp, então exponha só o listener público, a menos que você acrescente uma camada autenticada própria.
 
-## Caddy num VPS com HTTPS automático
+## Caddy num VPS, com túnel até em casa
 
-Um VPS barato roda Caddy com HTTPS automático (Let's Encrypt) e encaminha para a sua casa por um túnel reverso (WireGuard, ou `ssh -R`). Você usa o domínio que quiser, sem terceiros no caminho do tráfego. É o que dá mais controle e mais trabalho.
-
-## Admin só por ssh
-
-Arranjo não testado neste repositório, derivado do comportamento do `dumpsd`. Sem nenhum serviço de login, dá para nunca expor o admin: use `DUMPS_AUTH=none` e abra o listener por um túnel ssh.
+Rode o Caddy num VPS para ter HTTPS automático e domínio próprio, e chegue à máquina de casa por um túnel WireGuard ou um túnel reverso de ssh.
 
 ```bash
-ssh -L 8080:127.0.0.1:8080 meuservidor
+ssh -N -R 127.0.0.1:18081:127.0.0.1:8081 vps.example.com
 ```
 
-Com `DUMPS_ADMIN_ORIGIN=http://localhost:8080`, abra http://localhost:8080/_dumps/. Cuidado: `none` aceita **qualquer** conexão vinda do loopback do servidor, então qualquer usuário local dessa máquina alcança o admin. Só faz sentido em servidor de um usuário só.
+No VPS, o Caddy faz proxy reverso de `dumps.example.com` para `127.0.0.1:18081`. Mantenha o listener do admin fora do VPS, ou proteja-o com um mecanismo que o `dumpsd` suporte. Você usa o domínio que quiser, sem terceiros no caminho do tráfego. É o que dá mais controle e mais trabalho.
+
+## Admin pelo CLI por ssh
+
+Se você não quer um host de admin, não exponha o listener do admin. `dumps archive`, `unarchive`, `edit` e `rm` executam o `dumpsd apply` no servidor por ssh, então quem já tem ssh não precisa de camada de login. Exponha só o listener público. Não use `DUMPS_AUTH=none` para isso: o CLI o recusa para serviço.
 
 ## Comparação
 
 | Opção | Custo | Domínio próprio | Login do admin | Esforço |
-|---|---|---|---|---|
-| Cloudflare Tunnel + Access | plano gratuito cobre uso pessoal (confira o atual) | sim (precisa de domínio no Cloudflare) | Access, nativo (`access`) | médio |
-| Tailscale Funnel + serve | plano pessoal gratuito (confira o atual) | não (`*.ts.net`) | nativo (`tailscale`) | médio, o arranjo do admin é manual |
-| ngrok | plano gratuito com limites | depende do plano | não nativo | baixo |
-| frp (VPS) | custo do VPS | sim | não nativo | alto |
-| Caddy num VPS + WireGuard/ssh -R | custo do VPS | sim | não nativo (ssh -L, ou Tailscale) | alto |
+|-------|-------|-----------------|----------------|---------|
+| Cloudflare Tunnel e Access | Um domínio no Cloudflare; confira os limites atuais do plano | Sim | Nativo (`access`) | Médio: túnel, DNS, app do Access |
+| Tailscale Funnel e serve | Confira os limites atuais do plano | Usa o nome `ts.net` | Nativo (`tailscale`) | Baixo |
+| ngrok | Confira os limites atuais do plano | Depende do plano | Nenhum nativo | Baixo |
+| frp num VPS | Um VPS | Sim | Nenhum nativo | Médio |
+| Caddy num VPS com WireGuard ou túnel ssh | Um VPS | Sim, HTTPS automático | Nenhum nativo | Maior: VPS, túnel, manter ativo |
 
-## Outro provedor de login na frente (oauth2-proxy e similares)
+Para um site público sem interface de admin, qualquer opção serve. Para o admin no navegador, use Cloudflare Access ou Tailscale, ou gerencie os dumps pelo CLI.
 
-Não há suporte nativo. Veja [auth.md](../auth.md) para o que dá para fazer e o risco.
+## Outro provedor de login na frente
+
+Não há suporte nativo para oauth2-proxy e similares. Veja [../auth.md](../auth.md) para o que isso significa e o risco.
