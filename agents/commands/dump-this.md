@@ -1,5 +1,5 @@
 ---
-description: Turn the request into a page made by a specialist and publish it with dumps when available
+description: Turn the request into a page made by a specialist and deliver it through the active publisher
 argument-hint: "[style: classic|refined|bold|avant-garde or prose] <what to dump>"
 ---
 

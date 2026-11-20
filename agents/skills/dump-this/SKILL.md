@@ -1,6 +1,6 @@
 ---
 name: dump-this
-description: "Turn a request or the current conversation into a polished, self-contained HTML page made the way a specialist would make it (report, story timeline, slides, dashboard, doc, comparison, changelog, landing). Works in any harness: returns the HTML or an artifact, and publishes it with the dumps CLI when that is installed. Supports an enterprise delivery mode for an organization's configured internal dumps service. Use when the user says dump this, dump-this, asks for a shareable page, an artifact, a report page, slides, a dashboard, wants to publish or share content as a page, or asks for internal company artifacts."
+description: "Turn a request or the current conversation into a polished, self-contained HTML page made the way a specialist would make it (report, story timeline, slides, dashboard, doc, comparison, changelog, landing). Works in any harness and routes the result to its configured publisher: a dumps server, Claude Artifacts, ChatGPT Sites, or another publisher exposed by the active harness. Supports account-aware enterprise delivery. Use when the user says dump this, dump-this, asks for a shareable page, an artifact, a report page, slides, a dashboard, wants to publish or share content as a page, or asks for internal company artifacts."
 ---
 
 # dump-this
@@ -33,6 +33,9 @@ Enterprise is a delivery and access mode, not a page type or style level. Combin
 specialist and style the request calls for. When the user asks for an organization, company,
 enterprise or internal dump, also read `recipes/enterprise.md`. It overrides the generic delivery
 rules whenever the page contains company material or must stay inside the organization's boundary.
+Also read `recipes/publishing.md` before choosing a destination. An organization's native Claude or
+ChatGPT publisher can be used only through the active, authorized account and its actual sharing
+controls; a hosted publisher does not make company content public-safe by itself.
 
 ## 2. Set the style dial
 
@@ -67,9 +70,9 @@ guide expresses each level; it does not add dial positions.
 ## 4. Read the rules, then the recipe
 
 Read `recipes/base.md` and then `recipes/<type>.md` from this skill's folder. Follow style, base
-and type recipe. In enterprise mode, also read `recipes/enterprise.md` and follow its delivery
-and access rules. If the files are not available (for example when these instructions were pasted
-into a chat), apply the summary below.
+and type recipe. Read `recipes/publishing.md` before every delivery. In enterprise mode, also read
+`recipes/enterprise.md` and follow its delivery and access rules. If the files are not available
+(for example when these instructions were pasted into a chat), apply the summary below.
 
 Summary when the recipe files are missing: one `index.html` with inline CSS and JS; light and
 dark themes through `prefers-color-scheme`; readable at 360px wide with no horizontal scroll;
@@ -78,9 +81,11 @@ cookies; a real `<title>` and `<meta name="description">`; semantic headings and
 accessible controls. Internal company data is allowed only in enterprise mode when the audience
 and destination are approved.
 In enterprise mode, publish only to a verified organization-owned `DUMPS_URL` using its approved
-CLI configuration. `--hidden` is not access control. Never fall back to a personal or third-party
-host for internal material; if the internal destination is not configured, keep the HTML local
-and ask where the organization approves delivery.
+CLI configuration, or to an authorized native publisher in the active organization account when
+its access controls match the intended audience. `--hidden` is not access control. Never fall back
+to a personal host or an unapproved third-party publisher for internal material; if no approved
+destination is available, keep the HTML in the approved workspace and ask where the organization
+allows delivery.
 Never the default-artifact look (centered gradient hero plus three cards, emoji icons, shadows on
 everything, topic-only titles). At the default bold level: a display font with character,
 oversized type, asymmetric editorial layout, a confident palette and one signature element made
@@ -92,15 +97,22 @@ Write the page from the content the user gave or from the conversation. Ask one 
 if a fact the page depends on is missing; otherwise make the page and state the assumptions in
 a small note at the bottom.
 
-## 6. Deliver it
+## 6. Choose a publisher
+
+Read `recipes/publishing.md`. Resolve the destination in this order: a publisher the user names,
+the account profile's `DUMP_THIS_PUBLISHER` setting, then `auto` capability detection. A profile
+setting of `native` must never fall back to the dumps CLI. Use the account and workspace already
+active in this harness; never switch accounts or ask for credentials in chat.
+
+## 7. Deliver it
 
 In enterprise mode, follow `recipes/enterprise.md` before choosing a delivery option. Never send
-internal material to an unverified personal dumps host or to a third-party artifact service.
+internal material to an unverified personal dumps host or to an unapproved artifact service.
 
 Choose the first option that applies:
 
-1. **dumps is installed** (the command `dumps config` works): save the page to a temporary
-   folder and publish it hidden, marked as made by an agent:
+1. **The selected publisher is `dumps`** and `dumps config` verifies the intended `DUMPS_URL`:
+   save the page to a temporary folder and publish it hidden, marked as made by an agent:
 
    ```bash
    dumps publish <folder-or-file> --title "<title>" --hidden --source agent
@@ -110,14 +122,20 @@ Choose the first option that applies:
    and clicks **Publicar** in the admin to put it on the home. Drop `--hidden` only when the
    user explicitly asks for the home page. `--id <slug>` gives a readable, stable URL;
    republishing the same id updates it.
-2. **The environment renders artifacts or canvases** (claude.ai, ChatGPT canvas and similar):
-   output the complete HTML as an HTML artifact or canvas so the user can preview and share it
-   with the platform's own publish button.
-3. **Otherwise:** write `index.html` to the working directory (or print it in one fenced
-   `html` block) and tell the user how to open it.
+2. **The selected publisher is native:** use Claude Artifacts in claude.ai, ChatGPT Sites when its
+   native Sites tool is available, or another publishing integration exposed by the active
+   harness. Create the artifact or Site in the current account. Keep a new ChatGPT Site private by
+   default. Do not widen its audience unless the user asked for that audience and the account
+   allows it. Claude for Work artifacts stay within their organization. If the platform renders an
+   artifact but does not expose a publish action to the agent, leave it ready for review and tell
+   the user which built-in Share or Publish action remains.
+3. **No selected publisher is available:** write `index.html` to the approved workspace (or print
+   it in one fenced `html` block). State that it is an HTML file and has not been published. Never
+   silently switch to another account or publisher.
 
-## 7. Report back
+## 8. Report back
 
-One short message: what was made (type, style level and title), where it is (URL, artifact or path), and,
-when published with dumps, the follow-ups: `dumps unarchive <id>` or the Publicar button to
-show it on the home, `dumps edit <id> --title "..."` to rename, `dumps rm <id>` to delete.
+One short message: what was made (type, style level and title), which publisher and account audience
+were used, and where it is (URL, artifact or path). For dumps, include the follow-ups:
+`dumps unarchive <id>` or the Publicar button to show it on the home, `dumps edit <id> --title
+"..."` to rename, `dumps rm <id>` to delete.

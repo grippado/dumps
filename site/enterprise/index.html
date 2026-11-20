@@ -48,7 +48,7 @@ section{padding:clamp(58px,8vw,94px) 0;border-top:1px solid var(--line)}h2{max-w
         <div>
           <span class="eyebrow"><i aria-hidden="true"></i>Enterprise · self-hosted · organization controlled</span>
           <h1>Give company artifacts a home <em>inside your network.</em></h1>
-          <p class="lead">Pair the <code>/dump-this</code> skill with a managed dumps CLI and an internal host. Your agent creates the page; your organization controls where it is published and who can read it.</p>
+          <p class="lead">For an internal dumps host, pair <code>/dump-this</code> with a managed CLI and your organization’s access layer. The skill can also use Claude Artifacts or ChatGPT Sites in the signed-in work account when that publisher’s audience matches company policy.</p>
           <div class="actions"><a class="btn primary" href="https://github.com/grippado/dumps/blob/main/docs/enterprise.md">Read the setup guide</a><a class="btn" href="../dump-this.zip" download>Get the skill</a></div>
           <p class="tiny-note">A self-hosted deployment recipe for teams that already operate their own service and access policies.</p>
         </div>
@@ -67,12 +67,12 @@ section{padding:clamp(58px,8vw,94px) 0;border-top:1px solid var(--line)}h2{max-w
     </header>
 
     <section id="flow-en"><div class="shell">
-      <h2>One company destination, from prompt to page.</h2>
-      <p class="intro">The Enterprise recipe tells the skill to use the organization’s configured destination when the request involves company material. The team owns the server, CLI profile, identity policy and distribution of the skill.</p>
+      <h2>Choose an approved destination, from prompt to page.</h2>
+      <p class="intro">The Enterprise recipe routes company material only to an approved destination. The organization can operate a protected dumps host, or use a native publisher in its active work account when that platform’s audience controls fit the policy.</p>
       <div class="three">
         <article class="step"><div class="step-top"><b>01</b> Provision</div><h3>Run a dumps host</h3><p>Choose an internal name such as <code>dumps.example.org</code>. Configure the artifact origin, admin origin and SSH publishing route under your organization’s network and access policies.</p></article>
         <article class="step"><div class="step-top"><b>02</b> Configure</div><h3>Manage the publishing profile</h3><p>Install the CLI and skill on an approved workstation. Provide a managed profile with the exact host and URL, and select it with <code>DUMPS_CONFIG</code> when people have multiple destinations.</p></article>
-        <article class="step"><div class="step-top"><b>03</b> Create</div><h3>Ask the skill to publish internally</h3><p>The skill follows the requested specialist and style, prepares the HTML, then uses the local CLI to publish over SSH and rsync. A hosted agent needs an organization-approved connector to reach a private service.</p></article>
+        <article class="step"><div class="step-top"><b>03</b> Create</div><h3>Ask the skill to publish internally</h3><p>The skill follows the requested specialist and style, prepares the HTML, then uses the selected publisher. Claude for Work Artifacts stay inside the organization; ChatGPT Sites use the active workspace’s sharing rules. A hosted agent still needs an approved connector to reach a private dumps host.</p></article>
       </div>
       <div class="prompt"><b>Example request</b><code>/dump-this enterprise incident report for the security team, publish on our internal dumps host</code></div>
     </div></section>
@@ -86,7 +86,7 @@ section{padding:clamp(58px,8vw,94px) 0;border-top:1px solid var(--line)}h2{max-w
           <article class="check"><i aria-hidden="true">✓</i><div><h3>Keep external requests under policy</h3><p>Leave analytics off and review fonts, scripts and other third-party requests before publishing internal material.</p></div></article>
         </div>
       </div>
-      <aside class="safe"><h3>Two access boundaries</h3><p>The admin listing and API are separate from the artifact host. <code>DUMPS_AUTH</code> configures supported admin identity checks; it does not protect static artifacts.</p><p><code>--hidden</code> removes a dump from the home page. It does not require a login or make a public URL private.</p><p>Apply your SSO or VPN policy before requests reach the complete artifact origin.</p></aside>
+      <aside class="safe"><h3>Two access boundaries</h3><p>The admin listing and API are separate from the artifact host. <code>DUMPS_AUTH</code> configures supported admin identity checks; it does not protect static artifacts.</p><p><code>--hidden</code> removes a dump from the home page. It does not require a login or make a public URL private.</p><p>Claude for Work Artifacts stay inside the organization. ChatGPT Sites start private; Enterprise public publishing requires workspace permission. <a href="https://support.claude.com/en/articles/9547008-discover-publish-customize-and-share-artifacts">Claude sharing</a> · <a href="https://help.openai.com/en/articles/20001338-managing-chatgpt-sites-for-your-workspace">ChatGPT Sites access</a>.</p><p>Apply your SSO or VPN policy before requests reach the complete artifact origin.</p></aside>
     </div></section>
 
     <section id="google-access-en"><div class="shell">
@@ -113,7 +113,7 @@ section{padding:clamp(58px,8vw,94px) 0;border-top:1px solid var(--line)}h2{max-w
         <div>
           <span class="eyebrow"><i aria-hidden="true"></i>Enterprise · auto-hospedado · sob controle da organização</span>
           <h1>Dê aos artefatos da empresa um lugar <em>dentro da sua rede.</em></h1>
-          <p class="lead">Combine a skill <code>/dump-this</code> com o CLI dumps e um host interno configurados pela organização. O agente cria a página; a empresa controla onde ela é publicada e quem pode acessá-la.</p>
+          <p class="lead">Para publicar num host dumps interno, combine <code>/dump-this</code> com o CLI gerenciado e a camada de acesso da organização. A skill também pode usar Claude Artifacts ou ChatGPT Sites na conta de trabalho autenticada quando a audiência desse publicador seguir a policy da empresa.</p>
           <div class="actions"><a class="btn primary" href="https://github.com/grippado/dumps/blob/main/docs/pt-BR/enterprise.md">Ler o guia de configuração</a><a class="btn" href="../dump-this.zip" download>Baixar a skill</a></div>
           <p class="tiny-note">Uma receita de auto-hospedagem para equipes que já operam o próprio serviço e suas políticas de acesso.</p>
         </div>
@@ -132,12 +132,12 @@ section{padding:clamp(58px,8vw,94px) 0;border-top:1px solid var(--line)}h2{max-w
     </header>
 
     <section id="flow-pt"><div class="shell">
-      <h2>Um destino da empresa, do pedido à página.</h2>
-      <p class="intro">A receita Enterprise instrui a skill a usar o destino configurado pela organização quando o pedido envolve material da empresa. O time administra o servidor, o perfil do CLI, a política de identidade e a distribuição da skill.</p>
+      <h2>Escolha um destino aprovado, do pedido à página.</h2>
+      <p class="intro">A receita Enterprise encaminha material da empresa somente a um destino aprovado. A organização pode operar um host dumps protegido ou usar um publicador nativo da conta de trabalho ativa quando os controles de audiência da plataforma forem compatíveis com a policy.</p>
       <div class="three">
         <article class="step"><div class="step-top"><b>01</b> Hospede</div><h3>Coloque um dumps no ar</h3><p>Escolha um endereço interno como <code>dumps.example.org</code>. Configure a origem dos artefatos, a origem do admin e a rota SSH de publicação conforme a rede e as políticas de acesso da organização.</p></article>
         <article class="step"><div class="step-top"><b>02</b> Configure</div><h3>Gerencie o perfil de publicação</h3><p>Instale o CLI e a skill numa máquina aprovada. Forneça um perfil gerenciado com o host e a URL exatos e selecione-o com <code>DUMPS_CONFIG</code> quando houver mais de um destino.</p></article>
-        <article class="step"><div class="step-top"><b>03</b> Crie</div><h3>Peça à skill para publicar dentro da empresa</h3><p>A skill segue o especialista e o estilo pedidos, prepara o HTML e usa o CLI local para publicar por SSH e rsync. Um agente hospedado precisa de um conector aprovado pela organização para acessar um serviço privado.</p></article>
+        <article class="step"><div class="step-top"><b>03</b> Crie</div><h3>Peça à skill para publicar dentro da empresa</h3><p>A skill segue o especialista e o estilo pedidos, prepara o HTML e usa o publicador selecionado. Artifacts do Claude for Work ficam dentro da organização; Sites do ChatGPT seguem as regras de compartilhamento do workspace ativo. Um agente hospedado ainda precisa de um conector aprovado para acessar um host dumps privado.</p></article>
       </div>
       <div class="prompt"><b>Exemplo de pedido</b><code>/dump-this enterprise relatório do incidente para o time de segurança, publicar no dumps interno</code></div>
     </div></section>
@@ -151,7 +151,7 @@ section{padding:clamp(58px,8vw,94px) 0;border-top:1px solid var(--line)}h2{max-w
           <article class="check"><i aria-hidden="true">✓</i><div><h3>Controle pedidos externos</h3><p>Deixe analytics desligado e revise fontes, scripts e outros pedidos a terceiros antes de publicar material interno.</p></div></article>
         </div>
       </div>
-      <aside class="safe"><h3>Duas fronteiras de acesso</h3><p>A listagem e a API do admin ficam separadas do host de artefatos. <code>DUMPS_AUTH</code> configura verificações de identidade compatíveis para o admin; não protege os artefatos estáticos.</p><p><code>--hidden</code> tira um dump da home. Não exige login nem torna privado um endereço público.</p><p>Aplique a política de SSO ou VPN antes que os pedidos cheguem à origem inteira dos artefatos.</p></aside>
+      <aside class="safe"><h3>Duas fronteiras de acesso</h3><p>A listagem e a API do admin ficam separadas do host de artefatos. <code>DUMPS_AUTH</code> configura verificações de identidade compatíveis para o admin; não protege os artefatos estáticos.</p><p><code>--hidden</code> tira um dump da home. Não exige login nem torna privado um endereço público.</p><p>Artifacts do Claude for Work ficam dentro da organização. Sites do ChatGPT começam privados; publicação pública no Enterprise exige permissão do workspace. <a href="https://support.claude.com/en/articles/9547008-discover-publish-customize-and-share-artifacts">Compartilhamento no Claude</a> · <a href="https://help.openai.com/en/articles/20001338-managing-chatgpt-sites-for-your-workspace">Acesso ao ChatGPT Sites</a>.</p><p>Aplique a política de SSO ou VPN antes que os pedidos cheguem à origem inteira dos artefatos.</p></aside>
     </div></section>
 
     <section id="google-access-pt"><div class="shell">

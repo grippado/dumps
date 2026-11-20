@@ -4,14 +4,18 @@ Enterprise is a delivery and audience overlay, not a page type or style level. U
 the specialist recipe and style dial when an organization wants `dump-this` to create artifacts
 for an internal `dumps.<org-domain>` service.
 
+Publisher choice follows the active account profile. A work profile may use native Claude Artifacts
+or ChatGPT Sites when that publisher is available and its workspace boundary matches the intended
+audience. See [`publishing.md`](publishing.md) for route rules.
+
 ## Keep the organization boundary
 
 - Use only company material the requester is authorized to use and the intended audience is
   allowed to read. Include only the internal or customer details needed for the page and follow the
   organization's privacy policy. Keep secrets, passwords, tokens, private keys and session cookies
   out of the HTML, links, filenames, metadata and source code.
-- Do not send internal material to a personal dumps host, a public home, or a third-party artifact
-  service as a fallback.
+- Do not send internal material to a personal dumps host, a consumer account, a public Site, or an
+  unapproved third-party artifact service as a fallback.
 - Do not ask the user to paste credentials into chat. Authentication and network access must
   already be provisioned for the agent's machine or harness.
 - Keep third-party requests out of internal pages by default: use system or locally hosted fonts,
@@ -32,8 +36,15 @@ run in an environment that can reach the approved server.
    that the organization's SSO or VPN policy protects that entire origin. Do not infer the target
    from the company name, repository, or a previous personal setup.
 3. If the company profile is missing, the domain is ambiguous, or access protection is unknown,
-   do not publish. Keep the HTML in the approved local workspace and ask for the approved internal
-   destination or its managed CLI profile.
+   do not publish to a dumps host. Keep the HTML in the approved local workspace and ask for the
+   approved internal destination or its managed CLI profile.
+
+For the `native` route, use only the active, authenticated work account and verify its audience
+controls before delivery. Claude for Work (Team and Enterprise) keeps shared Artifacts within the
+organization. ChatGPT Sites can be shared with a workspace audience; a new Site is private by
+default, and Enterprise public publishing requires workspace permission. Do not make a Site public
+unless the user explicitly asks and the workspace permits it. If the harness cannot confirm the
+account or audience, keep the HTML local and ask.
 
 ## Respect the access boundary
 
@@ -68,9 +79,7 @@ Check that the returned URL uses the approved organization origin. Say that the 
 the company's network or login, and that hidden means absent from the home page only. Do not
 unarchive an internal dump unless the organization's home has the same access boundary.
 
-In browser-only harnesses such as claude.ai or ChatGPT, the local CLI is unavailable unless the
-organization has provided an approved connector. Do not claim to have published to the internal
-service. If the harness cannot save to an approved internal workspace, ask the user to use an
-approved local harness or provide an internal connector before generating company material there.
-Use the platform's hosted artifact only if company policy explicitly allows that destination for
-this material.
+In browser-only harnesses, use an organization-native publisher only when its account and sharing
+boundary are verified. If neither that publisher nor an approved dumps CLI is available, keep the
+HTML in the approved workspace and ask for an allowed destination. Never fall back to a personal
+host or an unapproved hosted artifact.

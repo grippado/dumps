@@ -90,7 +90,11 @@ pode distribuir o pacote por um espelho interno e acrescentar uma policy privada
 domínios, credenciais, dados de clientes e configurações do provedor de identidade fora do repo
 público.
 
-Skills do claude.ai e instruções do ChatGPT conseguem gerar o HTML, mas não executam o CLI local
-nem alcançam uma rede privada por conta própria. A publicação direta desses harnesses exige um
-conector aprovado pela organização. Sem ele, entregue o HTML apenas por um destino permitido pela
-policy da empresa; não apresente um artefato hospedado como publicação no dumps interno.
+Harnesses hospedados podem publicar pelo recurso nativo da conta quando a policy da organização
+permite. No Claude for Work, Artifacts compartilhados ficam dentro da organização Team ou
+Enterprise. O ChatGPT Sites pode ficar privado ao workspace ativo; a publicação pública no
+Enterprise vem desativada por padrão e exige permissão do workspace. A skill usa a conta já
+autenticada e não troca para uma conta pessoal. Se o publicador nativo estiver indisponível ou não
+der para confirmar a audiência, mantenha o HTML no workspace aprovado ou use um perfil aprovado do
+CLI dumps interno. Veja as regras em
+[`agents/skills/dump-this/recipes/publishing.md`](../../agents/skills/dump-this/recipes/publishing.md).

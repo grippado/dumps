@@ -476,9 +476,9 @@ code{font-family:var(--mono);font-size:.88em;background:var(--paper2);padding:1p
       </aside>
     </div>
     <div class="where">
-      <div><b>No server needed</b><p>An artifact in claude.ai, a canvas in ChatGPT, or a plain file anywhere.</p></div>
+      <div><b>Use your active publisher</b><p>A Claude Artifact, a ChatGPT Site, or any publisher exposed by the current harness. If none is available, keep the portable HTML.</p></div>
       <div><b>Any harness</b><p>Claude Code, Codex, claude.ai and ChatGPT, from the same skill.</p></div>
-      <div><b>Your own domain</b><p>With dumps installed it publishes the page hidden. You review it and press Publicar in the admin.</p></div>
+      <div><b>Personal or work profile</b><p>Personal machine profiles with CLI access can use their configured dumps host. Hosted work profiles can use Claude Artifacts or ChatGPT Sites in the signed-in account when the harness exposes them.</p></div>
     </div>
   </div>
   <div class="ticker" aria-hidden="true">
@@ -689,7 +689,7 @@ code{font-family:var(--mono);font-size:.88em;background:var(--paper2);padding:1p
     <ol class="steps">
       <li class="reveal"><b aria-hidden="true">1</b><h3>Casts the specialist</h3><p>From your words, or the type you name. If nothing fits, the technical writer takes the part.</p></li>
       <li class="reveal"><b aria-hidden="true">2</b><h3>Sets the dial and builds</h3><p>Reads the style rules, the base rules and the specialist's recipe, then writes one page from your request, your file or the conversation. Real data only; a missing fact gets one question, not an invention.</p></li>
-      <li class="reveal"><b aria-hidden="true">3</b><h3>Delivers where you are</h3><p>With dumps installed: <code>dumps publish</code>, hidden, until you press Publicar. Otherwise an artifact or canvas, or an <code>index.html</code> file.</p></li>
+      <li class="reveal"><b aria-hidden="true">3</b><h3>Routes to your active publisher</h3><p>Set <code>DUMP_THIS_PUBLISHER</code> to choose a publisher: <code>dumps</code> uses the configured host, <code>native</code> uses the signed-in publisher, <code>file</code> keeps HTML local, and <code>auto</code> prefers native and then a verified CLI. Personal machine profiles with CLI access use their configured dumps host; hosted work profiles use Claude Artifacts or ChatGPT Sites in the signed-in account when the harness exposes them. The skill never switches accounts or silently falls back.</p><p>Claude for Work Artifacts stay inside the organization. ChatGPT Sites follow the current workspace's sharing rules; Enterprise public publishing needs permission. <a href="https://support.claude.com/en/articles/9547008-discover-publish-customize-and-share-artifacts">Claude sharing</a> · <a href="https://help.openai.com/en/articles/20001338-managing-chatgpt-sites-for-your-workspace">ChatGPT Sites access</a>.</p><p>If the harness does not expose the selected publisher, the skill returns HTML and says it was not published.</p></li>
     </ol>
   </div>
 </section>
@@ -720,7 +720,7 @@ code{font-family:var(--mono);font-size:.88em;background:var(--paper2);padding:1p
       <div class="act-no" aria-hidden="true">V</div>
       <div>
         <h2 id="install-h">Box office: pick your harness</h2>
-        <p>Same skill everywhere. Free, MIT licensed, no account.</p>
+        <p>Free and MIT licensed. Publishing uses your signed-in account and its access rules.</p>
       </div>
     </div>
     <div class="office">
@@ -751,7 +751,7 @@ code{font-family:var(--mono);font-size:.88em;background:var(--paper2);padding:1p
         <div class="cmd"><code>git clone https://github.com/grippado/dumps</code><button class="copy" type="button">Copy</button></div>
         <div class="cmd"><code>cd dumps</code><button class="copy" type="button">Copy</button></div>
         <div class="cmd"><code>cli/dumps install-agent all</code><button class="copy" type="button">Copy</button></div>
-        <p>This also gives the skill a place to publish: your own dumps server, where new pages arrive hidden and wait for your Publicar.</p>
+        <p>This adds the dumps CLI publisher for profiles that select <code>dumps</code>. New pages arrive hidden for review; native routes stay with the active Claude or ChatGPT account.</p>
       </article>
     </div>
   </div>
@@ -856,9 +856,9 @@ code{font-family:var(--mono);font-size:.88em;background:var(--paper2);padding:1p
     'The data viz specialist':'Especialista em visualização de dados','The data visualization specialist':'Especialista em visualização de dados','The presentation coach':'Consultor de apresentações','The decision advisor':'Consultor de decisão',
     'with':'com','The technical writer':'Redator técnico','the release manager':'Gerente de release','and introducing':'e com a participação de','The product marketer':'Especialista de marketing de produto',
     'Each one follows its own recipe. You only say what you want.':'Cada um segue a própria receita. Você só diz o que quer.',
-    'No server needed':'Não precisa de servidor','An artifact in claude.ai, a canvas in ChatGPT, or a plain file anywhere.':'Um artifact no claude.ai, um canvas no ChatGPT ou um arquivo comum em qualquer lugar.',
+    'Use your active publisher':'Use o publicador da conta ativa','A Claude Artifact, a ChatGPT Site, or any publisher exposed by the current harness. If none is available, keep the portable HTML.':'Um Artifact do Claude, um Site do ChatGPT ou qualquer publicador exposto pelo harness atual. Se nenhum estiver disponível, mantenha o HTML portátil.',
     'Any harness':'Qualquer agente','Claude Code, Codex, claude.ai and ChatGPT, from the same skill.':'Claude Code, Codex, claude.ai e ChatGPT, com a mesma skill.',
-    'Your own domain':'Seu próprio domínio','With dumps installed it publishes the page hidden. You review it and press Publicar in the admin.':'Com o dumps instalado, a página é publicada como oculta. Você revisa e clica em Publicar no admin.',
+    'Personal or work profile':'Perfil pessoal ou de trabalho','Personal machine profiles with CLI access can use their configured dumps host. Hosted work profiles can use Claude Artifacts or ChatGPT Sites in the signed-in account when the harness exposes them.':'Perfis de máquina pessoais com acesso ao CLI podem usar o host dumps configurado. Perfis hospedados de trabalho podem usar Claude Artifacts ou ChatGPT Sites na conta autenticada quando o harness os expuser.',
     'conservative':'conservador','for the board':'para o conselho','sóbrio':'sóbrio','clean':'limpo','minimal':'minimalista','make it nice':'deixa bonito','go wild':'pode chutar o balde',
     'master innovation':'inovação máxima','inovação máxima':'inovação máxima','like a Swiss poster':'como um cartaz suíço','newspaper front page':'primeira página de jornal','museum catalogue':'catálogo de museu',
     'Eight specialists, each with a recipe they never skip':'Oito especialistas, cada um com uma receita que segue sempre',
@@ -904,7 +904,7 @@ code{font-family:var(--mono);font-size:.88em;background:var(--paper2);padding:1p
     'One line from you, three moves from the skill':'Uma frase sua, três passos da skill','Casts the specialist':'Escolhe o especialista',
     'From your words, or the type you name. If nothing fits, the technical writer takes the part.':'Pelas suas palavras ou pelo tipo que você indicar. Se nada se encaixar, o redator técnico assume.',
     'Sets the dial and builds':'Ajusta o dial e cria','Reads the style rules, the base rules and the specialist\'s recipe, then writes one page from your request, your file or the conversation. Real data only; a missing fact gets one question, not an invention.':'Lê as regras de estilo, as regras base e a receita do especialista. Depois cria uma página a partir do seu pedido, arquivo ou conversa. Usa dados reais; se faltar um fato, pergunta em vez de inventar.',
-    'Delivers where you are':'Entrega onde você está','With dumps installed:':'Com o dumps instalado:',', hidden, until you press Publicar. Otherwise an artifact or canvas, or an':', oculto, até você clicar em Publicar. Sem o dumps, entrega um artifact, um canvas ou um arquivo','file.':'arquivo.','Lines to steal':'Pedidos para copiar','Type, topic and, if you want, a level or an art direction. That is the whole script.':'Informe o tipo, o assunto e, se quiser, um nível ou uma direção visual. Só isso.',
+    'Routes to your active publisher':'Usa o publicador da conta ativa','Set':'Defina','to choose a publisher:':'para escolher um publicador:','uses the configured host,':'usa o host configurado,','uses the signed-in publisher,':'usa o publicador autenticado,','keeps HTML local, and':'mantém o HTML local, e','prefers native and then a verified CLI. Personal machine profiles with CLI access use their configured dumps host; hosted work profiles use Claude Artifacts or ChatGPT Sites in the signed-in account when the harness exposes them. The skill never switches accounts or silently falls back.':'prioriza o publicador nativo e depois um CLI verificado. Perfis de máquina pessoais com acesso ao CLI usam o host dumps configurado; perfis hospedados de trabalho usam Claude Artifacts ou ChatGPT Sites na conta autenticada quando o harness os expuser. A skill não troca de conta nem usa um fallback silencioso.','Claude for Work Artifacts stay inside the organization. ChatGPT Sites follow the current workspace\'s sharing rules; Enterprise public publishing needs permission.':'Artifacts do Claude for Work ficam dentro da organização. Sites do ChatGPT seguem as regras de compartilhamento do workspace; publicação pública no Enterprise exige permissão.','Claude sharing':'Compartilhamento no Claude','ChatGPT Sites access':'Acesso ao ChatGPT Sites','If the harness does not expose the selected publisher, the skill returns HTML and says it was not published.':'Se o harness não expuser o publicador selecionado, a skill entrega o HTML e informa que ele não foi publicado.','Lines to steal':'Pedidos para copiar','Type, topic and, if you want, a level or an art direction. That is the whole script.':'Informe o tipo, o assunto e, se quiser, um nível ou uma direção visual. Só isso.',
     '/dump-this conservative report for the board about Q3 costs':'/dump-this faça um relatório conservador para o conselho sobre os custos do 3º trimestre',
     'report · level 1':'relatório · nível 1','Copy':'Copiar',
     '/dump-this clean changelog of what shipped this week':'/dump-this changelog simples do que foi entregue nesta semana','changelog · level 2':'changelog · nível 2',
@@ -912,20 +912,17 @@ code{font-family:var(--mono);font-size:.88em;background:var(--paper2);padding:1p
     '/dump-this compare these three vendors, like a Swiss poster':'/dump-this compare estes três fornecedores como um cartaz suíço','comparison · art direction':'comparação · direção visual',
     '/dump-this go wild: a dashboard of our usage, as an instrument panel':'/dump-this pode chutar o balde: um painel de uso como painel de instrumentos','dashboard · level 4':'painel · nível 4',
     '/dump-this the story of this incident as a newspaper front page':'/dump-this conte a história deste incidente como a primeira página de um jornal','story · art direction':'história · direção visual',
-    'Box office: pick your harness':'Instalação: escolha seu agente','Same skill everywhere. Free, MIT licensed, no account.':'A mesma skill em todos. Grátis, licença MIT, sem conta.',
+    'Box office: pick your harness':'Instalação: escolha seu agente','Free and MIT licensed. Publishing uses your signed-in account and its access rules.':'Grátis e com licença MIT. A publicação usa sua conta autenticada e as regras de acesso dela.',
     '2 commands':'2 comandos','Then type':'Depois digite','in a new session.':'em uma nova sessão.','Then ask for a dump in plain words.':'Depois, peça uma página com suas próprias palavras.',
     'upload':'enviar arquivo','paste':'colar','Download the zip':'Baixe o arquivo zip','and upload it in Settings, Capabilities, Skills.':'e envie em Configurações, Recursos, Skills.','Paste':'Cole','the instructions':'as instruções','into a custom GPT or a Project.':'em um GPT personalizado ou Projeto.',
-    'With the dumps CLI':'Com o CLI do dumps','every harness at once':'para qualquer agente','This also gives the skill a place to publish: your own dumps server, where new pages arrive hidden and wait for your Publicar.':'Isso também dá à skill um lugar para publicar: seu próprio servidor dumps, onde as páginas chegam ocultas para você revisar e publicar.',
+    'With the dumps CLI':'Com o CLI do dumps','every harness at once':'para qualquer agente','This adds the dumps CLI publisher for profiles that select':'Isso adiciona o publicador CLI do dumps para perfis que escolhem','. New pages arrive hidden for review; native routes stay with the active Claude or ChatGPT account.':'. As páginas novas chegam ocultas para revisão; as rotas nativas ficam na conta ativa do Claude ou ChatGPT.',
     'Curtain up on':'Abrem-se as cortinas para','your next page.':'sua próxima página.','The main landing: publish HTML to your own domain':'Página principal: publique HTML no seu domínio',
     'Examples':'Exemplos','All eight specialists at work':'Os oito especialistas em ação','GitHub':'GitHub','Source, MIT license, issues':'Código, licença MIT e issues',
     'Built with flux':'Feito com flux','The agent workflow behind this project':'O fluxo de agentes por trás deste projeto',
     'Level 4 avant-garde · concept: the skill as a theatre playbill, its eight specialists billed as the cast, the style dial as the house volume knob · Big Shoulders Display + system serif + system mono.':'Nível 4 experimental · conceito: a skill como cartaz de teatro, seus oito especialistas no elenco e o dial de estilo como controle de intensidade · Big Shoulders Display + serif do sistema + mono do sistema.'
   };
   var TEXT_EN = {
-    'sóbrio':'understated','inovação máxima':'master innovation','Publicar':'Publish',
-    'With dumps installed it publishes the page hidden. You review it and press Publicar in the admin.':'With dumps installed, the page is published hidden. You review it and press Publish in the admin.',
-    ', hidden, until you press Publicar. Otherwise an artifact or canvas, or an':', hidden, until you press Publish. Otherwise an artifact or canvas, or an',
-    'This also gives the skill a place to publish: your own dumps server, where new pages arrive hidden and wait for your Publicar.':'This also gives the skill a place to publish: your own dumps server, where new pages arrive hidden and wait for your Publish.'
+    'sóbrio':'understated','inovação máxima':'master innovation','Publicar':'Publish'
   };
   var ATTR_PT = {
     'Page':'Página','Language':'Idioma','Selected style level':'Nível de estilo selecionado',

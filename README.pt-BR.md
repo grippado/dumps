@@ -19,9 +19,10 @@ um servidor dumps:
   em `~/.claude/skills` (sem clonar nada) e digite `/dump-this <o que você quer>`. Codex: o mesmo
   zip em `~/.codex/skills`. Comandos em [docs/pt-BR/agent.md](docs/pt-BR/agent.md).
 - **claude.ai:** suba o [dump-this.zip](https://grippado.github.io/dumps/dump-this.zip) em
-  Configurações, Capacidades, Skills, e receba a página como artefato.
+  Configurações, Capacidades, Skills, e receba um Artifact nativo na conta autenticada.
 - **ChatGPT:** cole o [dump-this-chatgpt.txt](https://grippado.github.io/dumps/dump-this-chatgpt.txt)
-  num GPT personalizado ou num Projeto, e receba a página no canvas.
+  num GPT personalizado ou Projeto. Use Sites no workspace ativo quando disponível; caso contrário,
+  receba a página no canvas.
 
 A página dela, com os oito especialistas: [grippado.github.io/dumps/skill](https://grippado.github.io/dumps/skill/).
 Ela é opinativa de propósito: um dial de estilo lido das suas próprias palavras vai de "sóbrio" a
@@ -32,6 +33,15 @@ formato aberto](https://grippado.github.io/dumps/style-packs/) ou o [guia de con
 
 Guia completo: [docs/pt-BR/agent.md](docs/pt-BR/agent.md).
 Para hosts internos da organização, veja o [guia de publicação Enterprise](docs/pt-BR/enterprise.md).
+
+### Uma skill, publicação por conta
+
+O `dump-this` envia o HTML ao publicador escolhido pelo perfil ativo: um servidor dumps configurado
+num perfil de máquina pessoal com acesso ao CLI, Claude Artifacts ou ChatGPT Sites na conta de
+trabalho já autenticada, ou outro
+publicador exposto pelo harness atual. Defina `DUMP_THIS_PUBLISHER` como `dumps`, `native`, `file`
+ou `auto`. A skill não troca de conta nem muda de publicador como fallback. A conta e o workspace
+controlam quem pode ver um Artifact ou Site nativo.
 
 ## Recursos
 
@@ -44,7 +54,7 @@ Para hosts internos da organização, veja o [guia de publicação Enterprise](d
 - Listagem privada de admin atrás de login (Cloudflare Access ou Tailscale): arquivar, desarquivar, renomear e apagar.
 - Publicação atômica com rollback: uma publicação que falha deixa a versão anterior no ar.
 - Miniaturas geradas localmente com Chrome ou Chromium headless.
-- Uma skill de agente, a `dump-this`, que deixa o Claude Code e o Codex transformarem um pedido numa página e publicá-la escondida para você revisar.
+- Uma skill de agente, a `dump-this`, que transforma um pedido numa página e a encaminha ao publicador escolhido pelo perfil ativo.
 - Uma receita de entrega Enterprise para perfis do CLI gerenciados pela organização e hosts internos `dumps.<domínio-da-org>` protegidos por SSO corporativo ou VPN.
 - Modo local sem servidor, sem túnel e sem login, com os dumps e o admin em origens separadas.
 - Um binário Go pequeno no servidor (`dumpsd`, sem CGO) e um CLI em bash na sua máquina.
