@@ -1,6 +1,6 @@
 # Contributing
 
-Thanks for helping. The project is a bash CLI (`cli/dumps`), a Go binary (`server/`, module in `server/go.mod`) and two browser scripts (`web/`).
+Thanks for helping. The project is a bash CLI (`cli/dumps`), a Go binary (`server/`, module in `server/go.mod`) and two browser scripts (`web/`). It also ships the `dump-this` agent skill and command (`agents/`) and the project landing page (`site/`, published with GitHub Pages at https://grippado.github.io/dumps/).
 
 ## Before you open a PR
 
@@ -42,5 +42,5 @@ Use Conventional Commits (`feat:`, `fix:`, `docs:`, `test:`, `refactor:`, `chore
 
 - Describe what changed and why, and how you tested it.
 - Add or update tests with the code. Auth, path and injection changes need tests.
-- Update the docs in `docs/` when you change flags, config keys or behavior.
+- Update the docs in `docs/` when you change flags, config keys or behavior. Keep the English files and their Portuguese mirrors (`README.pt-BR.md`, `docs/pt-BR/`) in sync, section by section.
 - Report security issues privately, see [SECURITY.md](SECURITY.md).

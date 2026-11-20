@@ -1,12 +1,13 @@
 # macOS host
 
-Use this when a Mac (a Mac mini, an old laptop) is the always-on server and you publish from another machine. If you only want dumps on the Mac you are using, see [../local.md](../local.md) instead.
+Use this when a Mac (a Mac mini, an old laptop) is the always-on server and you publish from another machine. The admin service is a launchd LaunchAgent and Caddy comes from Homebrew. If you only want dumps on the Mac you are using, see [../local.md](../local.md) instead.
 
 ## 1. Mac prerequisites
 
 - Remote Login on (System Settings, General, Sharing) so the CLI can ssh in
 - Homebrew
 - `rsync` and Caddy
+- A logged-in graphical session for the user that runs the service: the LaunchAgent lives in the `gui/<uid>` domain, which exists only with that user logged in
 
 Install them:
 
@@ -32,6 +33,10 @@ DUMPS_ACCESS_AUD=<AUD tag>
 
 `DUMPS_TARGET` is `darwin/arm64` for Apple Silicon or `darwin/amd64` for Intel. `my-mac` is an ssh alias in `~/.ssh/config`. With no `DUMPS_ROOT`, the root is the ssh home directory.
 
+For a service, `DUMPS_AUTH` is `access` or `tailscale`. `none` is refused. Values that go into the service may only contain letters, digits and `: / . _ @ -`. See [../auth.md](../auth.md).
+
+If the publishing machine and the server are the same Mac, use [local mode](../local.md).
+
 ## 3. Install dumpsd and the launchd agent
 
 ```bash
@@ -41,6 +46,8 @@ cli/dumps install-dumpsd
 This builds `dumpsd` for the Mac, uploads it, and writes `~/Library/LaunchAgents/io.github.grippado.dumpsd.plist` (`RunAtLoad` and `KeepAlive` on, log in `<root>/dumpsd.log`), then loads it with `launchctl bootstrap gui/<uid>`.
 
 It is a LaunchAgent in the user's GUI domain, so it starts when that user logs in. For an unattended Mac, enable automatic login for that user.
+
+Publishing works on macOS because `dumpsd activate` takes the lock itself: the Mac does not need a `flock` command.
 
 Check it on the Mac:
 
@@ -58,14 +65,14 @@ caddy run --config /path/to/Caddyfile
 
 To run Caddy at login, wrap that command in your own launchd agent.
 
-## 5. Expose and publish
+## 5. Expose it to the internet
 
-Expose the two loopback listeners with a tunnel: [../exposure/cloudflare.md](../exposure/cloudflare.md) or [../exposure/alternatives.md](../exposure/alternatives.md). Then:
+Expose the two loopback listeners with a tunnel: [../exposure/cloudflare.md](../exposure/cloudflare.md) or [../exposure/alternatives.md](../exposure/alternatives.md).
+
+## 6. Publish
 
 ```bash
 cli/dumps publish ./page.html
 ```
 
-## Notes
-
-- Thumbnails are rendered on the publishing machine, not on the Mac server.
+Thumbnails are rendered on the publishing machine, not on the Mac server.

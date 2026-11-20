@@ -94,7 +94,19 @@ pre{background:var(--code);border:1px solid var(--line);border-radius:12px;paddi
 footer{border-top:1px solid var(--line);padding:32px 0 48px;color:var(--mut);font-size:14px}
 footer .wrap{display:flex;flex-wrap:wrap;gap:12px 24px;justify-content:space-between}
 .live>*,.agent>*,.oss>*,.grid>*,.projects>*,.steps>li{min-width:0}
-pre,.term{max-width:100%}
+pre{max-width:100%}.term{max-width:min(720px,100%)}
+.specs{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px;margin:0 0 28px}
+.spec{padding:14px 16px;border:1px solid var(--line);border-radius:14px;background:var(--card)}
+.spec b{display:block;font-size:15px}.spec span{color:var(--mut);font-size:14px}
+.harness{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px;margin:0 0 40px}
+.harness>*{min-width:0}
+.harness .card{display:flex;flex-direction:column;gap:12px}
+.harness .tag{font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--acc)}
+.harness pre{margin:0;white-space:pre-wrap;word-break:break-word;font-size:13px}
+.btn.small{padding:9px 14px;font-size:14px;justify-content:center}
+.h3{font-size:22px;letter-spacing:-.015em;margin:0 0 8px}
+.flux{display:inline-flex;align-items:center;gap:8px;margin-top:22px;font-size:14px;color:var(--mut)}
+.flux a{font-weight:600}
 [data-lang-show]{display:none}
 html[lang="en"] [data-lang-show="en"],html[lang="pt-BR"] [data-lang-show="pt-BR"]{display:revert}
 </style>
@@ -105,7 +117,7 @@ html[lang="en"] [data-lang-show="en"],html[lang="pt-BR"] [data-lang-show="pt-BR"
     <a class="logo" href="#"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2 3 6.5 12 11l9-4.5L12 2Z" fill="currentColor" opacity=".95"/><path d="m3 11.5 9 4.5 9-4.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" opacity=".7"/><path d="m3 16.5 9 4.5 9-4.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" opacity=".45"/></svg>dumps</a>
     <div class="links">
       <a href="#live" data-i18n="nav_live">Live</a>
-      <a href="#agent" data-i18n="nav_agent">Agent</a>
+      <a href="#agent" data-i18n="nav_agent">Skill</a>
       <a href="#recipes" data-i18n="nav_recipes">Recipes</a>
       <a href="#oss" data-i18n="nav_oss">Contribute</a>
       <a href="https://github.com/grippado/dumps">GitHub</a>
@@ -127,6 +139,7 @@ html[lang="en"] [data-lang-show="en"],html[lang="pt-BR"] [data-lang-show="pt-BR"
       <a class="btn" href="https://dumps.gripp.link/" data-i18n="cta_live">See it live</a>
       <a class="btn" href="#recipes" data-i18n="cta_recipes">Host your own</a>
     </div>
+<p class="flux"><span data-i18n="built_with">Built end to end with</span> <a href="https://grippado.github.io/flux/">flux</a></p>
 <pre class="term" aria-label="Example"><span class="c" data-i18n="term_c1"># publish a page</span>
 <span class="p">$ </span>dumps publish ./report.html --title "Q3 review"
 <span class="o">https://dumps.example.com/k3v7q2xz9a/</span>
@@ -172,19 +185,35 @@ html[lang="en"] [data-lang-show="en"],html[lang="pt-BR"] [data-lang-show="pt-BR"
 </section>
 
 <section id="agent">
-  <div class="wrap agent">
-    <div>
-      <h2 data-i18n="agent_h">Comes with an agent that makes the dump for you</h2>
-      <p class="sub" data-i18n="agent_sub">The dump-this skill teaches Claude Code and Codex to turn a request into a self-contained page, pick the right recipe, publish it hidden and hand you the link.</p>
-<pre><span class="c" data-i18n="agent_c">#  installs the dump-this skill and the /dump-this command (symlinks)</span>
-dumps install-agent all</pre>
-      <div class="chips">
-        <span class="chip" data-i18n="t1">report</span><span class="chip" data-i18n="t2">story timeline</span><span class="chip" data-i18n="t3">slides</span><span class="chip" data-i18n="t4">dashboard</span><span class="chip" data-i18n="t5">doc</span><span class="chip" data-i18n="t6">comparison</span><span class="chip" data-i18n="t7">changelog</span><span class="chip" data-i18n="t8">landing</span>
-      </div>
+  <div class="wrap">
+    <h2 data-i18n="agent_h">A dump made by a specialist, in your favorite harness</h2>
+    <p class="sub" data-i18n="agent_sub">The dump-this skill picks the specialist your page needs and follows their recipe. You do not need a dumps server: it improves the artifacts you already make in Claude and ChatGPT, and publishes to your domain when dumps is installed.</p>
+    <div class="specs">
+      <div class="spec"><b data-i18n="s1_b">Report</b><span data-i18n="s1_s">by a senior analyst</span></div>
+      <div class="spec"><b data-i18n="s2_b">Story</b><span data-i18n="s2_s">by a magazine editor</span></div>
+      <div class="spec"><b data-i18n="s3_b">Slides</b><span data-i18n="s3_s">by a presentation coach</span></div>
+      <div class="spec"><b data-i18n="s4_b">Dashboard</b><span data-i18n="s4_s">by a data viz specialist</span></div>
+      <div class="spec"><b data-i18n="s5_b">Doc</b><span data-i18n="s5_s">by a technical writer</span></div>
+      <div class="spec"><b data-i18n="s6_b">Comparison</b><span data-i18n="s6_s">by a decision advisor</span></div>
+      <div class="spec"><b data-i18n="s7_b">Changelog</b><span data-i18n="s7_s">by a release manager</span></div>
+      <div class="spec"><b data-i18n="s8_b">Landing</b><span data-i18n="s8_s">by a product marketer</span></div>
     </div>
-    <div class="chat" aria-label="Example conversation">
-      <div class="msg u"><code>/dump-this</code> <span data-i18n="chat_u">a dashboard of this week's deploys from deploys.csv</span></div>
-      <div class="msg a"><span data-i18n="chat_a1">Built a dashboard with KPI tiles and inline charts from the 42 rows, published hidden:</span><br><span class="url">https://dumps.example.com/deploys-w47/</span><br><span data-i18n="chat_a2">Run</span> <code>dumps unarchive deploys-w47</code> <span data-i18n="chat_a3">to put it on the home page.</span></div>
+    <div class="harness">
+      <div class="card"><span class="tag">Claude Code</span><pre>cli/dumps install-agent claude</pre><p data-i18n="h1_p">Then type /dump-this and say what you want. Publishes hidden when dumps is installed.</p></div>
+      <div class="card"><span class="tag">Codex</span><pre>cli/dumps install-agent codex</pre><p data-i18n="h2_p">Then use /prompts:dump-this, or just ask for a dump in plain words.</p></div>
+      <div class="card"><span class="tag">claude.ai</span><a class="btn primary small" href="dump-this.zip" download data-i18n="h3_btn">Download dump-this.zip</a><p data-i18n="h3_p">Upload it in Settings, Capabilities, Skills. You get the page as an artifact to share.</p></div>
+      <div class="card"><span class="tag">ChatGPT</span><a class="btn small" href="dump-this-chatgpt.txt" data-i18n="h4_btn">Get the instructions</a><p data-i18n="h4_p">Paste them into a custom GPT or a Project. You get the page in canvas.</p></div>
+    </div>
+    <div class="agent">
+      <div>
+        <h3 class="h3" data-i18n="flow_h">With your own dumps, the agent drafts and you publish</h3>
+        <p class="sub" data-i18n="flow_sub">Dumps made by the agent are published hidden. The link works right away, and the admin shows a Publicar button so you review before it reaches your home page.</p>
+        <a class="btn" href="https://github.com/grippado/dumps/blob/main/docs/agent.md" data-i18n="agent_doc">Read the skill guide</a>
+      </div>
+      <div class="chat" aria-label="Example conversation">
+        <div class="msg u"><code>/dump-this</code> <span data-i18n="chat_u">a dashboard of this week's deploys from deploys.csv</span></div>
+        <div class="msg a"><span data-i18n="chat_a1">Built a dashboard with KPI tiles and inline charts from the 42 rows, published hidden:</span><br><span class="url">https://dumps.example.com/deploys-w47/</span><br><span data-i18n="chat_a2">Review it and click Publicar in the admin, or run</span> <code>dumps unarchive deploys-w47</code>.</div>
+      </div>
     </div>
   </div>
 </section>
@@ -242,7 +271,7 @@ dumps install-agent all</pre>
 <section id="more">
   <div class="wrap">
     <h2 data-i18n="more_h">More from the same workshop</h2>
-    <p class="sub" data-i18n="more_sub">dumps lives next to other open tools for working with AI agents.</p>
+    <p class="sub" data-i18n-html="more_sub">dumps was built end to end with flux: every slice was refined, built, reviewed and iterated with it. These tools live side by side.</p>
     <div class="projects">
       <a class="proj" href="https://grippado.github.io/flux/"><span class="mark" style="background:linear-gradient(135deg,#0ea5e9,#6366f1)">f</span><span><h3>flux</h3><p data-i18n="flux_p">A family of commands for AI agents (review, iterate, refine, build) as a plugin for Claude Code, Cursor and Codex.</p></span></a>
       <a class="proj" href="https://grippado.github.io/violeet/"><span class="mark" style="background:linear-gradient(135deg,#7c3aed,#c026d3)">v</span><span><h3>violeet</h3><p data-i18n="violeet_p">A local board for running and watching many agent sessions side by side.</p></span></a>
@@ -260,7 +289,7 @@ dumps install-agent all</pre>
 <script>
 (function(){
 var pt={
-nav_live:"Ao vivo",nav_agent:"Agente",nav_recipes:"Receitas",nav_oss:"Contribuir",
+nav_live:"Ao vivo",nav_agent:"Skill",nav_recipes:"Receitas",nav_oss:"Contribuir",
 eyebrow:"Open source · auto-hospedado · MIT",
 h1:"Publique qualquer artefato HTML em <em>dumps.SEUDOMINIO</em>",
 lead:"Um comando, ou o seu agente de IA, transforma um relatório, uma história, uns slides ou um dashboard num link no seu próprio domínio. Roda num celular velho, num Raspberry Pi, num VPS ou só no seu notebook.",
@@ -279,10 +308,12 @@ c3_h:"Prévias bonitas",c3_p:"Open Graph e Twitter Card injetados em toda págin
 c4_h:"Roda em qualquer lugar",c4_p:"Android com Termux, Linux com systemd, macOS com launchd, ou totalmente local, sem rede nenhuma.",
 c5_h:"Seu login, suas regras",c5_p:"O admin valida o JWT do Cloudflare Access ou a identidade do Tailscale. Dumps e admin ficam em origens separadas.",
 c6_h:"Métricas opcionais",c6_p:"Ligue o GA4 com um ID: visitas, compartilhamentos por canal e modo limpo, sem republicar nada.",
-agent_h:"Vem com um agente que faz o dump por você",agent_sub:"A skill dump-this ensina o Claude Code e o Codex a transformar um pedido numa página autocontida, escolher a receita certa, publicar escondido e devolver o link.",
-agent_c:"#  instala a skill dump-this e o comando /dump-this (symlinks)",
-t1:"relatório",t2:"história com linha do tempo",t3:"slides",t4:"dashboard",t5:"documento",t6:"comparação",t7:"changelog",t8:"landing",
-chat_u:"um dashboard dos deploys da semana a partir do deploys.csv",chat_a1:"Montei um dashboard com KPIs e gráficos inline a partir das 42 linhas e publiquei escondido:",chat_a2:"Rode",chat_a3:"para levar à home.",
+agent_h:"Um dump feito por especialista, no seu harness favorito",agent_sub:"A skill dump-this escolhe o especialista que a sua página precisa e segue a receita dele. Você não precisa de um servidor dumps: ela melhora os artefatos que você já faz no Claude e no ChatGPT, e publica no seu domínio quando o dumps está instalado.",
+s1_b:"Relatório",s1_s:"por um analista sênior",s2_b:"História",s2_s:"por um editor de revista",s3_b:"Slides",s3_s:"por um coach de apresentação",s4_b:"Dashboard",s4_s:"por um especialista em visualização",s5_b:"Documento",s5_s:"por um redator técnico",s6_b:"Comparação",s6_s:"por um conselheiro de decisão",s7_b:"Changelog",s7_s:"por um gerente de release",s8_b:"Landing",s8_s:"por um marketing de produto",
+h1_p:"Depois digite /dump-this e diga o que quer. Publica escondido quando o dumps está instalado.",h2_p:"Depois use /prompts:dump-this, ou só peça um dump em palavras.",h3_btn:"Baixar dump-this.zip",h3_p:"Suba em Configurações, Capacidades, Skills. Você recebe a página como artefato para compartilhar.",h4_btn:"Pegar as instruções",h4_p:"Cole num GPT personalizado ou num Projeto. Você recebe a página no canvas.",
+flow_h:"Com o seu dumps, o agente rascunha e você publica",flow_sub:"Dumps feitos pelo agente nascem escondidos. O link funciona na hora, e o admin mostra um botão Publicar para você revisar antes de ir para a home.",agent_doc:"Ler o guia da skill",
+chat_u:"um dashboard dos deploys da semana a partir do deploys.csv",chat_a1:"Montei um dashboard com KPIs e gráficos inline a partir das 42 linhas e publiquei escondido:",chat_a2:"Revise e clique em Publicar no admin, ou rode",
+built_with:"Feito de ponta a ponta com",
 rec_h:"Receitas para o seu dumps.SEUDOMINIO",rec_sub:"Escolha a máquina que você tem e o jeito de chegar nela. Cada receita é um doc no repo.",
 r1_t:"Celular velho",r1_p:"O setup original: serviços runit, Caddy, Cloudflare Tunnel e Access na frente do admin.",
 r2_t:"Servidor em casa",r2_p:"Um serviço systemd de usuário, Caddy e o túnel que você preferir. Funciona igual num VPS.",
@@ -296,7 +327,7 @@ start_4:"Abra http://localhost:8090 para os dumps e http://localhost:8091/_dumps
 oss_h:"Feito em aberto, pronto para o seu PR",oss_sub:"O dumps é MIT. A saída de cada renderizador é fixada por arquivos golden, o CI roda gofmt, vet, shellcheck e o race detector, e a documentação existe em inglês e português.",
 oss_cta:"Como contribuir",oss_issues:"Issues abertas",
 wanted_h:"Boas primeiras contribuições",w1:"Traduzir os textos da interface (hoje em português) e criar uma tabela de i18n",w2:"Novas receitas: Fly.io, um NAS, frp, um VPS simples com HTTPS automático",w3:"Mais receitas de dump para a skill do agente",w4:"Um servidor MCP e uma API para publicar de qualquer lugar (no roadmap)",
-more_h:"Mais da mesma oficina",more_sub:"O dumps mora ao lado de outras ferramentas abertas para trabalhar com agentes de IA.",
+more_h:"Mais da mesma oficina",more_sub:"O dumps foi feito de ponta a ponta com o flux: cada fatia foi refinada, construída, revisada e iterada com ele. Essas ferramentas moram lado a lado.",
 flux_p:"Uma família de comandos para agentes de IA (review, iterate, refine, build) como plugin para Claude Code, Cursor e Codex.",
 violeet_p:"Um quadro local para rodar e acompanhar várias sessões de agente lado a lado.",
 foot_l:'O dumps é MIT. Feito por <a href="https://github.com/grippado">Gabriel Gripp</a>.'

@@ -50,7 +50,7 @@ func run(args []string) int {
 func usage() {
 	fmt.Fprintln(os.Stderr, "uso: dumpsd render --base-url <url> [--ga] [--no-lock] [--root <dir>]")
 	fmt.Fprintln(os.Stderr, "     dumpsd apply --base-url <url> [--root <dir>] <archive|unarchive|title|delete> <id>  (title lê o título do stdin)")
-	fmt.Fprintln(os.Stderr, "     dumpsd serve --base-url <url> --team <host> --aud <tag> --origin <url> [--listen <addr>] [--root <dir>]")
+	fmt.Fprintln(os.Stderr, "     dumpsd serve --base-url <url> --origin <url> [--auth access|tailscale|none] [--team <host> --aud <tag>] [--allow <login>]... [--listen <addr>] [--static --admin-listen <addr>] [--root <dir>]")
 	fmt.Fprintln(os.Stderr, "     dumpsd prepare --dir <pasta> [--manifest <arquivo>]  (especificação JSON pelo stdin)")
 	fmt.Fprintln(os.Stderr, "     dumpsd activate --base-url <url> [--ga] [--root <dir>] <id>")
 	fmt.Fprintln(os.Stderr, "     dumpsd version")

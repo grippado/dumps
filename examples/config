@@ -25,10 +25,13 @@ DUMPS_HOST=local
 # Build target for a remote server (GOOS/GOARCH). Local builds use this machine.
 # DUMPS_TARGET=linux/arm64
 # DUMPS_LISTEN=127.0.0.1:8090
+# Admin port for dumps serve-local (separate origin from the dumps).
+# DUMPS_ADMIN_LISTEN=127.0.0.1:8091
 # Exact origin the admin page is served from (CSRF check).
 # DUMPS_ADMIN_ORIGIN=https://admin.example.com
 
-# Admin login: access (Cloudflare Access JWT) | tailscale (tailscale serve identity) | none (loopback only)
+# Admin login for the installed service: access (Cloudflare Access JWT) | tailscale (tailscale serve identity).
+# Local mode (dumps serve-local) always runs without login on loopback.
 # DUMPS_AUTH=access
 # DUMPS_ACCESS_TEAM=yourteam.cloudflareaccess.com
 # DUMPS_ACCESS_AUD=<Application Audience (AUD) tag of the admin Access app>

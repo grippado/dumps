@@ -23,6 +23,11 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
+      - name: package the dump-this skill for claude.ai
+        run: |
+          cd agents/skills
+          zip -qr ../../site/dump-this.zip dump-this
+          cp ../chatgpt/instructions.md ../../site/dump-this-chatgpt.txt
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:
