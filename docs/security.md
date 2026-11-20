@@ -62,6 +62,7 @@ Commit `examples/` only, with `example.com` hostnames.
 ## Privacy notes
 
 - With `DUMPS_GA_ID` set, every dump and the home load `googletagmanager.com` and report page views and the `share` and `dumps_clean_mode` events. Leave it empty to disable it. The GA4 ID (`G-...`) appears in clear in the served HTML.
+- Analytics start with Google Consent Mode set to denied: no analytics cookie is written until the visitor clicks Accept on a small banner (English or Portuguese, following the page language). The choice is stored in `localStorage` (`dumps-consent`) and the banner never shows again on that browser. Declining keeps cookies off; Google may still receive cookieless pings for modeling.
 - Open Graph tags include the dump URL and, when present, the author names.
 - The share buttons open WhatsApp and Telegram share links on click. Nothing is sent before that.
 
