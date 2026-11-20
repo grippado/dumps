@@ -25,6 +25,33 @@ domain and gives you the link.
 The skill lives in [`agents/skills/dump-this`](../agents/skills/dump-this): `SKILL.md` plus the
 recipes in `recipes/`.
 
+## The style dial: from conservative to master innovation
+
+dump-this is opinionated. It refuses the default artifact look (a centered gradient hero, three
+identical cards, emoji icons, shadows on everything) and decides how far to push from your own
+words:
+
+| Level | Say it like | What changes |
+|---|---|---|
+| 1 classic | "conservative", "for the board", "sóbrio" | strict grid, near-black on white, one restrained accent, no motion |
+| 2 refined | "clean", "minimal", "elegante" | modern grotesk, hairlines instead of shadows, one perfect detail |
+| 3 bold (default) | nothing, or "ousado" | display type, oversized headlines, asymmetric editorial layout, a signature element made from the content |
+| 4 avant-garde | "go wild", "experimental", "master innovation", "inovação máxima" | a strong concept first (newspaper front page, instrument panel, Swiss poster), generative SVG from the data, scroll-driven storytelling |
+
+You can also name an art direction in prose ("like a Swiss poster", "Japanese magazine",
+"terminal aesthetic"). Content and accessibility never move with the dial: contrast, keyboard,
+reduced motion and phone layouts hold at every level. Every page ends with a one-line colophon
+that names the level and the concept.
+
+```text
+/dump-this conservative report for the board about Q3 costs
+/dump-this slides for the meetup, make it look like a Swiss poster
+/dump-this dashboard of the release, go wild
+```
+
+See one example per type and level at
+[grippado.github.io/dumps/examples](https://grippado.github.io/dumps/examples/).
+
 ## Claude Code
 
 With the repo cloned:

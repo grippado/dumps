@@ -107,6 +107,19 @@ pre{max-width:100%}.term{max-width:min(720px,100%)}
 .h3{font-size:22px;letter-spacing:-.015em;margin:0 0 8px}
 .flux{display:inline-flex;align-items:center;gap:8px;margin-top:22px;font-size:14px;color:var(--mut)}
 .flux a{font-weight:600}
+.dial{display:grid;grid-template-columns:repeat(4,1fr);border:1px solid var(--line);border-radius:16px;overflow:hidden;margin:0 0 12px}
+.dial .lvl{padding:16px 18px;display:flex;flex-direction:column;gap:2px;border-right:1px solid var(--line);background:var(--card)}
+.dial .lvl:last-child{border-right:0}
+.dial .n{font:700 12px ui-monospace,Menlo,monospace;color:var(--mut)}
+.dial b{font-size:17px;letter-spacing:-.01em}
+.dial span:last-child{color:var(--mut);font-size:13.5px}
+.dial .l1 b{font-family:Georgia,"Times New Roman",serif;font-weight:600}
+.dial .l2 b{font-weight:500;letter-spacing:-.02em}
+.dial .l3{background:color-mix(in srgb,var(--acc) 12%,var(--card))}.dial .l3 b{font-weight:900;font-size:20px;letter-spacing:-.03em}
+.dial .l4{background:var(--fg);color:var(--bg)}.dial .l4 .n,.dial .l4 span:last-child{color:color-mix(in srgb,var(--bg) 70%,var(--fg))}
+.dial .l4 b{font:800 italic 20px ui-monospace,Menlo,monospace;text-transform:uppercase;letter-spacing:.04em}
+.dialnote{color:var(--mut);font-size:14.5px;margin:0 0 28px;max-width:70ch}
+@media (max-width:720px){.dial{grid-template-columns:1fr 1fr}.dial .lvl:nth-child(2){border-right:0}.dial .lvl:nth-child(-n+2){border-bottom:1px solid var(--line)}}
 [data-lang-show]{display:none}
 html[lang="en"] [data-lang-show="en"],html[lang="pt-BR"] [data-lang-show="pt-BR"]{display:revert}
 </style>
@@ -118,6 +131,7 @@ html[lang="en"] [data-lang-show="en"],html[lang="pt-BR"] [data-lang-show="pt-BR"
     <div class="links">
       <a href="#live" data-i18n="nav_live">Live</a>
       <a href="#agent" data-i18n="nav_agent">Skill</a>
+      <a href="examples/" data-i18n="nav_examples">Examples</a>
       <a href="#recipes" data-i18n="nav_recipes">Recipes</a>
       <a href="#oss" data-i18n="nav_oss">Contribute</a>
       <a href="https://github.com/grippado/dumps">GitHub</a>
@@ -198,6 +212,13 @@ html[lang="en"] [data-lang-show="en"],html[lang="pt-BR"] [data-lang-show="pt-BR"
       <div class="spec"><b data-i18n="s7_b">Changelog</b><span data-i18n="s7_s">by a release manager</span></div>
       <div class="spec"><b data-i18n="s8_b">Landing</b><span data-i18n="s8_s">by a product marketer</span></div>
     </div>
+    <div class="dial" aria-label="Style dial">
+      <div class="lvl l1"><span class="n">1</span><b data-i18n="d1_b">Classic</b><span data-i18n="d1_s">"conservative, for the board"</span></div>
+      <div class="lvl l2"><span class="n">2</span><b data-i18n="d2_b">Refined</b><span data-i18n="d2_s">"clean, minimal"</span></div>
+      <div class="lvl l3"><span class="n">3</span><b data-i18n="d3_b">Bold</b><span data-i18n="d3_s">the default</span></div>
+      <div class="lvl l4"><span class="n">4</span><b data-i18n="d4_b">Avant-garde</b><span data-i18n="d4_s">"go wild, master innovation"</span></div>
+    </div>
+    <p class="dialnote" data-i18n="dial_note">Set the style in plain words, from conservative to master innovation. It never falls back to the default artifact look: no centered gradient hero, no three identical cards, no emoji icons.</p>
     <div class="harness">
       <div class="card"><span class="tag">Claude Code</span><pre>cli/dumps install-agent claude</pre><p data-i18n="h1_p">Then type /dump-this and say what you want. Publishes hidden when dumps is installed.</p></div>
       <div class="card"><span class="tag">Codex</span><pre>cli/dumps install-agent codex</pre><p data-i18n="h2_p">Then use /prompts:dump-this, or just ask for a dump in plain words.</p></div>
@@ -208,7 +229,7 @@ html[lang="en"] [data-lang-show="en"],html[lang="pt-BR"] [data-lang-show="pt-BR"
       <div>
         <h3 class="h3" data-i18n="flow_h">With your own dumps, the agent drafts and you publish</h3>
         <p class="sub" data-i18n="flow_sub">Dumps made by the agent are published hidden. The link works right away, and the admin shows a Publicar button so you review before it reaches your home page.</p>
-        <a class="btn" href="https://github.com/grippado/dumps/blob/main/docs/agent.md" data-i18n="agent_doc">Read the skill guide</a>
+        <div class="ctas"><a class="btn primary" href="examples/" data-i18n="agent_examples">See the examples</a><a class="btn" href="https://github.com/grippado/dumps/blob/main/docs/agent.md" data-i18n="agent_doc">Read the skill guide</a></div>
       </div>
       <div class="chat" aria-label="Example conversation">
         <div class="msg u"><code>/dump-this</code> <span data-i18n="chat_u">a dashboard of this week's deploys from deploys.csv</span></div>
@@ -311,7 +332,9 @@ c6_h:"Métricas opcionais",c6_p:"Ligue o GA4 com um ID: visitas, compartilhament
 agent_h:"Um dump feito por especialista, no seu harness favorito",agent_sub:"A skill dump-this escolhe o especialista que a sua página precisa e segue a receita dele. Você não precisa de um servidor dumps: ela melhora os artefatos que você já faz no Claude e no ChatGPT, e publica no seu domínio quando o dumps está instalado.",
 s1_b:"Relatório",s1_s:"por um analista sênior",s2_b:"História",s2_s:"por um editor de revista",s3_b:"Slides",s3_s:"por um coach de apresentação",s4_b:"Dashboard",s4_s:"por um especialista em visualização",s5_b:"Documento",s5_s:"por um redator técnico",s6_b:"Comparação",s6_s:"por um conselheiro de decisão",s7_b:"Changelog",s7_s:"por um gerente de release",s8_b:"Landing",s8_s:"por um marketing de produto",
 h1_p:"Depois digite /dump-this e diga o que quer. Publica escondido quando o dumps está instalado.",h2_p:"Depois use /prompts:dump-this, ou só peça um dump em palavras.",h3_btn:"Baixar dump-this.zip",h3_p:"Suba em Configurações, Capacidades, Skills. Você recebe a página como artefato para compartilhar.",h4_btn:"Pegar as instruções",h4_p:"Cole num GPT personalizado ou num Projeto. Você recebe a página no canvas.",
-flow_h:"Com o seu dumps, o agente rascunha e você publica",flow_sub:"Dumps feitos pelo agente nascem escondidos. O link funciona na hora, e o admin mostra um botão Publicar para você revisar antes de ir para a home.",agent_doc:"Ler o guia da skill",
+d1_b:"Clássico",d1_s:"\"sóbrio, para a diretoria\"",d2_b:"Refinado",d2_s:"\"limpo, minimalista\"",d3_b:"Ousado",d3_s:"o padrão",d4_b:"Experimental",d4_s:"\"inovação máxima\"",
+dial_note:"Escolha o estilo em palavras, do conservador à inovação máxima. Ela nunca cai no visual padrão de artefato: nada de abertura centralizada com gradiente, três cards iguais ou emoji como ícone.",
+flow_h:"Com o seu dumps, o agente rascunha e você publica",flow_sub:"Dumps feitos pelo agente nascem escondidos. O link funciona na hora, e o admin mostra um botão Publicar para você revisar antes de ir para a home.",agent_doc:"Ler o guia da skill",agent_examples:"Ver os exemplos",nav_examples:"Exemplos",
 chat_u:"um dashboard dos deploys da semana a partir do deploys.csv",chat_a1:"Montei um dashboard com KPIs e gráficos inline a partir das 42 linhas e publiquei escondido:",chat_a2:"Revise e clique em Publicar no admin, ou rode",
 built_with:"Feito de ponta a ponta com",
 rec_h:"Receitas para o seu dumps.SEUDOMINIO",rec_sub:"Escolha a máquina que você tem e o jeito de chegar nela. Cada receita é um doc no repo.",

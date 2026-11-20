@@ -16,11 +16,14 @@ often on a phone, with no context. It has to work offline once loaded and look f
 - CSS custom properties on `:root` for colors, redefined in
   `@media (prefers-color-scheme: dark)`. Always set an explicit `body` background.
 - One accent color, one neutral scale, one muted text color. Contrast at least WCAG AA.
-- System font stack. Type scale with `clamp()`: body 16 to 17px, headings clearly larger.
+- Type: follow the style dial. Classic and refined use the system stack or one family; bold and
+  avant-garde load one display family from fonts.googleapis.com with a system fallback. Type
+  scale with `clamp()`: body 16 to 18px, headings clearly larger (much larger from bold up).
 - Max content width around 760px for reading, up to 1120px for dashboards and grids.
 - 16px side padding on phones, no horizontal scroll at 360px wide. Test mentally at 360, 768
   and 1280.
-- Spacing in steps of 4 or 8. Rounded corners and borders consistent across cards.
+- Spacing in steps of 4 or 8. Create rhythm through contrast (dense next to airy, wide next to
+  narrow), never the same card repeated down the page.
 
 ## Content
 
@@ -35,4 +38,6 @@ often on a phone, with no context. It has to work offline once loaded and look f
 - Headings are semantic (`h1` once, then `h2`, `h3`). Links have meaningful text.
 - Images have `alt`. Interactive controls are buttons, reachable by keyboard, with visible focus.
 - `@media print` hides navigation and keeps content readable.
+- Motion only with purpose, and none under `prefers-reduced-motion: reduce`.
 - No console errors. No placeholder text left behind.
+- A one-line colophon at the end: style level, concept, fonts.

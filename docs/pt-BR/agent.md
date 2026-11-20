@@ -25,6 +25,33 @@ domínio e devolve o link.
 A skill mora em [`agents/skills/dump-this`](../../agents/skills/dump-this): o `SKILL.md` e as
 receitas em `recipes/`.
 
+## O dial de estilo: do conservador à inovação máxima
+
+A dump-this é opinativa. Ela recusa o visual padrão de artefato (abertura centralizada com
+gradiente, três cards iguais, emoji como ícone, sombra em tudo) e decide quanto ousar a partir das
+suas próprias palavras:
+
+| Nível | Como pedir | O que muda |
+|---|---|---|
+| 1 clássico | "sóbrio", "conservador", "para a diretoria" | grid rígido, quase preto no branco, um acento contido, sem animação |
+| 2 refinado | "limpo", "minimalista", "elegante" | grotesca moderna, filetes no lugar de sombra, um detalhe perfeito |
+| 3 ousado (padrão) | nada, ou "ousado" | tipografia de display, títulos enormes, layout editorial assimétrico, uma assinatura feita do conteúdo |
+| 4 experimental | "pode chutar o balde", "experimental", "inovação máxima", "disruptivo" | um conceito forte primeiro (capa de jornal, painel de instrumentos, pôster suíço), SVG gerado dos dados, narrativa por rolagem |
+
+Também dá para pedir uma direção de arte em prosa ("como um pôster suíço", "revista japonesa",
+"estética de terminal"). Conteúdo e acessibilidade nunca mudam com o dial: contraste, teclado,
+movimento reduzido e layout de celular valem em todo nível. Toda página termina com uma linha de
+colofão com o nível e o conceito.
+
+```text
+/dump-this relatório sóbrio para a diretoria sobre os custos do trimestre
+/dump-this slides para o meetup, com cara de pôster suíço
+/dump-this dashboard do release, inovação máxima
+```
+
+Veja um exemplo de cada tipo e nível em
+[grippado.github.io/dumps/examples](https://grippado.github.io/dumps/examples/).
+
 ## Claude Code
 
 Com o repo clonado:

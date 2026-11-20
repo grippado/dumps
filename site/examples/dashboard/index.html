@@ -1,0 +1,576 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>16 commits, 8 of 8 issues: the day dumps was built</title>
+<meta name="description" content="An instrument panel for 19 Nov 2026, the day dumps was built: commits on a strip chart, issues and services as status lamps, the phone server on gauges.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+:root{
+  color-scheme:light;
+  --bg:#d9d3c3;
+  --panel:#ece7d9;
+  --bezel:#c4bca8;
+  --ink:#191915;
+  --mut:#4f4b42;
+  --rule:rgba(25,25,21,.22);
+  --grid:rgba(25,25,21,.09);
+  --face:#f7f4ea;
+  --acc:#9a4a00;
+  --hi:#00666b;
+  --ok:#1d7431;
+  --okbg:#cfe6cf;
+  --warn:#8a5a00;
+  --warnbg:#f1dfae;
+  --off:#b9b2a0;
+  --glow:0 0 0 transparent;
+  --mono:ui-monospace,"SF Mono",Menlo,Consolas,"Liberation Mono",monospace;
+  --disp:"Chakra Petch",ui-sans-serif,system-ui,sans-serif;
+}
+@media (prefers-color-scheme:dark){
+  :root{
+    color-scheme:dark;
+    --bg:#070807;
+    --panel:#121412;
+    --bezel:#232622;
+    --ink:#ebe6d6;
+    --mut:#a29d8d;
+    --rule:rgba(235,230,214,.18);
+    --grid:rgba(235,230,214,.07);
+    --face:#0b0c0b;
+    --acc:#ffb224;
+    --hi:#53d6cb;
+    --ok:#6fe48a;
+    --okbg:#0f2a17;
+    --warn:#ffc24d;
+    --warnbg:#2e2208;
+    --off:#2c2f2b;
+    --glow:0 0 14px currentColor;
+  }
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 17px/1.5 var(--disp);
+  background-image:radial-gradient(var(--grid) 1px,transparent 1.4px);background-size:8px 8px}
+.rack{max-width:1120px;margin:0 auto;padding:24px 16px 48px}
+a{color:inherit}
+:focus-visible{outline:3px solid var(--acc);outline-offset:3px}
+.num,.mono{font-family:var(--mono);font-variant-numeric:tabular-nums}
+.plate{background:var(--panel);border:1px solid var(--rule);border-radius:6px;position:relative;padding:20px}
+.plate::before,.plate::after{content:"";position:absolute;width:7px;height:7px;border-radius:50%;
+  background:var(--bezel);box-shadow:inset 0 0 0 1px var(--rule);top:8px}
+.plate::before{left:8px}.plate::after{right:8px}
+.stencil{font:600 12px/1.2 var(--disp);letter-spacing:.18em;text-transform:uppercase;color:var(--mut);margin:0}
+h2.stencil{font-size:13px;margin-bottom:14px;display:flex;gap:10px;align-items:center}
+h2.stencil::after{content:"";flex:1;height:1px;background:var(--rule)}
+
+.top{display:grid;gap:20px;grid-template-columns:1fr;margin-bottom:20px}
+.ident{display:flex;flex-wrap:wrap;gap:8px 20px;justify-content:space-between;border-bottom:1px solid var(--rule);padding-bottom:12px;margin-bottom:18px}
+h1{font:700 clamp(2.1rem,6.4vw,4.9rem)/.95 var(--disp);letter-spacing:-.02em;margin:0 0 18px;text-transform:uppercase}
+h1 em{font-style:normal;color:var(--acc)}
+.prov{color:var(--mut);font-size:14px;margin:0;max-width:62ch}
+
+.annun{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:0;padding:0;list-style:none}
+.lamp{border:1px solid var(--rule);border-radius:4px;padding:10px 10px 9px;background:var(--face);min-height:74px;
+  display:flex;flex-direction:column;justify-content:space-between;gap:6px}
+.lamp b{font:700 13px/1.15 var(--disp);letter-spacing:.12em;text-transform:uppercase}
+.lamp span{font:400 13px/1.25 var(--mono);color:var(--mut)}
+.lamp.ok{background:var(--okbg);border-color:color-mix(in srgb,var(--ok) 55%,transparent)}
+.lamp.ok b{color:var(--ok);text-shadow:var(--glow)}
+.lamp.warn{background:var(--warnbg);border-color:color-mix(in srgb,var(--warn) 55%,transparent)}
+.lamp.warn b{color:var(--warn);text-shadow:var(--glow)}
+.lamp b::before{content:"\25CF\00a0";font-size:11px;vertical-align:1px}
+.lamp.warn b::before{content:"\25B2\00a0"}
+
+.dials{display:grid;grid-template-columns:repeat(2,1fr);gap:20px;margin-bottom:20px}
+.dial{text-align:center;display:flex;flex-direction:column;gap:6px}
+.dial svg{width:100%;max-width:260px;margin:0 auto;display:block;overflow:visible}
+.dial h3{font:600 13px/1.2 var(--disp);letter-spacing:.16em;text-transform:uppercase;margin:0}
+.dial p{margin:0;font-size:14px;color:var(--mut)}
+.tick{stroke:var(--ink)}
+.tick.min{stroke:var(--mut);opacity:.7}
+.tlab{fill:var(--mut);font:500 12px var(--mono)}
+.track{fill:none;stroke:var(--grid);stroke-width:10}
+.fill{fill:none;stroke:var(--acc);stroke-width:10}
+.dead{fill:none;stroke:var(--mut);stroke-width:10;stroke-dasharray:2 3;opacity:.6}
+.needle{transform-box:view-box;transform-origin:100px 100px;transition:transform 1.6s cubic-bezier(.2,1.4,.4,1)}
+.needle line{stroke:var(--ink);stroke-width:3;stroke-linecap:round}
+.hub{fill:var(--ink)}
+.read{fill:var(--ink);font:700 22px var(--mono)}
+.readu{fill:var(--mut);font:500 11px var(--disp);letter-spacing:.14em;text-transform:uppercase}
+
+.counters{display:grid;gap:20px}
+.odo{display:flex;gap:4px;justify-content:center;margin:6px 0 2px}
+.odo .d{width:52px;height:72px;overflow:hidden;background:var(--face);border:1px solid var(--rule);border-radius:3px;position:relative}
+.odo .d i{display:block;font:700 54px/72px var(--mono);font-style:normal;text-align:center;transition:transform 2s cubic-bezier(.3,.9,.3,1)}
+.odo .d::after{content:"";position:absolute;inset:0;background:linear-gradient(var(--face),transparent 22%,transparent 78%,var(--face));opacity:.7}
+.seg{font:700 clamp(36px,6vw,48px)/1 var(--mono);text-align:center;color:var(--acc);text-shadow:var(--glow);margin:8px 0 2px;letter-spacing:.02em}
+.seg small{font-size:.42em;color:var(--mut);text-shadow:none;letter-spacing:.1em;margin:0 6px 0 2px}
+.cap{text-align:center;color:var(--mut);font-size:14px;margin:0}
+
+.strip-wrap{margin-bottom:20px}
+#strip{width:100%;display:block}
+#strip svg{display:block;width:100%;height:auto}
+.paper{fill:var(--face)}
+.gl{stroke:var(--grid);stroke-width:1}
+.gl.hr{stroke:var(--rule)}
+.alab{fill:var(--mut);font:500 12px var(--mono)}
+.trk{fill:var(--mut);font:600 11px var(--disp);letter-spacing:.12em;text-transform:uppercase}
+.pen{fill:none;stroke:var(--acc);stroke-width:2.5;stroke-linejoin:round}
+.mk-t{fill:var(--acc)}
+.mk-p{fill:var(--hi)}
+.mk.on{stroke:var(--ink);stroke-width:2}
+.cur{stroke:var(--ink);stroke-width:1.5;stroke-dasharray:4 3}
+.scrub{display:grid;grid-template-columns:auto 1fr;gap:10px 16px;align-items:center;margin-top:14px}
+.scrub label{font:600 12px var(--disp);letter-spacing:.16em;text-transform:uppercase;color:var(--mut)}
+.scrub input{width:100%;accent-color:var(--acc);min-height:32px}
+.scrub output{grid-column:1/-1;font:500 15px/1.4 var(--mono);background:var(--face);border:1px solid var(--rule);border-radius:4px;padding:10px 12px;min-height:44px}
+.legend{display:flex;flex-wrap:wrap;gap:6px 18px;margin:10px 0 0;padding:0;list-style:none;font-size:14px;color:var(--mut)}
+.sw{display:inline-block;width:12px;height:12px;margin-right:6px;vertical-align:-1px}
+.sw.t{background:var(--acc)}
+.sw.p{background:var(--hi);clip-path:polygon(50% 0,100% 100%,0 100%)}
+.note{font-size:14px;color:var(--mut);margin:12px 0 0}
+
+.duo{display:grid;gap:20px;margin-bottom:20px}
+.meters{display:grid;gap:12px}
+.meter{display:grid;grid-template-columns:7.5em 1fr 5.2em;gap:10px;align-items:center}
+.meter .n{font:600 14px var(--disp);letter-spacing:.06em}
+.meter .v{font:600 14px var(--mono);text-align:right}
+.meter svg{width:100%;height:18px;display:block}
+.bar-bg{fill:var(--face);stroke:var(--rule)}
+.bar{fill:var(--acc)}
+.bar.p{fill:var(--hi)}
+.bar.rng{fill:var(--acc);opacity:.45}
+.scale{display:grid;grid-template-columns:7.5em 1fr 5.2em;gap:10px}
+.scale div{display:flex;justify-content:space-between;font:500 12px var(--mono);color:var(--mut)}
+
+.issues{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+.issues li{display:grid;grid-template-columns:auto 1fr;gap:2px 10px;align-items:center;border:1px solid var(--rule);border-radius:4px;padding:8px 10px;background:var(--face)}
+.issues .led{width:12px;height:12px;border-radius:50%;background:var(--ok);box-shadow:var(--glow);color:var(--ok);grid-row:span 2}
+.issues b{font:700 13px var(--mono)}
+.issues span{font-size:14px;color:var(--mut);line-height:1.25}
+
+.qa{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin:0}
+.qa div{border-left:3px solid var(--acc);padding:4px 0 4px 12px}
+.qa dt{font:700 clamp(28px,4.4vw,40px)/1 var(--mono);color:var(--ink)}
+.qa dd{margin:4px 0 0;font-size:14px;color:var(--mut);line-height:1.3}
+
+.raw{display:grid;gap:20px;margin-bottom:20px}
+.tbl-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:15px}
+caption{text-align:left;font:600 12px var(--disp);letter-spacing:.16em;text-transform:uppercase;color:var(--mut);padding-bottom:8px}
+th,td{text-align:left;padding:7px 8px;border-bottom:1px solid var(--rule);vertical-align:top}
+td.r,th.r{text-align:right}
+td{font-family:var(--mono);font-variant-numeric:tabular-nums;font-size:14px}
+th{font:600 12px var(--disp);letter-spacing:.1em;text-transform:uppercase;color:var(--mut);white-space:nowrap}
+th button{all:unset;cursor:pointer;display:inline-flex;gap:4px;align-items:center}
+th button:focus-visible{outline:3px solid var(--acc);outline-offset:2px}
+th button::after{content:"\2195";opacity:.5}
+th[aria-sort=ascending] button::after{content:"\25B2";opacity:1}
+th[aria-sort=descending] button::after{content:"\25BC";opacity:1}
+
+footer{color:var(--mut);font-size:14px;border-top:1px solid var(--rule);padding-top:14px;display:grid;gap:6px}
+footer p{margin:0}
+
+@media (min-width:700px){
+  .rack{padding:32px 24px 64px}
+  .plate{padding:24px 26px}
+  .annun{grid-template-columns:repeat(6,1fr)}
+  .dials{grid-template-columns:repeat(3,1fr) 1.05fr}
+  .duo{grid-template-columns:1fr 1fr}
+  .issues{grid-template-columns:repeat(4,1fr)}
+  .qa{grid-template-columns:repeat(4,1fr)}
+  .raw{grid-template-columns:1.1fr 1fr}
+}
+@media (max-width:420px){
+  .dials{grid-template-columns:1fr}
+  .dial svg{max-width:230px}
+  .meter,.scale{grid-template-columns:6.4em 1fr 4.6em;gap:8px}
+  .annun{grid-template-columns:repeat(2,1fr)}
+  .scale .xs{display:none}
+  th,td{padding:6px 4px}
+  th{letter-spacing:.04em}
+}
+@media (prefers-reduced-motion:reduce){
+  .needle,.odo .d i{transition:none!important}
+  .pen{stroke-dasharray:none!important;animation:none!important}
+}
+@keyframes draw{to{stroke-dashoffset:0}}
+@media print{
+  body{background:#fff;color:#000}
+  .scrub{display:none}
+  .plate{break-inside:avoid}
+}
+</style>
+</head>
+<body>
+<main class="rack">
+
+<section class="top" aria-labelledby="t">
+  <div class="plate">
+    <div class="ident">
+      <p class="stencil">dumps · flight recorder · 19 Nov 2026</p>
+      <p class="stencil">Panel 01 of 01</p>
+    </div>
+    <h1 id="t">Shipped in <em>3&nbsp;h&nbsp;55&nbsp;min</em>: 16 commits, 8 of 8 issues, 4 of 4 services green</h1>
+    <p class="prov">Source: git history of the two repos, the issue tracker, and readings taken on the server, an Android phone. As of 19 Nov 2026, local time (UTC&minus;3). First commit 17:39, last 21:34.</p>
+  </div>
+
+  <div class="plate">
+    <h2 class="stencil">Master caution</h2>
+    <ul class="annun">
+      <li class="lamp ok"><b>Services</b><span>4/4 up</span></li>
+      <li class="lamp ok"><b>Issues</b><span>8/8 done</span></li>
+      <li class="lamp ok"><b>Tests</b><span>20 golden</span></li>
+      <li class="lamp ok"><b>Parity</b><span>byte-identical</span></li>
+      <li class="lamp ok"><b>Fuzz</b><span>2 diffs fixed</span></li>
+      <li class="lamp warn"><b>Tunnel</b><span>2 outages, self-recovered</span></li>
+    </ul>
+  </div>
+</section>
+
+<section class="plate" aria-labelledby="g" style="margin-bottom:20px">
+  <h2 class="stencil" id="g">Gauges</h2>
+  <div class="dials">
+    <figure class="dial" style="margin:0">
+      <svg viewBox="0 -6 200 176" id="g-issues" role="img" aria-label="Issues closed: 8 of 8"></svg>
+      <h3>Issues closed</h3>
+      <p>8 of 8, LAB-382 to LAB-389</p>
+    </figure>
+    <figure class="dial" style="margin:0">
+      <svg viewBox="0 -6 200 176" id="g-ram" role="img" aria-label="Server RAM available: about 4.6 of 7.6 gigabytes"></svg>
+      <h3>RAM available</h3>
+      <p>About 4.6 of 7.6 GB on the phone (Moto G54, 8 GB). Hatched: beyond the 7.6 GB the OS reports.</p>
+    </figure>
+    <figure class="dial" style="margin:0">
+      <svg viewBox="0 -6 200 176" id="g-rate" role="img" aria-label="Commit rate: 4.1 per hour on average"></svg>
+      <h3>Commit rate</h3>
+      <p>4.1 per hour on average across the window (derived: 16 in 235 min). Peak hours 18h and 19h, 4 each.</p>
+    </figure>
+    <div class="counters">
+      <div>
+        <h3 class="stencil" style="text-align:center">Commits</h3>
+        <div class="odo" id="odo" role="img" aria-label="16 commits"><span class="d"><i>0</i></span><span class="d"><i>1</i></span><span class="d"><i>6</i></span></div>
+        <p class="cap">14 tooling repo + 2 public repo</p>
+      </div>
+      <div>
+        <h3 class="stencil" style="text-align:center">Server uptime</h3>
+        <p class="seg">5<small>d</small>07<small>h</small></p>
+        <p class="cap">Go binary 2.4 MB</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="plate strip-wrap" aria-labelledby="s">
+  <h2 class="stencil" id="s">Strip chart · 17:30 to 21:45</h2>
+  <div id="strip" role="img" aria-label="Cumulative commits from 17:39 to 21:34, rising from 1 to 16. The tooling repo commits steadily through the evening; the public repo commits at 21:16 and 21:34. Full list in the commits table below."></div>
+  <ul class="legend">
+    <li><span class="sw t"></span>Tooling repo (bars, lower track), 14 commits</li>
+    <li><span class="sw p"></span>Public repo (triangles, upper track), 2 commits</li>
+    <li>Line: running total</li>
+  </ul>
+  <div class="scrub">
+    <label for="scrub">Scrub</label>
+    <input type="range" id="scrub" min="1" max="16" step="1" value="16" aria-describedby="readout">
+    <output id="readout" for="scrub" aria-live="polite">#16 · 21:34 · public repo · 16 of 16 so far</output>
+  </div>
+  <p class="note">The two tunnel outages lasted minutes each and recovered on their own. Their exact times were not recorded, so they are not plotted.</p>
+</section>
+
+<section class="duo">
+  <div class="plate" aria-labelledby="k">
+    <h2 class="stencil" id="k">Commit kinds · 16 total</h2>
+    <div class="meters" id="kinds"></div>
+    <div class="scale" aria-hidden="true"><span></span><div><span>0</span><span>4</span><span>8</span><span>12</span></div><span></span></div>
+    <p class="note">Teal share is the public repo: 1 feat, 1 docs.</p>
+  </div>
+  <div class="plate" aria-labelledby="m">
+    <h2 class="stencil" id="m">Resident memory on the phone</h2>
+    <div class="meters" id="mem"></div>
+    <div class="scale" aria-hidden="true"><span></span><div><span>0</span><span class="xs">16</span><span>32</span><span class="xs">48</span><span>64 MB</span></div><span></span></div>
+    <p class="note">Approximate readings. dumpsd moved between 5 and 11 MB; the pale band is that range.</p>
+  </div>
+</section>
+
+<section class="plate" aria-labelledby="i" style="margin-bottom:20px">
+  <h2 class="stencil" id="i">Issues closed · 8 of 8</h2>
+  <ul class="issues" id="issues"></ul>
+</section>
+
+<section class="plate" aria-labelledby="q" style="margin-bottom:20px">
+  <h2 class="stencil" id="q">Quality bus</h2>
+  <dl class="qa">
+    <div><dt>20</dt><dd>Go test functions with golden files</dd></div>
+    <div><dt>1:1</dt><dd>Renderer output byte-identical to the previous Python implementation</dd></div>
+    <div><dt>~6,000</dt><dd>HTML documents in a differential fuzz; 2 divergences found and fixed</dd></div>
+    <div><dt>4</dt><dd>Code reviews that blocked commits until fixed</dd></div>
+  </dl>
+</section>
+
+<section class="raw" aria-labelledby="r">
+  <h2 class="stencil" id="r" style="grid-column:1/-1;margin:0">Raw data · click a header to sort</h2>
+  <div class="plate tbl-wrap">
+    <table id="t-commits">
+      <caption>Commits, 19 Nov 2026 (UTC&minus;3)</caption>
+      <thead><tr>
+        <th scope="col" class="r" aria-sort="ascending"><button type="button" data-k="n" data-t="num">#</button></th>
+        <th scope="col"><button type="button" data-k="time" data-t="str">Time</button></th>
+        <th scope="col"><button type="button" data-k="repo" data-t="str">Repo</button></th>
+        <th scope="col" class="r"><button type="button" data-k="gap" data-t="num">Gap (min)</button></th>
+        <th scope="col" class="r"><button type="button" data-k="cum" data-t="num">Total</button></th>
+      </tr></thead>
+      <tbody></tbody>
+    </table>
+  </div>
+  <div class="plate tbl-wrap">
+    <table id="t-read">
+      <caption>All readings</caption>
+      <thead><tr>
+        <th scope="col"><button type="button" data-k="name" data-t="str">Instrument</button></th>
+        <th scope="col" class="r"><button type="button" data-k="val" data-t="num">Reading</button></th>
+        <th scope="col"><button type="button" data-k="unit" data-t="str">Unit</button></th>
+      </tr></thead>
+      <tbody></tbody>
+    </table>
+  </div>
+</section>
+
+<footer>
+  <p>Gap is minutes since the previous commit in either repo. Commit rate is derived from the commit list. Per-commit kinds were not recorded, so the kinds chart is a day total only.</p>
+  <p>Level 4 avant-garde · concept: the build day as an instrument panel (gauges, lamps, strip chart) · Chakra Petch + system monospace</p>
+</footer>
+
+</main>
+
+<script type="application/json" id="data">
+{
+  "date": "2026-11-19",
+  "tz": "UTC-3",
+  "commits": {
+    "tooling": ["17:39","17:42","18:04","18:20","18:38","18:55","19:12","19:30","19:35","19:49","20:07","20:32","20:51","21:21"],
+    "public": ["21:16","21:34"]
+  },
+  "kinds": [
+    {"kind":"feat","total":11,"public":1},
+    {"kind":"fix","total":3,"public":0},
+    {"kind":"refactor","total":1,"public":0},
+    {"kind":"docs","total":1,"public":1}
+  ],
+  "issues": [
+    {"id":"LAB-382","title":"Public origin + CLI"},
+    {"id":"LAB-383","title":"CLI"},
+    {"id":"LAB-384","title":"Public home"},
+    {"id":"LAB-385","title":"Archive and edit"},
+    {"id":"LAB-386","title":"Admin in the browser"},
+    {"id":"LAB-387","title":"Single writer in Go"},
+    {"id":"LAB-388","title":"Injection in Go"},
+    {"id":"LAB-389","title":"Open source repo"}
+  ],
+  "server": {
+    "device": "Android phone, Moto G54, 8 GB RAM",
+    "ramAvailableGB": 4.6,
+    "ramTotalGB": 7.6,
+    "rssMB": [
+      {"name":"Caddy","min":60,"max":60},
+      {"name":"cloudflared","min":56,"max":56},
+      {"name":"dumpsd","min":5,"max":11}
+    ],
+    "binaryMB": 2.4,
+    "uptime": "5 d 7 h",
+    "services": ["sshd","cloudflared","web","dumpsd"],
+    "servicesUp": 4
+  },
+  "quality": {"goTestFunctions":20,"byteIdentical":true,"fuzzDocs":6000,"divergencesFixed":2,"blockingReviews":4},
+  "tunnelOutages": 2
+}
+</script>
+<script>
+(function(){
+  var D = JSON.parse(document.getElementById('data').textContent);
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var NS = 'http://www.w3.org/2000/svg';
+  function T(s){var a=s.split(':');return (+a[0])*60+(+a[1]);}
+  function el(tag, attrs, parent){var e=document.createElementNS(NS,tag);for(var k in attrs)e.setAttribute(k,attrs[k]);if(parent)parent.appendChild(e);return e;}
+  function pol(r,deg){var a=deg*Math.PI/180;return [100+r*Math.sin(a),100-r*Math.cos(a)];}
+  function arc(r,a0,a1){var p=pol(r,a0),q=pol(r,a1);return 'M'+p[0].toFixed(2)+' '+p[1].toFixed(2)+' A'+r+' '+r+' 0 '+((a1-a0)>180?1:0)+' 1 '+q[0].toFixed(2)+' '+q[1].toFixed(2);}
+
+  function gauge(id,o){
+    var s=document.getElementById(id), A=-120, B=120, ang=function(v){return A+(B-A)*v/o.max;};
+    el('title',{},s).textContent=s.getAttribute('aria-label');
+    el('path',{d:arc(74,A,B),'class':'track'},s);
+    if(o.dead!=null) el('path',{d:arc(74,ang(o.dead),B),'class':'dead'},s);
+    el('path',{d:arc(74,A,ang(o.value)),'class':'fill'},s);
+    for(var v=0; v<=o.max+1e-9; v+=o.minor){
+      var major=Math.abs(v/o.major-Math.round(v/o.major))<1e-6, a=ang(v), p=pol(major?62:66,a), q=pol(80,a);
+      el('line',{x1:p[0],y1:p[1],x2:q[0],y2:q[1],'class':'tick'+(major?'':' min'),'stroke-width':major?2:1},s);
+      if(major){var l=pol(50,a);var t=el('text',{x:l[0],y:l[1]+4,'text-anchor':'middle','class':'tlab'},s);t.textContent=+v.toFixed(1);}
+    }
+    var g=el('g',{'class':'needle'},s);
+    el('line',{x1:100,y1:112,x2:100,y2:34},g);
+    el('circle',{cx:100,cy:100,r:6,'class':'hub'},s);
+    var r=el('text',{x:100,y:142,'text-anchor':'middle','class':'read'},s); r.textContent=o.read;
+    var u=el('text',{x:100,y:160,'text-anchor':'middle','class':'readu'},s); u.textContent=o.unit;
+    var target='rotate('+ang(o.value)+'deg)';
+    if(reduce){g.style.transform=target;}
+    else{g.style.transform='rotate('+A+'deg)';requestAnimationFrame(function(){requestAnimationFrame(function(){g.style.transform=target;});});}
+  }
+
+  var all=[];
+  D.commits.tooling.forEach(function(t){all.push({time:t,repo:'tooling'});});
+  D.commits.public.forEach(function(t){all.push({time:t,repo:'public'});});
+  all.sort(function(a,b){return T(a.time)-T(b.time);});
+  all.forEach(function(c,i){c.n=i+1;c.cum=i+1;c.gap=i?T(c.time)-T(all[i-1].time):null;});
+  var span=T(all[all.length-1].time)-T(all[0].time);
+  var rate=Math.round(all.length/(span/60)*10)/10;
+
+  gauge('g-issues',{max:8,minor:1,major:2,value:D.issues.length,read:D.issues.length+'/8',unit:'issues done'});
+  gauge('g-ram',{max:8,minor:.5,major:2,value:D.server.ramAvailableGB,dead:D.server.ramTotalGB,read:D.server.ramAvailableGB+' GB',unit:'free of '+D.server.ramTotalGB});
+  gauge('g-rate',{max:6,minor:.5,major:1,value:rate,read:rate.toFixed(1),unit:'commits / hour'});
+
+  var digits=String(all.length).padStart(3,'0').split('');
+  document.querySelectorAll('#odo .d').forEach(function(d,i){
+    var n=+digits[i], col='';
+    for(var k=0;k<=9;k++) col+=k+'\n';
+    var iEl=d.querySelector('i'); iEl.style.whiteSpace='pre'; iEl.textContent=col.trim();
+    var set=function(){iEl.style.transform='translateY('+(-72*n)+'px)';};
+    if(reduce) set(); else requestAnimationFrame(function(){requestAnimationFrame(set);});
+  });
+
+  var strip=document.getElementById('strip'), cursorIdx=all.length-1, drawn=false;
+  function drawStrip(){
+    var W=Math.max(300,Math.round(strip.clientWidth||600)), narrow=W<560;
+    var H=narrow?250:270, L=narrow?50:70, R=12, top=14, cb=132, pubY=166, tolY=200, axY=H-10;
+    var t0=T('17:30'), t1=T('21:45');
+    var x=function(t){return L+(t-t0)/(t1-t0)*(W-L-R);};
+    var y=function(c){return cb-(cb-top)*c/16;};
+    strip.innerHTML='';
+    var s=el('svg',{viewBox:'0 0 '+W+' '+H,width:W,height:H,'aria-hidden':'true',focusable:'false'},strip);
+    el('rect',{x:L,y:top-6,width:W-L-R,height:tolY+18-(top-6),'class':'paper'},s);
+    for(var t=t0;t<=t1;t+=15){
+      var hr=t%60===0;
+      el('line',{x1:x(t),y1:top-6,x2:x(t),y2:tolY+12,'class':'gl'+(hr?' hr':'')},s);
+      if(hr){var lb=el('text',{x:x(t),y:axY,'text-anchor':'middle','class':'alab'},s);lb.textContent=(t/60)+':00';}
+    }
+    [0,4,8,12,16].forEach(function(c){
+      el('line',{x1:L,y1:y(c),x2:W-R,y2:y(c),'class':'gl'},s);
+      var lb=el('text',{x:L-8,y:y(c)+4,'text-anchor':'end','class':'alab'},s);lb.textContent=c;
+    });
+    var tl=el('text',{x:L-8,y:pubY+4,'text-anchor':'end','class':'trk'},s);tl.textContent='pub';
+    var tt=el('text',{x:L-8,y:tolY+4,'text-anchor':'end','class':'trk'},s);tt.textContent=narrow?'tool':'tooling';
+    var d='M'+x(t0)+' '+y(0);
+    all.forEach(function(c){d+=' H'+x(T(c.time)).toFixed(1)+' V'+y(c.cum).toFixed(1);});
+    d+=' H'+x(t1);
+    var pen=el('path',{d:d,'class':'pen'},s);
+    if(!reduce && !drawn){var len=pen.getTotalLength();pen.style.strokeDasharray=len;pen.style.strokeDashoffset=len;pen.style.animation='draw 2.4s ease-out .2s forwards';}
+    all.forEach(function(c,i){
+      var cx=x(T(c.time)), m;
+      if(c.repo==='public') m=el('path',{d:'M'+cx+' '+(pubY-9)+' L'+(cx+7)+' '+(pubY+7)+' L'+(cx-7)+' '+(pubY+7)+' Z','class':'mk mk-p'},s);
+      else m=el('rect',{x:cx-2,y:tolY-10,width:4,height:20,'class':'mk mk-t'},s);
+      m.setAttribute('data-i',i);
+    });
+    el('line',{x1:0,y1:top-6,x2:0,y2:tolY+12,'class':'cur',id:'cur'},s);
+    drawn=true;
+    s._x=x;
+    setCursor(cursorIdx);
+  }
+  var readout=document.getElementById('readout'), scrub=document.getElementById('scrub');
+  function setCursor(i){
+    cursorIdx=i;
+    var s=strip.querySelector('svg'); if(!s) return;
+    var c=all[i], cx=s._x(T(c.time)), cur=s.querySelector('#cur');
+    cur.setAttribute('x1',cx);cur.setAttribute('x2',cx);
+    s.querySelectorAll('.mk').forEach(function(m){m.classList.toggle('on',+m.getAttribute('data-i')===i);});
+    readout.textContent='#'+c.n+' · '+c.time+' · '+c.repo+' repo · '+c.cum+' of '+all.length+' so far'+(c.gap!=null?' · '+c.gap+' min after the previous commit':' · first commit of the day');
+  }
+  scrub.addEventListener('input',function(){setCursor(+scrub.value-1);});
+  drawStrip();
+  var rt; window.addEventListener('resize',function(){clearTimeout(rt);rt=setTimeout(drawStrip,120);});
+
+  function meter(host,o){
+    var row=document.createElement('div'); row.className='meter';
+    var n=document.createElement('span'); n.className='n'; n.textContent=o.name;
+    var s=el('svg',{viewBox:'0 0 100 10',preserveAspectRatio:'none','aria-hidden':'true',focusable:'false'});
+    el('rect',{x:0,y:0,width:100,height:10,'class':'bar-bg','vector-effect':'non-scaling-stroke'},s);
+    o.segs.forEach(function(g){el('rect',{x:g.from/o.max*100,y:1.5,width:(g.to-g.from)/o.max*100,height:7,'class':g.cls},s);});
+    var v=document.createElement('span'); v.className='v'; v.textContent=o.label;
+    row.appendChild(n); row.appendChild(s); row.appendChild(v); host.appendChild(row);
+  }
+  var kinds=document.getElementById('kinds');
+  D.kinds.slice().sort(function(a,b){return b.total-a.total;}).forEach(function(k){
+    var own=k.total-k.public;
+    meter(kinds,{name:k.kind,max:12,label:String(k.total),segs:[{from:0,to:own,cls:'bar'},{from:own,to:k.total,cls:'bar p'}]});
+  });
+  var mem=document.getElementById('mem');
+  D.server.rssMB.slice().sort(function(a,b){return b.max-a.max;}).forEach(function(p){
+    var segs=[{from:0,to:p.min,cls:'bar'}]; if(p.max>p.min) segs.push({from:p.min,to:p.max,cls:'bar rng'});
+    meter(mem,{name:p.name,max:64,label:(p.max>p.min?p.min+'–'+p.max:'~'+p.max)+' MB',segs:segs});
+  });
+
+  var il=document.getElementById('issues');
+  D.issues.forEach(function(x){
+    var li=document.createElement('li');
+    li.innerHTML='<span class="led" aria-hidden="true"></span><b></b><span></span>';
+    li.querySelector('b').textContent=x.id+' · done';
+    li.querySelectorAll('span')[1].textContent=x.title;
+    il.appendChild(li);
+  });
+
+  var readings=[
+    {name:'Issues closed',val:8,disp:'8 of 8',unit:'issues'},
+    {name:'Commits, tooling repo',val:14,disp:'14',unit:'commits'},
+    {name:'Commits, public repo',val:2,disp:'2',unit:'commits'},
+    {name:'RAM available',val:4.6,disp:'~4.6 of 7.6',unit:'GB'},
+    {name:'Resident memory, Caddy',val:60,disp:'~60',unit:'MB'},
+    {name:'Resident memory, cloudflared',val:56,disp:'~56',unit:'MB'},
+    {name:'Resident memory, dumpsd',val:11,disp:'5–11',unit:'MB'},
+    {name:'Go binary size',val:2.4,disp:'2.4',unit:'MB'},
+    {name:'Device uptime',val:127,disp:'5 d 7 h',unit:'time'},
+    {name:'Services up (sshd, cloudflared, web, dumpsd)',val:4,disp:'4 of 4',unit:'services'},
+    {name:'Go test functions with golden files',val:20,disp:'20',unit:'functions'},
+    {name:'Differential fuzz corpus',val:6000,disp:'~6,000',unit:'HTML docs'},
+    {name:'Fuzz divergences found and fixed',val:2,disp:'2',unit:'divergences'},
+    {name:'Code reviews that blocked commits',val:4,disp:'4',unit:'reviews'},
+    {name:'Tunnel outages (minutes each, self-recovered)',val:2,disp:'2',unit:'outages'}
+  ];
+
+  function table(id,rows,render){
+    var tb=document.querySelector('#'+id+' tbody');
+    function paint(){tb.innerHTML='';rows.forEach(function(r){tb.appendChild(render(r));});}
+    document.querySelectorAll('#'+id+' th button').forEach(function(b){
+      b.addEventListener('click',function(){
+        var th=b.parentNode, k=b.dataset.k, num=b.dataset.t==='num';
+        var dir=th.getAttribute('aria-sort')==='ascending'?'descending':'ascending';
+        document.querySelectorAll('#'+id+' th').forEach(function(h){h.removeAttribute('aria-sort');});
+        th.setAttribute('aria-sort',dir);
+        rows.sort(function(a,b2){
+          var x=a[k],y=b2[k];
+          if(x==null) return 1; if(y==null) return -1;
+          var c=num?x-y:String(x).localeCompare(String(y),'en',{numeric:true});
+          return dir==='ascending'?c:-c;
+        });
+        paint();
+      });
+    });
+    paint();
+  }
+  function td(text,cls){var c=document.createElement('td');c.textContent=text;if(cls)c.className=cls;return c;}
+  table('t-commits',all.slice(),function(r){
+    var tr=document.createElement('tr');
+    tr.appendChild(td(r.n,'r'));tr.appendChild(td(r.time));tr.appendChild(td(r.repo));
+    tr.appendChild(td(r.gap==null?'first':r.gap,'r'));tr.appendChild(td(r.cum,'r'));
+    return tr;
+  });
+  table('t-read',readings,function(r){
+    var tr=document.createElement('tr');
+    var n=td(r.name);n.style.fontFamily='var(--disp)';n.style.fontSize='15px';
+    tr.appendChild(n);tr.appendChild(td(r.disp,'r'));tr.appendChild(td(r.unit));
+    return tr;
+  });
+})();
+</script>
+</body>
+</html>

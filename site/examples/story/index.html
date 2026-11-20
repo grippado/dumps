@@ -1,0 +1,622 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Linha 19: o dumps em um dia</title>
+<meta name="description" content="A história do dumps contada como uma linha de metrô: 18 estações entre 17:39 e 21:34 de 19/11/2026, da origem pública ao código aberto, com a distância entre estações medida em minutos reais.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&display=swap" rel="stylesheet">
+<style>
+:root{
+  color-scheme:light dark;
+  --paper:#f3f0e6;
+  --paper-2:#e8e3d4;
+  --ink:#121212;
+  --muted:#4d4a43;
+  --rule:#121212;
+  --line:#d4231b;
+  --line-ink:#b81d16;
+  --board:#121212;
+  --board-fg:#f3f0e6;
+  --board-mut:#b9b4a6;
+  --hatch:rgba(18,18,18,.14);
+  --sans:"Archivo",ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --mono:ui-monospace,"SF Mono",SFMono-Regular,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme:dark){
+  :root{
+    --paper:#0f0f10;
+    --paper-2:#1b1b1d;
+    --ink:#f1ede2;
+    --muted:#b3ae9f;
+    --rule:#f1ede2;
+    --line:#ff5a3c;
+    --line-ink:#ff7a5f;
+    --board:#f1ede2;
+    --board-fg:#0f0f10;
+    --board-mut:#4d4a43;
+    --hatch:rgba(241,237,226,.16);
+  }
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+@media (prefers-reduced-motion:no-preference){html{scroll-behavior:smooth}}
+body{margin:0;background:var(--paper);color:var(--ink);font:400 17px/1.55 var(--sans);font-stretch:100%;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+a{color:inherit;text-decoration-thickness:2px;text-underline-offset:3px}
+a:hover{color:var(--line-ink)}
+:focus-visible{outline:3px solid var(--line);outline-offset:3px}
+.skip{position:absolute;left:16px;top:-60px;background:var(--ink);color:var(--paper);padding:8px 12px;z-index:50}
+.skip:focus{top:8px}
+.wrap{max-width:1120px;margin:0 auto;padding:0 16px}
+@media (min-width:700px){.wrap{padding:0 32px}}
+.mono{font-family:var(--mono)}
+.tag{display:inline-block;font:700 12px/1 var(--sans);font-stretch:112%;letter-spacing:.14em;text-transform:uppercase}
+
+/* hero */
+header.hero{border-bottom:6px solid var(--rule);padding:20px 0 0}
+.topline{display:flex;flex-wrap:wrap;align-items:center;gap:8px 16px;font:600 13px/1.3 var(--sans);letter-spacing:.06em;text-transform:uppercase}
+.bullet{display:inline-grid;place-items:center;width:44px;height:44px;border-radius:50%;background:var(--line);color:#fff;font:900 20px/1 var(--sans);font-stretch:80%;letter-spacing:0}
+@media (prefers-color-scheme:dark){.bullet{color:#0f0f10}}
+.topline .sep{flex:1 1 40px;height:2px;background:var(--rule);min-width:24px}
+h1{margin:28px 0 8px;font-weight:900;line-height:.86;letter-spacing:-.02em;font-size:clamp(64px,16vw,220px);font-stretch:125%;text-transform:uppercase}
+h1 .h1-sub{display:block;font-size:.28em;line-height:1.05;font-weight:700;font-stretch:72%;letter-spacing:0;text-transform:none;margin-top:.35em;max-width:22ch}
+h1 .h1-sub em{font-style:normal;color:var(--line-ink)}
+.dek{max-width:58ch;font-size:clamp(18px,2.1vw,22px);line-height:1.45;margin:20px 0 32px;color:var(--ink)}
+.stats{display:grid;grid-template-columns:repeat(2,1fr);border-top:2px solid var(--rule)}
+@media (min-width:700px){.stats{grid-template-columns:1.6fr 1fr 1fr 1fr}}
+.stat{padding:16px 16px 20px 0;border-bottom:2px solid var(--rule)}
+.stat + .stat{padding-left:16px;border-left:2px solid var(--rule)}
+.stat:nth-child(3){border-left:0;padding-left:0}
+@media (min-width:700px){.stat{border-bottom:0}.stat:nth-child(3){border-left:2px solid var(--rule);padding-left:16px}}
+.stat b{display:block;font-weight:900;font-size:clamp(40px,7vw,84px);line-height:.95;font-stretch:62%;letter-spacing:-.01em;font-variant-numeric:tabular-nums}
+.stat span{display:block;font-size:14px;line-height:1.35;color:var(--muted);margin-top:6px;max-width:24ch}
+
+/* strip map (desktop) */
+.strip{display:none}
+@media (min-width:700px){
+  .strip{display:block;padding:40px 0 28px;border-bottom:2px solid var(--rule)}
+  .strip h2{margin:0 0 4px}
+  .strip-note{margin:0 0 8px;color:var(--muted);font-size:14px}
+  .strip ol{list-style:none;margin:0;padding:150px 0 0;display:grid;grid-template-columns:72px repeat(18,minmax(0,1fr));position:relative}
+  .strip ol::before{content:"";position:absolute;left:72px;right:calc(100% / 19 / 2 - 4px);bottom:40px;height:10px;background:var(--line);border-radius:5px}
+  .strip .branch{position:relative;height:84px}
+  .strip .branch::before{content:"";position:absolute;left:0;right:8px;bottom:44px;border-top:3px dashed var(--ink)}
+  .strip .branch span{position:absolute;left:0;bottom:56px;font:700 11px/1.2 var(--sans);letter-spacing:.08em;text-transform:uppercase;width:68px}
+  .strip li.s{position:relative;height:84px}
+  .strip a{position:absolute;inset:0;display:block;text-decoration:none;color:var(--ink)}
+  .strip .dot{position:absolute;left:50%;bottom:33px;width:24px;height:24px;margin-left:-12px;border-radius:50%;background:var(--paper);border:5px solid var(--ink)}
+  .strip .x .dot{width:30px;height:30px;margin-left:-15px;bottom:30px;box-shadow:0 0 0 4px var(--paper),0 0 0 7px var(--ink)}
+  .strip .alert .dot{background:repeating-linear-gradient(45deg,var(--ink) 0 3px,var(--paper) 3px 6px)}
+  .strip .name{position:absolute;left:50%;bottom:72px;transform-origin:0 100%;transform:rotate(-52deg);white-space:nowrap;font:700 14px/1 var(--sans);font-stretch:85%;letter-spacing:.01em}
+  .strip .t{position:absolute;left:50%;bottom:6px;transform:translateX(-50%);font:600 11px/1 var(--mono);color:var(--muted)}
+  .strip a:hover .name,.strip a:focus-visible .name{color:var(--line-ink)}
+  .strip a:focus-visible{outline:none}
+  .strip a:focus-visible .dot{outline:3px solid var(--line);outline-offset:4px}
+  .strip li.passed .dot{background:var(--line);border-color:var(--line)}
+  .strip li.here .dot{background:var(--ink)}
+}
+@media (min-width:700px) and (max-width:980px){
+  .strip .name{font-size:12px}
+  .strip .t{font-size:9px}
+}
+
+/* sticky board */
+.board{position:sticky;top:0;z-index:20;background:var(--board);color:var(--board-fg)}
+.board .wrap{display:grid;grid-template-columns:auto 1fr;gap:4px 14px;align-items:center;padding-top:10px;padding-bottom:10px}
+.board .bullet{width:34px;height:34px;font-size:15px}
+.board-now{min-width:0}
+.board-label{font:600 10.5px/1.2 var(--sans);letter-spacing:.16em;text-transform:uppercase;color:var(--board-mut)}
+.board-name{display:block;font:900 clamp(20px,3.4vw,30px)/1.05 var(--sans);font-stretch:118%;text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.board-next{font:500 13px/1.3 var(--sans);color:var(--board-mut);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.board-next b{color:var(--board-fg);font-weight:700}
+.dots{grid-column:1 / -1;display:flex;align-items:center;gap:0;margin:4px 0 2px;padding:0;list-style:none;position:relative}
+.dots::before{content:"";position:absolute;left:6px;right:6px;top:50%;height:3px;margin-top:-1.5px;background:var(--board-mut);opacity:.5}
+.dots li{flex:1 1 0;display:flex;justify-content:center;position:relative}
+.dots li:first-child{justify-content:flex-start}
+.dots li:last-child{justify-content:flex-end}
+.dots a{display:block;width:13px;height:13px;border-radius:50%;background:var(--board);border:2.5px solid var(--board-mut)}
+.dots a.passed{background:var(--line);border-color:var(--line)}
+.dots a[aria-current="step"]{background:var(--board-fg);border-color:var(--line);transform:scale(1.35)}
+.dots a:focus-visible{outline:3px solid var(--line);outline-offset:3px}
+@media (min-width:700px){
+  .board .wrap{grid-template-columns:auto minmax(0,1fr) minmax(260px,44%);gap:4px 18px}
+  .dots{grid-column:auto;margin:0}
+}
+@media (prefers-reduced-motion:no-preference){
+  .board-name{transition:font-stretch .5s ease,letter-spacing .5s ease}
+  .board-name.swap{font-stretch:62%;letter-spacing:.04em}
+  .dots a{transition:background .3s,border-color .3s,transform .3s}
+}
+
+section{padding:56px 0}
+h2{font:900 clamp(30px,5.4vw,60px)/.95 var(--sans);font-stretch:70%;text-transform:uppercase;letter-spacing:-.005em;margin:0 0 20px}
+h2 .k{display:block;font:700 13px/1.2 var(--sans);font-stretch:112%;letter-spacing:.16em;color:var(--line-ink);margin-bottom:10px}
+
+/* ramal */
+.ramal{border-bottom:2px solid var(--rule)}
+.ramal-grid{display:grid;gap:24px}
+@media (min-width:700px){.ramal-grid{grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:48px}}
+.ramal p{margin:0 0 14px;max-width:52ch}
+.ramal-line{list-style:none;margin:0;padding:0 0 0 30px;position:relative}
+.ramal-line::before{content:"";position:absolute;left:10px;top:12px;bottom:12px;border-left:4px dashed var(--ink)}
+.ramal-line li{position:relative;padding:8px 0 12px}
+.ramal-line li::before{content:"";position:absolute;left:-28px;top:13px;width:16px;height:16px;border-radius:50%;background:var(--paper);border:4px solid var(--ink)}
+.ramal-line .rt{font:600 13px/1 var(--mono);color:var(--muted);display:block;margin-bottom:4px}
+.ramal-line strong{font-weight:800;font-stretch:90%;font-size:19px}
+.ramal-line .rd{display:block;color:var(--muted);font-size:15px}
+.gap5{margin:40px 0 0;padding:18px 0;border-top:2px solid var(--rule);border-bottom:2px solid var(--rule);display:flex;flex-wrap:wrap;align-items:baseline;gap:6px 18px;background:repeating-linear-gradient(-45deg,transparent 0 10px,var(--hatch) 10px 12px)}
+.gap5 b{font:900 clamp(28px,5vw,48px)/1 var(--sans);font-stretch:62%;text-transform:uppercase;background:var(--paper);padding:0 6px}
+.gap5 span{background:var(--paper);padding:0 6px}
+
+/* the line */
+.line-head{display:grid;gap:12px}
+@media (min-width:700px){.line-head{grid-template-columns:minmax(0,7fr) minmax(0,5fr);align-items:end;gap:48px}}
+.line-head p{margin:0;color:var(--muted);max-width:44ch}
+.stations{list-style:none;margin:32px 0 0;padding:0;position:relative}
+.stations::before{content:"";position:absolute;top:30px;bottom:44px;left:calc(var(--tcol) + 15px);width:10px;background:var(--line);border-radius:5px}
+.stations{--tcol:64px}
+@media (min-width:700px){.stations{--tcol:132px}}
+.st{position:relative;display:grid;grid-template-columns:var(--tcol) 40px minmax(0,1fr);column-gap:12px;padding-top:calc(var(--gap,0) * 5px + 14px);scroll-margin-top:110px}
+@media (min-width:700px){.st{column-gap:20px;padding-top:calc(var(--gap,0) * 6px + 18px)}}
+.st:first-child{padding-top:8px}
+.st .min{position:absolute;top:calc(var(--gap,0) * 2.5px);left:calc(var(--tcol) + 44px);font:600 12px/1 var(--mono);color:var(--line-ink);letter-spacing:.02em}
+@media (min-width:700px){.st .min{top:calc(var(--gap,0) * 3px + 2px);left:calc(var(--tcol) + 52px)}}
+.st time{grid-column:1;text-align:right;font:900 clamp(22px,3.6vw,46px)/1 var(--sans);font-stretch:62%;font-variant-numeric:tabular-nums;padding-top:4px}
+.st .node{grid-column:2;position:relative;height:40px}
+.st .node::before{content:"";position:absolute;left:4px;top:4px;width:32px;height:32px;border-radius:50%;background:var(--paper);border:7px solid var(--ink);box-sizing:border-box}
+.st.x .node::before{box-shadow:0 0 0 4px var(--paper),0 0 0 8px var(--ink)}
+.st.alert .node::before{background:repeating-linear-gradient(45deg,var(--ink) 0 3px,var(--paper) 3px 6px)}
+.st.here .node::before{background:var(--line);border-color:var(--ink)}
+.st .body{grid-column:3;min-width:0;padding-bottom:4px}
+.st h3{margin:0;font:900 clamp(24px,4.2vw,44px)/.98 var(--sans);font-stretch:112%;text-transform:uppercase;letter-spacing:-.01em;overflow-wrap:anywhere}
+@media (prefers-reduced-motion:no-preference){
+  .st h3{transition:font-stretch .6s ease,color .3s}
+  .st:not(.here):not(.passed) h3{font-stretch:88%}
+}
+.st .verb{display:inline-block;margin:10px 0 6px;padding:4px 8px 3px;border:2px solid var(--ink);font:800 11.5px/1 var(--sans);font-stretch:115%;letter-spacing:.14em;text-transform:uppercase}
+.st.alert .verb{background:var(--ink);color:var(--paper)}
+.st p{margin:4px 0 0;max-width:56ch}
+.st code{font:600 .88em/1 var(--mono);background:var(--paper-2);padding:2px 5px}
+.xfer{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.xfer span{display:inline-flex;align-items:center;gap:6px;font:700 12px/1 var(--mono);padding:5px 9px 5px 5px;border:2px solid var(--ink);border-radius:999px}
+.xfer span::before{content:"";width:12px;height:12px;border-radius:50%;background:var(--ink)}
+.terminus .node::before{border-radius:4px;width:34px;height:34px;left:3px;top:3px}
+.legend{display:flex;flex-wrap:wrap;gap:10px 22px;margin-top:22px;font-size:14px;color:var(--muted)}
+.legend i{display:inline-block;vertical-align:-3px;margin-right:8px;width:16px;height:16px;border-radius:50%;border:4px solid var(--ink);background:var(--paper)}
+.legend .lx{box-shadow:0 0 0 2px var(--paper),0 0 0 4px var(--ink)}
+.legend .la{background:repeating-linear-gradient(45deg,var(--ink) 0 2px,var(--paper) 2px 4px)}
+.crew-line{margin-top:40px;padding:16px 0;border-top:2px solid var(--rule);font-size:15px;color:var(--muted);max-width:70ch}
+
+/* turning points */
+.turns{background:var(--ink);color:var(--paper)}
+.turns h2 .k{color:var(--line)}
+.turn{display:grid;gap:8px 32px;padding:32px 0;border-top:2px solid var(--paper)}
+@media (min-width:700px){.turn{grid-template-columns:200px minmax(0,1fr)}}
+.turn .when{font:900 clamp(48px,8vw,96px)/.9 var(--sans);font-stretch:62%;color:var(--line)}
+.turn blockquote{margin:0;font:800 clamp(24px,3.6vw,40px)/1.1 var(--sans);font-stretch:90%;max-width:26ch}
+.turn p{margin:14px 0 0;max-width:60ch;color:var(--paper);opacity:.86}
+
+/* cast */
+.cast ol{list-style:none;margin:0;padding:0;display:grid;gap:0;border-top:2px solid var(--rule)}
+@media (min-width:700px){.cast ol{grid-template-columns:repeat(6,1fr)}}
+.cast li{padding:18px 0;border-bottom:2px solid var(--rule)}
+@media (min-width:700px){
+  .cast li{padding:20px 20px 24px;border-bottom:0;border-left:2px solid var(--rule)}
+  .cast li:first-child{border-left:0;padding-left:0}
+  .cast li:nth-child(1),.cast li:nth-child(2){grid-column:span 3}
+  .cast li:nth-child(n+3){grid-column:span 2;border-top:2px solid var(--rule)}
+  .cast li:nth-child(3){border-left:0;padding-left:0}
+}
+.cast .role{font:700 12px/1 var(--sans);font-stretch:112%;letter-spacing:.14em;text-transform:uppercase;color:var(--line-ink)}
+.cast h3{margin:8px 0 6px;font:900 clamp(28px,4vw,48px)/1 var(--sans);font-stretch:100%;text-transform:uppercase}
+.cast li:nth-child(n+3) h3{font-size:clamp(22px,2.6vw,30px)}
+.cast p{margin:0;color:var(--muted);max-width:40ch}
+
+/* now */
+.now-grid{display:grid;gap:32px}
+@media (min-width:700px){.now-grid{grid-template-columns:minmax(0,7fr) minmax(0,5fr);gap:48px}}
+.now ul{list-style:none;margin:0;padding:0}
+.now li{padding:12px 0 12px 28px;border-bottom:1px solid var(--rule);position:relative}
+.now li::before{content:"";position:absolute;left:0;top:19px;width:14px;height:14px;border-radius:50%;background:var(--line)}
+.now .next li::before{background:var(--paper);border:3px solid var(--ink)}
+.now h3{font:800 15px/1 var(--sans);font-stretch:112%;letter-spacing:.14em;text-transform:uppercase;margin:0 0 6px}
+.big-num{display:flex;flex-wrap:wrap;gap:24px 40px;margin:28px 0 0}
+.big-num div b{display:block;font:900 clamp(56px,10vw,128px)/.85 var(--sans);font-stretch:62%;color:var(--line-ink);font-variant-numeric:tabular-nums}
+.big-num div span{font-size:14px;color:var(--muted)}
+
+footer{border-top:6px solid var(--rule);padding:24px 0 40px;font-size:13px;color:var(--muted)}
+footer p{margin:0 0 6px;max-width:80ch}
+
+@media print{
+  .board,.strip,.skip{display:none!important}
+  body{background:#fff;color:#000}
+  .turns{background:#fff;color:#000}
+  .turn p{color:#000}
+  .st{break-inside:avoid;padding-top:14px}
+  .st .min{display:none}
+}
+</style>
+</head>
+<body>
+<a class="skip" href="#linha">Pular para a linha</a>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="topline">
+      <span class="bullet" aria-hidden="true">19</span>
+      <span>Linha 19 · dumps</span>
+      <span class="sep" aria-hidden="true"></span>
+      <span>Sentido: código aberto</span>
+    </div>
+    <h1>Linha 19
+      <span class="h1-sub">Um celular saiu da caixa, e num fim de tarde virou <em>uma plataforma de publicação aberta</em>.</span>
+    </h1>
+    <p class="dek">Em 19/11/2026, entre 17:39 e 21:34, o dumps foi de uma origem pública vazia a um projeto MIT no GitHub. Esta é a viagem, estação por estação. Role a página como quem anda de trem: o espaço entre as paradas é o tempo real entre elas.</p>
+    <div class="stats">
+      <div class="stat"><b>3 h 55</b><span>da primeira à última estação, 235 minutos de linha</span></div>
+      <div class="stat"><b>19</b><span>commits no dia, mais 2 no repositório público</span></div>
+      <div class="stat"><b>8</b><span>issues no Linear, LAB-382 a LAB-389</span></div>
+      <div class="stat"><b>1</b><span>celular antigo servindo tudo</span></div>
+    </div>
+  </div>
+</header>
+
+<nav class="strip" aria-labelledby="strip-title">
+  <div class="wrap">
+    <h2 id="strip-title" class="tag">Mapa da linha</h2>
+    <p class="strip-note">Esquemático, como todo mapa de metrô: as estações têm espaço igual aqui. Na linha abaixo, a distância é o tempo.</p>
+    <ol id="strip-list">
+      <li class="branch" aria-hidden="true"><span>Ramal Moto 14/11</span></li>
+    </ol>
+  </div>
+</nav>
+
+<nav class="board" aria-label="Progresso na linha">
+  <div class="wrap">
+    <span class="bullet" aria-hidden="true">19</span>
+    <div class="board-now">
+      <span class="board-label">Estação</span>
+      <span class="board-name" id="board-name">Ramal Moto</span>
+      <span class="board-next" id="board-next">Próxima: <b>Origem</b>, 17:39</span>
+    </div>
+    <ol class="dots" id="dots"></ol>
+  </div>
+</nav>
+
+<main>
+  <section class="ramal" aria-labelledby="ramal-title">
+    <div class="wrap">
+      <div class="ramal-grid">
+        <div>
+          <h2 id="ramal-title"><span class="k">Ramal Moto · 14/11/2026</span>Antes da linha, o trilho</h2>
+          <p>Um Motorola Moto G54, esquecido numa caixa, vira nó de home lab. Das 14:03 às 15:13, ele ganha tudo o que um servidor precisa para não depender de ninguém por perto.</p>
+          <p>O teste que importa: reiniciar o aparelho e esperar. Os serviços voltaram sozinhos em cerca de 95 segundos.</p>
+        </div>
+        <ol class="ramal-line">
+          <li><span class="rt">14:03</span><strong>Caixa</strong><span class="rd">o celular sai da gaveta e entra em serviço</span></li>
+          <li><strong>Termux</strong><span class="rd">um Linux de bolso para rodar o resto</span></li>
+          <li><strong>runit</strong><span class="rd">supervisão: serviço que cai, sobe de novo</span></li>
+          <li><strong>Caddy</strong><span class="rd">o servidor web</span></li>
+          <li><strong>Cloudflare Tunnel</strong><span class="rd">a ponte até a internet, sem abrir porta em casa</span></li>
+          <li><strong>Reboot</strong><span class="rd">tudo de volta sozinho em cerca de 95 s</span></li>
+          <li><strong>Dieta</strong><span class="rd">o Termux cai de 764 MB para 183 MB</span></li>
+          <li><span class="rt">15:13</span><strong>Fim do ramal</strong><span class="rd">o trilho está pronto</span></li>
+        </ol>
+      </div>
+      <p class="gap5"><b>5 dias sem trem</b><span>de 14/11 a 19/11, o celular espera</span></p>
+    </div>
+  </section>
+
+  <section id="linha" aria-labelledby="linha-title">
+    <div class="wrap">
+      <div class="line-head">
+        <h2 id="linha-title"><span class="k">Linha 19 · 19/11/2026</span>Dezoito estações em uma tarde</h2>
+        <p>Cada estação é um marco tirado dos commits do dia. Entre uma e outra, o número em vermelho é o tempo de viagem.</p>
+      </div>
+
+      <ol class="stations" id="stations">
+        <li class="st x" id="s-1739" data-name="Origem" style="--gap:0">
+          <time datetime="2026-11-19T17:39-03:00">17:39</time><span class="node" aria-hidden="true"></span>
+          <div class="body"><h3>Origem</h3><span class="verb">abriu</span>
+            <p>Nasce a origem pública <strong>dumps.gripp.link</strong> e, com ela, a CLI <code>dumps</code>.</p>
+            <div class="xfer" aria-label="Baldeação para issues"><span>LAB-382</span><span>LAB-383</span></div></div>
+        </li>
+        <li class="st" id="s-1742" data-name="Cerca" style="--gap:3">
+          <span class="min">+3 min</span>
+          <time datetime="2026-11-19T17:42-03:00">17:42</time><span class="node" aria-hidden="true"></span>
+          <div class="body"><h3>Cerca</h3><span class="verb">bloqueou</span>
+            <p>Publicar a partir de pastas de trabalho passa a ser recusado. A cerca veio antes do primeiro passageiro.</p></div>
+        </li>
+        <li class="st" id="s-1804" data-name="Barra" style="--gap:22">
+          <span class="min">+22 min</span>
+          <time datetime="2026-11-19T18:04-03:00">18:04</time><span class="node" aria-hidden="true"></span>
+          <div class="body"><h3>Barra</h3><span class="verb">injetou</span>
+            <p>Todo dump publicado ganha uma barra de compartilhamento injetada.</p></div>
+        </li>
+        <li class="st" id="s-1820" data-name="Rodapé" style="--gap:16">
+          <span class="min">+16 min</span>
+          <time datetime="2026-11-19T18:20-03:00">18:20</time><span class="node" aria-hidden="true"></span>
+          <div class="body"><h3>Rodapé</h3><span class="verb">fixou</span>
+            <p>A barra fica fixa na tela e entra um rodapé com os autores.</p></div>
+        </li>
+        <li class="st" id="s-1836" data-name="Ensaio" style="--gap:16">
+          <span class="min">+16 min</span>
+          <time datetime="2026-11-19T18:36-03:00">18:36</time><span class="node" aria-hidden="true"></span>
+          <div class="body"><h3>Ensaio</h3><span class="verb">testou</span>
+            <p>Sobe o primeiro dump de teste.</p></div>
+        </li>
+        <li class="st" id="s-1837" data-name="Primeiro Dump" style="--gap:1">
+          <span class="min">+1 min</span>
+          <time datetime="2026-11-19T18:37-03:00">18:37</time><span class="node" aria-hidden="true"></span>
+          <div class="body"><h3>Primeiro Dump</h3><span class="verb">publicou</span>
+            <p>Um minuto depois, o primeiro de verdade, com o título “Primeiro dump”.</p></div>
+        </li>
+        <li class="st x" id="s-1838" data-name="Vitrine" style="--gap:1">
+          <span class="min">+1 min</span>
+          <time datetime="2026-11-19T18:38-03:00">18:38</time><span class="node" aria-hidden="true"></span>
+          <div class="body"><h3>Vitrine</h3><span class="verb">abriu</span>
+            <p>A home pública aparece, com miniaturas, URLs limpas e modo limpo.</p>
+            <div class="xfer" aria-label="Baldeação para issues"><span>LAB-384</span></div></div>
+        </li>
+        <li class="st alert" id="s-1846" data-name="Colisão" style="--gap:8">
+          <span class="min">+8 min</span>
+          <time datetime="2026-11-19T18:46-03:00">18:46</time><span class="node" aria-hidden="true"></span>
+          <div class="body"><h3>Colisão</h3><span class="verb">quebrou</span>
+            <p>Uma corrida de verdade: duas publicações trocaram a home ao mesmo tempo. O rollback segurou.</p></div>
+        </li>
+        <li class="st x" id="s-1855" data-name="Arquivo" style="--gap:9">
+          <span class="min">+9 min</span>
+          <time datetime="2026-11-19T18:55-03:00">18:55</time><span class="node" aria-hidden="true"></span>
+          <div class="body"><h3>Arquivo</h3><span class="verb">ganhou</span>
+            <p>Arquivar, desarquivar e renomear, direto da CLI.</p>
+            <div class="xfer" aria-label="Baldeação para issues"><span>LAB-385</span></div></div>
+        </li>
+        <li class="st" id="s-1912" data-name="Sombra" style="--gap:17">
+          <span class="min">+17 min</span>
+          <time datetime="2026-11-19T19:12-03:00">19:12</time><span class="node" aria-hidden="true"></span>
+          <div class="body"><h3>Sombra</h3><span class="verb">escondeu</span>
+            <p>Chegam o <code>--hidden</code>, para dumps fora da home, e as prévias Open Graph.</p></div>
+        </li>
+        <li class="st" id="s-1930" data-name="Medidor" style="--gap:18">
+          <span class="min">+18 min</span>
+          <time datetime="2026-11-19T19:30-03:00">19:30</time><span class="node" aria-hidden="true"></span>
+          <div class="body"><h3>Medidor</h3><span class="verb">mediu</span>
+            <p>GA4 entra, e só para quem quiser: é opcional.</p></div>
+        </li>
+        <li class="st" id="s-1935" data-name="Remendo" style="--gap:5">
+          <span class="min">+5 min</span>
+          <time datetime="2026-11-19T19:35-03:00">19:35</time><span class="node" aria-hidden="true"></span>
+          <div class="body"><h3>Remendo</h3><span class="verb">corrigiu</span>
+            <p>Sai a sobra da corrida das 18:46.</p></div>
+        </li>
+        <li class="st" id="s-1949" data-name="Blindagem" style="--gap:14">
+          <span class="min">+14 min</span>
+          <time datetime="2026-11-19T19:49-03:00">19:49</time><span class="node" aria-hidden="true"></span>
+          <div class="body"><h3>Blindagem</h3><span class="verb">blindou</span>
+            <p>O Open Graph passa a aguentar HTML de terceiros.</p></div>
+        </li>
+        <li class="st x" id="s-2007" data-name="Escritor Único" style="--gap:18">
+          <span class="min">+18 min</span>
+          <time datetime="2026-11-19T20:07-03:00">20:07</time><span class="node" aria-hidden="true"></span>
+          <div class="body"><h3>Escritor Único</h3><span class="verb">trocou</span>
+            <p>O <strong>dumpsd</strong>, em Go, vira o único escritor da home e da listagem, com saída byte a byte idêntica à do Python antigo.</p>
+            <div class="xfer" aria-label="Baldeação para issues"><span>LAB-387</span></div></div>
+        </li>
+        <li class="st x" id="s-2032" data-name="Portaria" style="--gap:25">
+          <span class="min">+25 min</span>
+          <time datetime="2026-11-19T20:32-03:00">20:32</time><span class="node" aria-hidden="true"></span>
+          <div class="body"><h3>Portaria</h3><span class="verb">trancou</span>
+            <p>O admin vai para o navegador, atrás do Cloudflare Access.</p>
+            <div class="xfer" aria-label="Baldeação para issues"><span>LAB-386</span></div></div>
+        </li>
+        <li class="st x" id="s-2051" data-name="Fuzz" style="--gap:19">
+          <span class="min">+19 min</span>
+          <time datetime="2026-11-19T20:51-03:00">20:51</time><span class="node" aria-hidden="true"></span>
+          <div class="body"><h3>Fuzz</h3><span class="verb">provou</span>
+            <p>A injeção também muda para Go, e um fuzz diferencial de 6.000 documentos confere o resultado contra o Python antigo.</p>
+            <div class="xfer" aria-label="Baldeação para issues"><span>LAB-388</span></div></div>
+        </li>
+        <li class="st" id="s-2116" data-name="Código Aberto" style="--gap:25">
+          <span class="min">+25 min</span>
+          <time datetime="2026-11-19T21:16-03:00">21:16</time><span class="node" aria-hidden="true"></span>
+          <div class="body"><h3>Código Aberto</h3><span class="verb">abriu</span>
+            <p>O projeto vai a público em <a href="https://github.com/grippado/dumps">github.com/grippado/dumps</a>, com licença MIT.</p></div>
+        </li>
+        <li class="st terminus" id="s-2134" data-name="Qualquer Harness" style="--gap:18">
+          <span class="min">+18 min</span>
+          <time datetime="2026-11-19T21:34-03:00">21:34</time><span class="node" aria-hidden="true"></span>
+          <div class="body"><h3>Qualquer Harness</h3><span class="verb">terminal</span>
+            <p>Chega a skill <strong>dump-this</strong>, que funciona em qualquer harness de agente. Esta página é um exemplo do que ela faz.</p></div>
+        </li>
+      </ol>
+
+      <div class="legend" aria-label="Legenda">
+        <span><i aria-hidden="true"></i>estação</span>
+        <span><i class="lx" aria-hidden="true"></i>baldeação para uma issue do Linear</span>
+        <span><i class="la" aria-hidden="true"></i>incidente</span>
+      </div>
+      <p class="crew-line">Em todas as estações, a mesma tripulação: Gabriel decide, Claude implementa, e cada fatia passa pelo flux para ser refinada, construída e revisada.</p>
+    </div>
+  </section>
+
+  <section class="turns" aria-labelledby="turns-title">
+    <div class="wrap">
+      <h2 id="turns-title"><span class="k">Pontos de virada</span>Três paradas que mudaram a linha</h2>
+      <div class="turn">
+        <div class="when">18:46</div>
+        <div>
+          <blockquote>Duas publicações, uma home, o mesmo segundo.</blockquote>
+          <p>A corrida não foi simulada: aconteceu no uso real, oito minutos depois da home existir. O rollback segurou, a sobra saiu às 19:35, e às 20:07 a home passou a ter um escritor só, o dumpsd. Lição: estado compartilhado pede um único dono.</p>
+        </div>
+      </div>
+      <div class="turn">
+        <div class="when">20:51</div>
+        <div>
+          <blockquote>Trocar a linguagem sem trocar um byte.</blockquote>
+          <p>Reescrever em Go o que o Python fazia só vale se o resultado for o mesmo. Primeiro a home e a listagem, byte a byte; depois a injeção, contra 6.000 documentos num fuzz diferencial. Lição: migração se prova com diferença zero, não com confiança.</p>
+        </div>
+      </div>
+      <div class="turn">
+        <div class="when">21:16</div>
+        <div>
+          <blockquote>O que roda num celular de gaveta cabe no mundo.</blockquote>
+          <p>Três horas e meia depois da origem, o código vai a público sob MIT. Dezoito minutos depois, a skill dump-this deixa qualquer agente publicar. Lição: aberto e pequeno é uma escolha de arquitetura, não um detalhe de licença.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="cast" aria-labelledby="cast-title">
+    <div class="wrap">
+      <h2 id="cast-title"><span class="k">Tripulação</span>Quem estava no trem</h2>
+      <ol>
+        <li><span class="role">Autor</span><h3>Gabriel</h3><p>Escolheu o destino e tomou as decisões, estação por estação.</p></li>
+        <li><span class="role">Agente</span><h3>Claude</h3><p>Escreveu a implementação de cada fatia.</p></li>
+        <li><span class="role">Servidor</span><h3>O celular</h3><p>Um Moto G54 que saiu de uma caixa para servir tudo.</p></li>
+        <li><span class="role">Rede</span><h3>Cloudflare</h3><p>O Tunnel até a internet e o Access na porta do admin.</p></li>
+        <li><span class="role">Método</span><h3>flux</h3><p>A família de comandos que refinou, construiu e revisou cada fatia.</p></li>
+      </ol>
+    </div>
+  </section>
+
+  <section class="now" aria-labelledby="now-title">
+    <div class="wrap">
+      <h2 id="now-title"><span class="k">Onde a linha está agora</span>Em operação, de um celular</h2>
+      <div class="now-grid">
+        <div>
+          <h3>Em operação</h3>
+          <ul>
+            <li>Origem pública e CLI <code>dumps</code> para publicar, arquivar, esconder e renomear</li>
+            <li>Home pública com miniaturas, prévias Open Graph e GA4 opcional</li>
+            <li>dumpsd em Go como escritor único da home e da listagem</li>
+            <li>Admin no navegador, atrás do Cloudflare Access</li>
+            <li>Código aberto sob MIT e a skill dump-this para qualquer harness</li>
+          </ul>
+        </div>
+        <div class="next">
+          <h3>Próximas partidas</h3>
+          <ul>
+            <li>Não anunciadas nesta história. O quadro de horários é o <a href="https://github.com/grippado/dumps">repositório no GitHub</a>.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="big-num">
+        <div><b>~10 MB</b><span>de RAM para o dumpsd</span></div>
+        <div><b>2,4 MB</b><span>o binário em Go</span></div>
+        <div><b>~95 s</b><span>para voltar sozinho depois de um reboot</span></div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <p>Fontes: commits do dia, issues LAB-382 a LAB-389 e o registro do home lab. Horários locais (UTC-3). No ramal de 14/11, só a partida e a chegada têm horário registrado; as paradas do meio ficam sem hora.</p>
+    <p>Nível 4, vanguarda · conceito: o dia de construção como uma linha de metrô, cada marco uma estação, e a distância entre estações igual aos minutos reais · Archivo variável (largura e peso) + mono do sistema.</p>
+  </div>
+</footer>
+
+<script>
+(function(){
+  var stations = Array.prototype.slice.call(document.querySelectorAll('.st'));
+  var strip = document.getElementById('strip-list');
+  var dots = document.getElementById('dots');
+  var boardName = document.getElementById('board-name');
+  var boardNext = document.getElementById('board-next');
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
+  var stripItems = [], dotLinks = [];
+
+  stations.forEach(function(st, i){
+    var name = st.getAttribute('data-name');
+    var time = st.querySelector('time').textContent;
+    var label = time + ', ' + name;
+
+    var li = document.createElement('li');
+    li.className = 's' + (st.classList.contains('x') ? ' x' : '') + (st.classList.contains('alert') ? ' alert' : '');
+    var a = document.createElement('a');
+    a.href = '#' + st.id;
+    a.setAttribute('aria-label', label);
+    var dot = document.createElement('span'); dot.className = 'dot'; dot.setAttribute('aria-hidden', 'true');
+    var nm = document.createElement('span'); nm.className = 'name'; nm.setAttribute('aria-hidden', 'true'); nm.textContent = name;
+    var t = document.createElement('span'); t.className = 't'; t.setAttribute('aria-hidden', 'true'); t.textContent = time;
+    a.appendChild(dot); a.appendChild(nm); a.appendChild(t);
+    li.appendChild(a);
+    strip.appendChild(li);
+    stripItems.push(li);
+
+    var dli = document.createElement('li');
+    var da = document.createElement('a');
+    da.href = '#' + st.id;
+    da.setAttribute('aria-label', label);
+    dli.appendChild(da);
+    dots.appendChild(dli);
+    dotLinks.push(da);
+  });
+
+  function arrowNav(list){
+    list.forEach(function(a, i){
+      a.addEventListener('keydown', function(e){
+        var j = null;
+        if (e.key === 'ArrowRight' || e.key === 'ArrowDown') j = Math.min(i + 1, list.length - 1);
+        if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') j = Math.max(i - 1, 0);
+        if (e.key === 'Home') j = 0;
+        if (e.key === 'End') j = list.length - 1;
+        if (j !== null){ e.preventDefault(); list[j].focus(); }
+      });
+    });
+  }
+  arrowNav(stripItems.map(function(li){ return li.firstChild; }));
+  arrowNav(dotLinks);
+
+  var current = -1;
+  function setCurrent(i){
+    if (i === current) return;
+    current = i;
+    stations.forEach(function(st, k){
+      st.classList.toggle('here', k === i);
+      st.classList.toggle('passed', k < i);
+      stripItems[k].classList.toggle('here', k === i);
+      stripItems[k].classList.toggle('passed', k < i);
+      dotLinks[k].classList.toggle('passed', k < i);
+      if (k === i) dotLinks[k].setAttribute('aria-current', 'step'); else dotLinks[k].removeAttribute('aria-current');
+    });
+    var name = i < 0 ? 'Ramal Moto' : stations[i].getAttribute('data-name');
+    var nextIdx = i + 1;
+    var nextHtml;
+    if (nextIdx < stations.length){
+      var ns = stations[nextIdx];
+      var gap = ns.style.getPropertyValue('--gap').trim();
+      var nt = ns.querySelector('time').textContent;
+      nextHtml = 'Próxima: <b>' + ns.getAttribute('data-name') + '</b>, ' + nt + (i >= 0 ? ' · em ' + gap + ' min' : '');
+    } else {
+      nextHtml = 'Fim da linha. Obrigado por viajar.';
+    }
+    if (!reduce.matches){
+      boardName.classList.add('swap');
+      setTimeout(function(){ boardName.textContent = name; boardName.classList.remove('swap'); }, 180);
+    } else {
+      boardName.textContent = name;
+    }
+    boardNext.innerHTML = nextHtml;
+  }
+
+  function update(){
+    var mark = window.innerHeight * 0.45;
+    var idx = -1;
+    for (var k = 0; k < stations.length; k++){
+      if (stations[k].querySelector('.node').getBoundingClientRect().top <= mark) idx = k; else break;
+    }
+    setCurrent(idx);
+  }
+  var ticking = false;
+  window.addEventListener('scroll', function(){
+    if (!ticking){ ticking = true; requestAnimationFrame(function(){ ticking = false; update(); }); }
+  }, {passive:true});
+  window.addEventListener('resize', update);
+  update();
+})();
+</script>
+</body>
+</html>
